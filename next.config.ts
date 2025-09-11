@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
   // 순수한 HTML/CSS/JS 파일을 'out' 폴더에 생성합니다.
   // -----------------------------------------------------------------
   ...(isProd && { output: 'export' }),
-  
+
   // -----------------------------------------------------------------
   // [개발 환경 전용]
   // Docker 환경에서 파일 수정이 실시간으로 반영(Hot Reload)되도록
@@ -24,12 +24,11 @@ const nextConfig: NextConfig = {
     webpack: (config) => {
       config.watchOptions = {
         poll: 1000, // 1초마다 파일 변경이 있는지 확인
-        aggregateTimeout: 300, // 변경 감지 후 0.3초 대기 후 빌드
-      }
-      return config
-    },
-  }),
+        aggregateTimeout: 300 // 변경 감지 후 0.3초 대기 후 빌드
+      };
+      return config;
+    }
+  })
 };
 
 export default nextConfig;
-
