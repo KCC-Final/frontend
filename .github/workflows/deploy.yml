@@ -1,5 +1,6 @@
 # GitHub Actions 워크플로우 이름
 name: Deploy Frontend to AWS S3 and CloudFront
+
 # 워크플로우 실행 조건: main 브랜치에 push 이벤트가 발생했을 때
 on:
   push:
@@ -10,9 +11,9 @@ on:
 # 워크플로우 실행에 필요한 권한 설정
 permissions:
   contents: read # actions/checkout에서 코드를 읽기 위해 필요
+
 jobs:
   # 'deploy'라는 이름의 단일 작업
-  
   deploy:
     # 실행 환경: 최신 버전의 Ubuntu
     runs-on: ubuntu-latest
@@ -22,6 +23,7 @@ jobs:
       # 1. 리포지토리 코드 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v4
+
       # 2. GitHub Secrets에 저장된 액세스 키를 사용하여 AWS 자격 증명 설정
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -29,24 +31,32 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
       # 3. Node.js 환경 설정 (Next.js 빌드에 필요)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.16.0' # 프로젝트에 맞는 Node.js 버전
-          npm-version: '10.9.2'   # 프로젝트에 맞는 npm 버전
-          cache: 'npm'       # npm 의존성 캐싱으로 설치 속도 향상
-      # 4. 프로젝트 의존성 설치
+          cache: 'npm'             # npm 의존성 캐싱으로 설치 속도 향상
+
+      # 4. 특정 npm 버전 설치
+      - name: Install specific npm version
+        run: npm install -g npm@10.9.2
+
+      # 5. 프로젝트 의존성 설치
       - name: Install dependencies
         run: npm install
-      # 5. Next.js 프로젝트 빌드 (정적 파일 생성)
+
+      # 6. Next.js 프로젝트 빌드 (정적 파일 생성)
       - name: Build Next.js project
         run: npm run build
-      # 6. 빌드 결과물('out' 폴더)을 S3 버킷에 동기화
+
+      # 7. 빌드 결과물('out' 폴더)을 S3 버킷에 동기화
       # --delete 옵션은 버킷에는 있지만 빌드 결과물에는 없는 오래된 파일을 삭제합니다.
       # --exclude 옵션으로 사용자 업로드 폴더는 삭제되지 않도록 보호합니다.
       - name: Deploy to S3
         run: aws s3 sync ./out/ s3://${{ secrets.S3_BUCKET_NAME }} --delete --exclude "uploads/*"
-      # 7. CloudFront 캐시 무효화하여 사용자가 즉시 최신 버전을 볼 수 있도록 함
+
+      # 8. CloudFront 캐시 무효화하여 사용자가 즉시 최신 버전을 볼 수 있도록 함
       - name: Invalidate CloudFront cache
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFONT_DISTRIBUTION_ID }} --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
