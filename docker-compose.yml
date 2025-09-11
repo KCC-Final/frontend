@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    
+    image: groo-frontend-dev:latest
+    container_name: groo-frontend-dev
+    
+    # environment 섹션 대신 env_file을 사용합니다.
+    env_file:
+      - .env
+      
+    ports:
+      - "3000:3000"
+      
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+      
+    command: npm run dev
+    
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
