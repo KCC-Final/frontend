@@ -1,3 +1,11 @@
+---
+name: Question
+about: 프로젝트에 관련된 질문을 작성해 주세요.
+title: '[QUESTION] '
+labels: 'question'
+assignees: ''
+---
+
 ## ❓ 질문 내용
 
 <!--- 궁금하신 점이나 질문 내용을 간결하게 작성해 주세요 -->

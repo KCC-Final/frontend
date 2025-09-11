@@ -1,3 +1,11 @@
+---
+name: Feature Request
+about: Feature 작업 상황을 입력해주세요.
+title: '[FEATURE] '
+labels: 'feature'
+assignees: ''
+---
+
 ## 🎯 배경 및 목적
 
 <!--- 왜 이 기능이 필요한지, 어떤 문제를 해결하는지 설명해주세요 -->
