@@ -4,6 +4,7 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
+import prettierPlugin from 'eslint-plugin-prettier';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import { dirname } from 'path';
@@ -103,6 +104,17 @@ const eslintConfig = [
     rules: {
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs['core-web-vitals'].rules
+    }
+  },
+
+  // Prettier 연동
+  {
+    files: ['**/*.{js,ts,jsx,tsx}'],
+    plugins: {
+      prettier: prettierPlugin
+    },
+    rules: {
+      'prettier/prettier': 'error'
     }
   },
 
