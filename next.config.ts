@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const path = require('path');
+
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -8,6 +11,10 @@ console.log('개발 환경:', isDev);
 console.log('운영 환경:', isProd);
 
 const nextConfig: NextConfig = {
+  sassOptions: {
+    // SCSS 파일에서 @/ 경로를 인식할 수 있도록 src 폴더를 경로에 추가합니다.
+    includePaths: [path.join(__dirname, 'src')]
+  },
   // -----------------------------------------------------------------
   // [배포 환경 전용]
   // 'npm run build' 실행 시, S3와 같은 정적 호스팅에 올릴 수 있도록
