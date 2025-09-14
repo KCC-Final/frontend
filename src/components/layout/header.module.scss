@@ -1,0 +1,46 @@
+@use '@/styles/abstract/' as *;
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.gnb {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1400px;
+  height: $header-height;
+
+  .nav {
+    display: flex;
+    gap: 14px;
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      padding: 6px 8px;
+    }
+
+    .pages {
+      display: flex;
+      align-items: center;
+
+      a {
+        font-size: 2rem;
+        font-weight: 700;
+        padding: 6px 8px;
+        margin: 0 8px;
+      }
+    }
+  }
+
+  .user {
+    display: flex;
+    gap: 12px;
+
+    button {
+      padding: 6px 8px;
+    }
+  }
+}

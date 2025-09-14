@@ -1,0 +1,11 @@
+@use '@/styles/abstract/' as *;
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.main {
+  width: 1400px;
+  min-height: calc(100vh - $header-height);
+}

@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+}
+
+.image {
+  flex: 1;
+  min-height: 100vh;
+}
+
+.main {
+  flex-basis: 550px;
+  min-height: 100vh;
+}
