@@ -1,3 +1,6 @@
+import Image from 'next/image';
+
+import treeImage from '@/assets/login-tree.jpg';
 import styles from '@/components/user/login.module.scss';
 
 interface LoginLayoutProps {
@@ -7,7 +10,9 @@ interface LoginLayoutProps {
 function LoginLayout({ children }: LoginLayoutProps) {
   return (
     <div className={styles.container}>
-      <section className={styles.image}>왼쪽 이미지 영역입니다.</section>
+      <section className={styles.image}>
+        <Image src={treeImage} alt="tree image" fill />
+      </section>
       <main className={styles.main}>{children}</main>
     </div>
   );
