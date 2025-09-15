@@ -4,9 +4,9 @@ name: Deploy Frontend to AWS S3 and CloudFront
 # 워크플로우 실행 조건: main 브랜치에 push 이벤트가 발생했을 때
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: ['main', 'develop']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 # 워크플로우 실행에 필요한 권한 설정
 permissions:
@@ -17,7 +17,7 @@ jobs:
   deploy:
     # 실행 환경: 최신 버전의 Ubuntu
     runs-on: ubuntu-latest
-    
+
     # 작업 단계들
     steps:
       # 1. 리포지토리 코드 체크아웃
@@ -37,7 +37,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.16.0' # 프로젝트에 맞는 Node.js 버전
-          cache: 'npm'             # npm 의존성 캐싱으로 설치 속도 향상
+          cache: 'npm' # npm 의존성 캐싱으로 설치 속도 향상
 
       # 4. 특정 npm 버전 설치
       - name: Install specific npm version
