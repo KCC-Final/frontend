@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 
-import styles from './login.module.scss';
-
+import styles from '@/components/user/login.module.scss';
 import { useInputText } from '@/hooks/useInput';
 
 function Login() {
@@ -34,8 +33,8 @@ function Login() {
   return (
     <section className={styles.login}>
       <h2>
-        <div>일상을 심다</div>
-        <div>독서 경험의 모든 것</div>
+        <p>일상을 심다</p>
+        <p>독서 경험의 모든 것</p>
       </h2>
       <form onSubmit={loginSubmitHandler}>
         <div className={styles.id}>
@@ -58,10 +57,6 @@ function Login() {
             placeholder="비밀번호를 입력해주세요."
           />
         </div>
-        <label className={styles.status}>
-          <input type="checkbox" />
-          <span>로그인 상태 유지</span>
-        </label>
         <div className={styles.submit}>
           <button type="submit">로그인</button>
         </div>
@@ -71,7 +66,6 @@ function Login() {
         <span>|</span>
         <Link href="/login/find-id">ID/PW 찾기</Link>
       </div>
-      <div className={styles.blank}></div>
     </section>
   );
 }

@@ -1,0 +1,16 @@
+@use '@/styles/abstract/' as *;
+
+@mixin login-input($width: 100%, $height: 48px) {
+  width: $width;
+  height: $height;
+  padding: 14px 16px;
+  background-color: $input-bg;
+  border: $input-border;
+  border-radius: $input-border-radius;
+  outline: $input-outline;
+  transition: border-color 0.2s ease-in-out;
+
+  &:focus {
+    border: $input-focus-border;
+  }
+}
