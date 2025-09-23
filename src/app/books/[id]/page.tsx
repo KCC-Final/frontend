@@ -19,14 +19,16 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 interface BookDetailsPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-function BookDetailsPage({ params }: BookDetailsPageProps) {
+async function BookDetailsPage({ params }: BookDetailsPageProps) {
+  const { id } = await params;
+
   return (
     <>
       <BookDetails />
-      {params.id}
+      {id}
     </>
   );
 }

@@ -19,14 +19,16 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 interface ReviewEditPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-function ReviewEditPage({ params }: ReviewEditPageProps) {
+async function ReviewEditPage({ params }: ReviewEditPageProps) {
+  const { id } = await params;
+
   return (
     <>
       <ReviewEdit />
-      {params.id}
+      {id}
     </>
   );
 }

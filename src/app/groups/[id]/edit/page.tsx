@@ -19,14 +19,16 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 interface ReadingGroupEditPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-function ReadingGroupEditPage({ params }: ReadingGroupEditPageProps) {
+async function ReadingGroupEditPage({ params }: ReadingGroupEditPageProps) {
+  const { id } = await params;
+
   return (
     <>
       <ReadingGroupEdit />
-      {params.id}
+      {id}
     </>
   );
 }
