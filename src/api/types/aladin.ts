@@ -1,4 +1,3 @@
-// 📁 src/api/types/aladin.ts
 export interface AladinBook {
   title: string;
   author: string;

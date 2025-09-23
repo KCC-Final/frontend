@@ -1,4 +1,3 @@
-// 📁 src/api/types/common.ts
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
