@@ -1,4 +1,3 @@
-// 📁 src/api/utils/apiHelper.ts
 import type { ApiResponse } from '../types/index';
 
 /**
