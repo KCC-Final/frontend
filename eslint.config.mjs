@@ -29,7 +29,8 @@ const eslintConfig = [
     rules: {
       ...typescriptEslint.configs['recommended'].rules, // 기본 추천 규칙
       'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn'
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn'
     }
   },
 
