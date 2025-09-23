@@ -18,8 +18,17 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-function BookDetailsPage() {
-  return <BookDetails />;
+interface BookDetailsPageProps {
+  params: { id: string };
+}
+
+function BookDetailsPage({ params }: BookDetailsPageProps) {
+  return (
+    <>
+      <BookDetails />
+      {params.id}
+    </>
+  );
 }
 
 export default BookDetailsPage;
