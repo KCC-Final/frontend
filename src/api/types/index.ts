@@ -4,6 +4,7 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   totalCount?: number;
+  message?: string;
   pageInfo?: {
     pageNo: number;
     pageSize: number;
