@@ -18,8 +18,17 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-function ReviewDetailsPage() {
-  return <ReviewDetails />;
+interface ReviewDetailsPageProps {
+  params: { id: string };
+}
+
+function ReviewDetailsPage({ params }: ReviewDetailsPageProps) {
+  return (
+    <>
+      <ReviewDetails />
+      {params.id}
+    </>
+  );
 }
 
 export default ReviewDetailsPage;

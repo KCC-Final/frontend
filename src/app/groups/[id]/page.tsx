@@ -18,8 +18,17 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-function ReadingGroupDetailsPage() {
-  return <ReadingGroupDetails />;
+interface ReadingGroupDetailsPageProps {
+  params: { id: string };
+}
+
+function ReadingGroupDetailsPage({ params }: ReadingGroupDetailsPageProps) {
+  return (
+    <>
+      <ReadingGroupDetails />
+      {params.id}
+    </>
+  );
 }
 
 export default ReadingGroupDetailsPage;
