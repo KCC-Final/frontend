@@ -1,30 +1,37 @@
-# GitHub Actions 워크플로우 이름
+# =========================================
+# GitHub Actions 워크플로우: 프론트엔드 배포
+# - Next.js 프로젝트를 빌드하여 정적 파일 생성
+# - 빌드 결과물을 S3 버킷에 업로드
+# - CloudFront 캐시 무효화로 즉시 최신 반영
+# =========================================
 name: Deploy Frontend to AWS S3 and CloudFront
 
-# 워크플로우 실행 조건: main 브랜치에 push 이벤트가 발생했을 때
+# 워크플로우 실행 조건
 on:
   push:
-    branches: ['main', 'dev']
+    branches: ['main', 'dev'] # main, dev 브랜치에 push될 때 자동 실행
   pull_request:
-    branches: ['main']
+    branches: ['main'] # main 브랜치에 PR 생성 시에도 실행
 
-# 워크플로우 실행에 필요한 권한 설정
 permissions:
-  contents: read # actions/checkout에서 코드를 읽기 위해 필요
+  contents: read # actions/checkout에서 리포지토리 코드 읽기 권한 필요
 
 jobs:
-  # 'deploy'라는 이름의 단일 작업
   deploy:
-    # 실행 환경: 최신 버전의 Ubuntu
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # GitHub Actions 실행 환경 (Ubuntu 최신)
 
-    # 작업 단계들
     steps:
+      # -------------------------------
       # 1. 리포지토리 코드 체크아웃
+      # -------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. GitHub Secrets에 저장된 액세스 키를 사용하여 AWS 자격 증명 설정
+      # -------------------------------
+      # 2. AWS 자격 증명 설정
+      # - GitHub Secrets에 등록된 AWS IAM 키를 사용
+      # - 이후 모든 aws-cli 명령어에서 이 자격 증명을 사용
+      # -------------------------------
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -32,31 +39,62 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 3. Node.js 환경 설정 (Next.js 빌드에 필요)
+      # -------------------------------
+      # 3. Node.js 환경 설정
+      # - Next.js 빌드에 필요한 Node.js 설치
+      # - npm 캐시 활용으로 빌드 속도 최적화
+      # -------------------------------
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.16.0' # 프로젝트에 맞는 Node.js 버전
-          cache: 'npm' # npm 의존성 캐싱으로 설치 속도 향상
+          node-version: '22.16.0' # 프로젝트에서 사용하는 Node.js 버전
+          cache: 'npm'
 
+      # -------------------------------
       # 4. 특정 npm 버전 설치
+      # - 프로젝트와 호환되는 npm 버전 강제 설치
+      # -------------------------------
       - name: Install specific npm version
         run: npm install -g npm@10.9.2
 
+      # -------------------------------
       # 5. 프로젝트 의존성 설치
+      # - package.json 기준으로 node_modules 설치
+      # -------------------------------
       - name: Install dependencies
         run: npm install
 
-      # 6. Next.js 프로젝트 빌드 (정적 파일 생성)
+      # -------------------------------
+      # 6. Next.js 빌드
+      # - NEXT_PUBLIC_* 환경변수를 GitHub Secrets에서 주입
+      # - 빌드된 결과물은 out/ 폴더에 생성됨
+      # -------------------------------
       - name: Build Next.js project
         run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_ALADIN_TTBKEY: ${{ secrets.NEXT_PUBLIC_ALADIN_TTBKEY }}
+          NEXT_PUBLIC_DATA4LIBRARY_KEY: ${{ secrets.NEXT_PUBLIC_DATA4LIBRARY_KEY }}
 
-      # 7. 빌드 결과물('out' 폴더)을 S3 버킷에 동기화
-      # --delete 옵션은 버킷에는 있지만 빌드 결과물에는 없는 오래된 파일을 삭제합니다.
-      # --exclude 옵션으로 사용자 업로드 폴더는 삭제되지 않도록 보호합니다.
+      # -------------------------------
+      # 7. S3에 정적 파일 업로드
+      # - ./out 폴더를 S3 버킷과 동기화
+      # - --delete: S3에만 존재하는 오래된 파일 삭제
+      # - --exclude: 특정 경로는 삭제 제외 (예: 사용자 업로드 파일)
+      # -------------------------------
       - name: Deploy to S3
-        run: aws s3 sync ./out/ s3://${{ secrets.S3_BUCKET_NAME }} --delete --exclude "uploads/*"
+        run: |
+          aws s3 sync ./out/ s3://${{ secrets.S3_BUCKET_NAME }} \
+            --delete \
+            --exclude "uploads/*"
 
-      # 8. CloudFront 캐시 무효화하여 사용자가 즉시 최신 버전을 볼 수 있도록 함
+      # -------------------------------
+      # 8. CloudFront 캐시 무효화
+      # - "/*" 전체 경로 캐시를 지워서 즉시 최신 파일 제공
+      # -------------------------------
       - name: Invalidate CloudFront cache
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
