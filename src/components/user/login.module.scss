@@ -27,7 +27,7 @@
     gap: $input-label-gap;
 
     input {
-      @include login-input();
+      @include common-input-md();
     }
   }
 
