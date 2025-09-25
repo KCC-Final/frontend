@@ -1,77 +1,81 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 
-import type { Step } from '@/components/user/signup/index';
 import styles from '@/components/user/signup/signup.module.scss';
-import { validate } from '@/utils/validation';
+import useBoundStore from '@/stores';
+import { SignupInputFieldKey } from '@/types';
 
-import type { Dispatch, SetStateAction, ChangeEventHandler } from 'react';
-
-interface SignupStep1Props {
-  setStep: Dispatch<SetStateAction<Step>>;
-  name: string;
-  changeName: ChangeEventHandler<HTMLInputElement>;
-  gender: string;
-  changeGender: ChangeEventHandler<HTMLInputElement>;
-  birthYear: string;
-  changeBirthYear: ChangeEventHandler<HTMLSelectElement>;
-  birthMonth: string;
-  changeBirthMonth: ChangeEventHandler<HTMLSelectElement>;
-  birthDay: string;
-  changeBirthDay: ChangeEventHandler<HTMLSelectElement>;
-  setBirthDay: Dispatch<SetStateAction<string>>;
-  checkService: boolean;
-  changeCheckService: ChangeEventHandler<HTMLInputElement>;
-  setCheckService: Dispatch<SetStateAction<boolean>>;
-  checkPrivacy: boolean;
-  changeCheckPrivacy: ChangeEventHandler<HTMLInputElement>;
-  setCheckPrivacy: Dispatch<SetStateAction<boolean>>;
-}
+type ChangeInputEvent = React.ChangeEvent<HTMLInputElement>;
+type ChangeSelectEvent = React.ChangeEvent<HTMLSelectElement>;
 
 const GENDER_OPTIONS = [
   { value: 'm', label: '남자' },
   { value: 'f', label: '여자' }
 ];
 
-function SignupStep3({
-  setStep,
-  name,
-  changeName,
-  gender,
-  changeGender,
-  birthYear,
-  changeBirthYear,
-  birthMonth,
-  changeBirthMonth,
-  birthDay,
-  changeBirthDay,
-  setBirthDay,
-  checkService,
-  changeCheckService,
-  setCheckService,
-  checkPrivacy,
-  changeCheckPrivacy,
-  setCheckPrivacy
-}: SignupStep1Props) {
-  // 회원가입 입력 폼의 value에 사용할 값과 onChange에 사용할 함수
+function SignupStep3() {
+  // 회원가입 저장소의 state 및 actions 불러오기
+  const {
+    name,
+    gender,
+    birthYear,
+    birthMonth,
+    birthDay,
+    isCheckedAllTerms,
+    isCheckedService,
+    isCheckedPrivacy,
+    setSignupInputField
+  } = useBoundStore(
+    useShallow((state) => ({
+      name: state.signupInputField.name,
+      gender: state.signupInputField.gender,
+      birthYear: state.signupInputField.birthYear,
+      birthMonth: state.signupInputField.birthMonth,
+      birthDay: state.signupInputField.birthDay,
+      isCheckedAllTerms: state.signupInputField.isCheckedAllTerms,
+      isCheckedService: state.signupInputField.isCheckedService,
+      isCheckedPrivacy: state.signupInputField.isCheckedPrivacy,
+      setSignupInputField: state.setSignupInputField
+    }))
+  );
 
-  const [checkAll, setCheckAll] = useState(false);
+  /**
+   * type = text인 input태그의 ChangeEventHandler
+   */
+  const changeInputHandler = (field: SignupInputFieldKey) => (event: ChangeInputEvent) => {
+    setSignupInputField(field, event.target.value);
+  };
+
+  /**
+   * type = checkbox인 input태그의 ChangeEventHandler
+   */
+  const changeCheckboxHandler = (field: SignupInputFieldKey) => (event: ChangeInputEvent) => {
+    setSignupInputField(field, event.target.checked);
+  };
+
+  /**
+   * select 태그의 ChangeEventHandler
+   */
+  const changeSelectHandler = (field: SignupInputFieldKey) => (event: ChangeSelectEvent) => {
+    setSignupInputField(field, event.target.value);
+  };
+
+  /**
+   * 전체 동의 체크박스 클릭시 동작할 ChangeEventHandler
+   */
+  const changeCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSignupInputField('isCheckedAllTerms', event.target.checked);
+    setSignupInputField('isCheckedService', event.target.checked);
+    setSignupInputField('isCheckedPrivacy', event.target.checked);
+  };
 
   // 선택할 년, 월, 일 생성
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
   const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
   const [daysInMonth, setDaysInMonth] = useState<string[]>([]);
-
-  /**
-   * 전체 동의 체크박스 클릭시 동작할 함수
-   */
-  const changeCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckAll(event.target.checked);
-    setCheckService(event.target.checked);
-    setCheckPrivacy(event.target.checked);
-  };
 
   // 선택한 년, 월을 기준으로 일 목록 생성
   useEffect(() => {
@@ -89,7 +93,7 @@ function SignupStep3({
 
       // 월이 바뀌었을 때 기존에 선택한 '일'이 유효하지 않으면 초기화
       if (parseInt(birthDay) > days) {
-        setBirthDay('');
+        setSignupInputField('birthDay', '');
       }
     } else {
       setDaysInMonth([]);
@@ -98,43 +102,16 @@ function SignupStep3({
 
   // 개별 체크박스 상태가 변하면 전체 체크박스 상태 수정
   useEffect(() => {
-    if (checkService && checkPrivacy) {
-      if (!checkAll) {
-        setCheckAll(true);
+    if (isCheckedService && isCheckedPrivacy) {
+      if (!isCheckedAllTerms) {
+        setSignupInputField('isCheckedAllTerms', true);
       }
     } else {
-      if (checkAll) {
-        setCheckAll(false);
+      if (isCheckedAllTerms) {
+        setSignupInputField('isCheckedAllTerms', false);
       }
     }
-  }, [checkService, checkPrivacy]);
-
-  // 회원가입 요청 전 이름, 성별, 생년월일, 약관 동의 확인
-  useEffect(() => {
-    if (!validate.name(name).result) {
-      setStep({ value: 3, canNextStep: false, reason: validate.name(name).message });
-      return;
-    } else if (!validate.gender(gender).result) {
-      setStep({ value: 3, canNextStep: false, reason: validate.gender(gender).message });
-      return;
-    } else if (!validate.birth(birthYear, birthMonth, birthDay).result) {
-      setStep({
-        value: 3,
-        canNextStep: false,
-        reason: validate.birth(birthYear, birthMonth, birthDay).message
-      });
-      return;
-    } else if (!(checkPrivacy && checkService)) {
-      setStep({
-        value: 3,
-        canNextStep: false,
-        reason: '필수 약관에 모두 동의해야 합니다.'
-      });
-      return;
-    } else {
-      setStep({ value: 3, canNextStep: true, reason: '' });
-    }
-  }, [name, gender, birthYear, birthMonth, birthDay, checkPrivacy, checkService]);
+  }, [isCheckedService, isCheckedPrivacy]);
 
   return (
     <>
@@ -144,7 +121,7 @@ function SignupStep3({
           type="text"
           name="name"
           value={name}
-          onChange={changeName}
+          onChange={changeInputHandler('name')}
           placeholder="이름을 입력해주세요."
         />
       </div>
@@ -158,12 +135,10 @@ function SignupStep3({
                 name="gender"
                 value={option.value}
                 checked={gender === option.value}
-                onChange={changeGender}
+                onChange={changeInputHandler('gender')}
                 hidden
               />
-              <span className={`${gender === option.value ? styles.checked : ''}`}>
-                {option.label}
-              </span>
+              <span className={`${gender === option.value ? styles.checked : ''}`}>{option.label}</span>
             </label>
           ))}
         </div>
@@ -171,7 +146,7 @@ function SignupStep3({
       <div className={styles.birth}>
         <div>생년월일</div>
         <div className={styles.select}>
-          <select name="year" value={birthYear} onChange={changeBirthYear}>
+          <select name="year" value={birthYear} onChange={changeSelectHandler('birthYear')}>
             <option value="">년</option>
             {years.map((year) => (
               <option key={year} value={year}>
@@ -179,7 +154,7 @@ function SignupStep3({
               </option>
             ))}
           </select>
-          <select name="month" value={birthMonth} onChange={changeBirthMonth}>
+          <select name="month" value={birthMonth} onChange={changeSelectHandler('birthMonth')}>
             <option value="">월</option>
             {months.map((month) => (
               <option key={month} value={month}>
@@ -190,7 +165,7 @@ function SignupStep3({
           <select
             name="day"
             value={birthDay}
-            onChange={changeBirthDay}
+            onChange={changeSelectHandler('birthDay')}
             disabled={!birthYear || !birthMonth}>
             <option value="">일</option>
             {daysInMonth.map((day) => (
@@ -205,16 +180,24 @@ function SignupStep3({
         <div>약관동의</div>
         <div>
           <label className={styles.all}>
-            <input type="checkbox" checked={checkAll} onChange={changeCheckAll} />
+            <input type="checkbox" checked={isCheckedAllTerms} onChange={changeCheckAll} />
             <span>전체 동의</span>
           </label>
           <div className={styles.individual}>
             <label>
-              <input type="checkbox" checked={checkService} onChange={changeCheckService} />
+              <input
+                type="checkbox"
+                checked={isCheckedService}
+                onChange={changeCheckboxHandler('isCheckedService')}
+              />
               <span>서비스 이용약관 동의 (필수)</span>
             </label>
             <label>
-              <input type="checkbox" checked={checkPrivacy} onChange={changeCheckPrivacy} />
+              <input
+                type="checkbox"
+                checked={isCheckedPrivacy}
+                onChange={changeCheckboxHandler('isCheckedPrivacy')}
+              />
               <span>개인정보 수집 및 이용 동의 (필수)</span>
             </label>
           </div>

@@ -1,48 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 
-import type { Step } from '@/components/user/signup/index';
 import styles from '@/components/user/signup/signup.module.scss';
-import { validate } from '@/utils/validation';
+import useBoundStore from '@/stores';
+import { SignupInputFieldKey } from '@/types';
+import { validate } from '@/utils/validation/signup';
 
-import type { Dispatch, SetStateAction } from 'react';
+type ChangeInputEvent = React.ChangeEvent<HTMLInputElement>;
 
-interface SignupStep1Props {
-  setStep: Dispatch<SetStateAction<Step>>;
-  userId: string;
-  changeUserId: React.ChangeEventHandler<HTMLInputElement>;
-  password: string;
-  changePassword: React.ChangeEventHandler<HTMLInputElement>;
-  password2: string;
-  changePassword2: React.ChangeEventHandler<HTMLInputElement>;
-  nickname: string;
-  changeNickname: React.ChangeEventHandler<HTMLInputElement>;
-}
+function SignupStep1() {
+  // 회원가입 저장소의 state 및 actions 불러오기
+  const { userId, password1, password2, nickname, idVerification, setIdVerification, setSignupInputField } =
+    useBoundStore(
+      useShallow((state) => ({
+        userId: state.signupInputField.userId,
+        password1: state.signupInputField.password1,
+        password2: state.signupInputField.password2,
+        nickname: state.signupInputField.nickname,
+        setSignupInputField: state.setSignupInputField,
+        idVerification: state.signupIdVerification,
+        setIdVerification: state.setSignupIdVerification
+      }))
+    );
 
-interface IdVerification {
-  userId: string;
-  result: boolean | null;
-  message: string;
-}
-
-function SignupStep1({
-  setStep,
-  userId,
-  changeUserId,
-  password,
-  changePassword,
-  password2,
-  changePassword2,
-  nickname,
-  changeNickname
-}: SignupStep1Props) {
-  // 아이디 중복확인, 비밀번호 일치확인
-  const [idVerification, setIdVerification] = useState<IdVerification>({
-    userId: '',
-    result: null,
-    message: ''
-  });
+  /**
+   * type = text인 input태그의 ChangeEventHandler
+   */
+  const changeInputHandler = (field: SignupInputFieldKey) => (event: ChangeInputEvent) => {
+    setSignupInputField(field, event.target.value);
+  };
 
   /**
    * input에 입력된 userId값을 이용하여 아이디 중복확인 요청 버튼
@@ -50,38 +37,21 @@ function SignupStep1({
   const verifyUserId = () => {
     // TODO: 아이디 중복확인 처리 필요
     if (Math.random() < 0.5) {
-      setIdVerification({ userId: userId, result: true, message: '사용 가능한 아이디입니다.' });
+      setIdVerification({
+        isLoading: false,
+        isSuccess: true,
+        userId: userId,
+        message: '사용 가능한 아이디입니다.'
+      });
     } else {
-      setIdVerification({ userId: userId, result: false, message: '이미 사용중인 아이디입니다.' });
+      setIdVerification({
+        isLoading: false,
+        isSuccess: false,
+        userId: userId,
+        message: '이미 사용중인 아이디입니다.'
+      });
     }
   };
-
-  // 회원가입 2단계로 이동 전 아이디, 비밀번호, 닉네임 확인
-  useEffect(() => {
-    if (!validate.userId(userId).result) {
-      setStep({ value: 1, canNextStep: false, reason: validate.userId(userId).message });
-      return;
-    } else if (idVerification.userId !== userId || !idVerification.result) {
-      setStep({ value: 1, canNextStep: false, reason: '중복확인이 필요합니다.' });
-      return;
-    } else if (!validate.password(password).result) {
-      setStep({ value: 1, canNextStep: false, reason: validate.password(password).message });
-      return;
-    } else if (!validate.passwordConfirm(password, password2).result) {
-      setStep({
-        value: 1,
-        canNextStep: false,
-        reason: validate.passwordConfirm(password, password2).message
-      });
-      return;
-    } else if (!validate.nickname(nickname).result) {
-      setStep({ value: 1, canNextStep: false, reason: validate.nickname(nickname).message });
-      return;
-    } else {
-      setStep({ value: 1, canNextStep: true, reason: '' });
-      return;
-    }
-  }, [userId, idVerification, password, password2, nickname]);
 
   return (
     <>
@@ -92,7 +62,7 @@ function SignupStep1({
             type="text"
             name="userId"
             value={userId}
-            onChange={changeUserId}
+            onChange={changeInputHandler('userId')}
             placeholder="아이디를 입력해주세요."
           />
           <button type="button" onClick={verifyUserId}>
@@ -100,8 +70,7 @@ function SignupStep1({
           </button>
         </label>
         {idVerification.message && (
-          <div
-            className={`${styles.message} ${idVerification.result ? styles.success : styles.fail}`}>
+          <div className={`${styles.message} ${idVerification.isSuccess ? styles.success : styles.fail}`}>
             {idVerification.message}
           </div>
         )}
@@ -110,26 +79,24 @@ function SignupStep1({
         <div>비밀번호</div>
         <input
           type="password"
-          name="password"
-          value={password}
-          onChange={changePassword}
+          name="password1"
+          value={password1}
+          onChange={changeInputHandler('password1')}
           placeholder="비밀번호를 입력해주세요."
         />
-        {password && !validate.password(password).result && (
-          <div className={`${styles.message} ${styles.fail}`}>
-            {validate.password(password).message}
-          </div>
+        {password1 && !validate.password(password1).result && (
+          <div className={`${styles.message} ${styles.fail}`}>{validate.password(password1).message}</div>
         )}
         <input
           type="password"
           name="password2"
           value={password2}
-          onChange={changePassword2}
+          onChange={changeInputHandler('password2')}
           placeholder="비밀번호를 다시 한번 입력해주세요."
         />
-        {password2 && !validate.passwordConfirm(password, password2).result && (
+        {password2 && !validate.passwordConfirm(password1, password2).result && (
           <div className={`${styles.message} ${styles.fail}`}>
-            {validate.passwordConfirm(password, password2).message}
+            {validate.passwordConfirm(password1, password2).message}
           </div>
         )}
       </div>
@@ -139,13 +106,11 @@ function SignupStep1({
           type="text"
           name="nickname"
           value={nickname}
-          onChange={changeNickname}
+          onChange={changeInputHandler('nickname')}
           placeholder="닉네임을 입력해주세요."
         />
         {nickname && !validate.nickname(nickname).result && (
-          <div className={`${styles.message} ${styles.fail}`}>
-            {validate.nickname(nickname).message}
-          </div>
+          <div className={`${styles.message} ${styles.fail}`}>{validate.nickname(nickname).message}</div>
         )}
       </div>
     </>

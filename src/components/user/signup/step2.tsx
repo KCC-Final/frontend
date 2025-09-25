@@ -1,35 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 
-import type { Step } from '@/components/user/signup/index';
 import styles from '@/components/user/signup/signup.module.scss';
-import { useInputText } from '@/hooks/useInput';
-import { validate } from '@/utils/validation';
+import useBoundStore from '@/stores';
+import { SignupInputFieldKey } from '@/types';
+import { validate } from '@/utils/validation/signup';
 
-import type { Dispatch, SetStateAction } from 'react';
+type ChangeInputEvent = React.ChangeEvent<HTMLInputElement>;
 
-interface SignupStep1Props {
-  setStep: Dispatch<SetStateAction<Step>>;
-  email: string;
-  changeEmail: React.ChangeEventHandler<HTMLInputElement>;
-}
+function SignupStep2() {
+  // 회원가입 저장소의 state 및 actions 불러오기
+  const { email, emailVerificationCode, setSignupInputField, setEmailVerification } = useBoundStore(
+    useShallow((state) => ({
+      email: state.signupInputField.email,
+      emailVerificationCode: state.signupInputField.emailVerificationCode,
+      setSignupInputField: state.setSignupInputField,
+      setEmailVerification: state.setSignupEmailVerification
+    }))
+  );
 
-interface EmailVerification {
-  email: string;
-  result: boolean | null;
-}
-
-function SignupStep2({ setStep, email, changeEmail }: SignupStep1Props) {
-  // 회원가입 입력 폼의 value에 사용할 값과 onChange에 사용할 함수
-
-  const [emailVerificationCode, changeEmailVerificationCode] = useInputText('');
-
-  // 이메일 인증성공 여부
-  const [emailVerification, setEmailVerification] = useState<EmailVerification>({
-    email: '',
-    result: null
-  });
+  /**
+   * type = text인 input태그의 ChangeEventHandler
+   */
+  const changeInputHandler = (field: SignupInputFieldKey) => (event: ChangeInputEvent) => {
+    setSignupInputField(field, event.target.value);
+  };
 
   /**
    * input에 입력된 email값을 이용하여 이메일 인증코드 전송 요청 버튼
@@ -49,27 +45,23 @@ function SignupStep2({ setStep, email, changeEmail }: SignupStep1Props) {
   const verifyEmailCode = () => {
     // TODO: 이메일 확인요청 처리 필요
     if (Math.random() < 0.5) {
-      setEmailVerification({ email: email, result: true });
+      setEmailVerification({
+        isLoading: false,
+        isSuccess: true,
+        email: email,
+        message: '이메일 인증에 성공했습니다.'
+      });
       alert('이메일 인증에 성공했습니다.');
     } else {
-      setEmailVerification({ email: email, result: false });
+      setEmailVerification({
+        isLoading: false,
+        isSuccess: false,
+        email: email,
+        message: '인증코드가 일치하지 않습니다.'
+      });
       alert('인증코드가 일치하지 않습니다.');
     }
   };
-
-  // 회원가입 3단계로 이동 전 이메일, 이메일 인증 결과 확인
-  useEffect(() => {
-    if (!validate.email(email).result) {
-      setStep({ value: 2, canNextStep: false, reason: validate.email(email).message });
-      return;
-    } else if (emailVerification.email !== email || !emailVerification.result) {
-      setStep({ value: 2, canNextStep: false, reason: '이메일 인증이 필요합니다.' });
-      return;
-    } else {
-      setStep({ value: 2, canNextStep: true, reason: '' });
-      return;
-    }
-  }, [email, emailVerification]);
 
   return (
     <>
@@ -80,7 +72,7 @@ function SignupStep2({ setStep, email, changeEmail }: SignupStep1Props) {
             type="email"
             name="email"
             value={email}
-            onChange={changeEmail}
+            onChange={changeInputHandler('email')}
             placeholder="이메일을 입력해주세요."
           />
           <button type="button" onClick={sendVerificationCode}>
@@ -92,7 +84,7 @@ function SignupStep2({ setStep, email, changeEmail }: SignupStep1Props) {
             type="text"
             name="emailVerificationCode"
             value={emailVerificationCode}
-            onChange={changeEmailVerificationCode}
+            onChange={changeInputHandler('emailVerificationCode')}
             placeholder="인증코드를 입력해주세요."
           />
           <button type="button" onClick={verifyEmailCode}>

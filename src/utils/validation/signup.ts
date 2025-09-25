@@ -1,3 +1,5 @@
+import { SignupEmailVerification, SignupIdVerification } from '@/types';
+
 interface ValidateReturn {
   result: boolean;
   message: string;
@@ -161,4 +163,63 @@ export const validate = {
     }
     return { result: true, message: '' };
   }
+};
+
+export const validateSignupStep1 = (
+  userId: string,
+  idVerification: SignupIdVerification,
+  password1: string,
+  password2: string,
+  nickname: string
+) => {
+  if (!validate.userId(userId).result) {
+    return { isSuccess: false, message: validate.userId(userId).message };
+  }
+  if (idVerification.userId !== userId || !idVerification.isSuccess) {
+    return { isSuccess: false, message: '아이디 중복 확인이 필요합니다.' };
+  }
+  if (!validate.password(password1).result) {
+    return { isSuccess: false, message: validate.password(password1).message };
+  }
+  if (!validate.passwordConfirm(password1, password2).result) {
+    return { isSuccess: false, message: validate.passwordConfirm(password1, password2).message };
+  }
+  if (!validate.nickname(nickname).result) {
+    return { isSuccess: false, message: validate.nickname(nickname).message };
+  }
+  return { isSuccess: true, message: '1단계 검증 완료' };
+};
+
+export const validateSignupStep2 = (email: string, emailVerification: SignupEmailVerification) => {
+  if (!validate.email(email).result) {
+    return { isSuccess: false, message: validate.email(email).message };
+  }
+  if (emailVerification.email !== email || !emailVerification.isSuccess) {
+    return { isSuccess: false, message: '이메일 인증이 필요합니다.' };
+  }
+  return { isSuccess: true, message: '2단계 검증 완료' };
+};
+
+export const validateSignupStep3 = (
+  name: string,
+  gender: 'm' | 'f' | '',
+  birthYear: string,
+  birthMonth: string,
+  birthDay: string,
+  isCheckedService: boolean,
+  isCheckedPrivacy: boolean
+) => {
+  if (!validate.name(name).result) {
+    return { isSuccess: false, message: validate.name(name).message };
+  }
+  if (!validate.gender(gender).result) {
+    return { isSuccess: false, message: validate.gender(gender).message };
+  }
+  if (!validate.birth(birthYear, birthMonth, birthDay).result) {
+    return { isSuccess: false, message: validate.birth(birthYear, birthMonth, birthDay).message };
+  }
+  if (!isCheckedService || !isCheckedPrivacy) {
+    return { isSuccess: false, message: '필수 약관에 모두 동의해야 합니다.' };
+  }
+  return { isSuccess: true, message: '모든 검증 완료' };
 };
