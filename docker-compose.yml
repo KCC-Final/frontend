@@ -6,26 +6,26 @@ services:
       context: .
       dockerfile: Dockerfile
       target: development
-
+    
     image: groo-frontend-dev:latest
     container_name: groo-frontend-dev
-
+    
     # environment 섹션 대신 env_file을 사용합니다.
-    # 로컬 개발용: .env.development.local
+# 로컬 개발용: .env.development.local
     # 배포용: .env.production
     env_file:
       - .env.development.local
-
+      
     ports:
       - '3001:3000'
-
+      
     volumes:
       - .:/app
       - /app/node_modules
       - /app/.next
-
+      
     command: npm run dev
-
+    
     stdin_open: true
     tty: true
     restart: unless-stopped
