@@ -1,5 +1,7 @@
+// 회원가입 단계
 export type SignupStep = 1 | 2 | 3;
 
+// 회원가입 사용자 입력 정보
 export type SignupInputField = {
   userId: string; // 아이디
   password1: string; // 비밀번호
@@ -16,9 +18,9 @@ export type SignupInputField = {
   isCheckedService: boolean; //서비스 이용 약관 동의
   isCheckedPrivacy: boolean; // 개인정보 수집 약관 동의
 };
-
 export type SignupInputFieldKey = keyof SignupState['signupInputField'];
 
+// 회원가입 아이디 중복확인
 export type SignupIdVerification = {
   isLoading: boolean;
   isSuccess: boolean | null;
@@ -26,6 +28,7 @@ export type SignupIdVerification = {
   message: string;
 };
 
+// 회원가입 이메일 인증결과
 export type SignupEmailVerification = {
   isLoading: boolean;
   isSuccess: boolean | null;
@@ -33,6 +36,7 @@ export type SignupEmailVerification = {
   message: string;
 };
 
+// 회원가입 스토어 state
 export interface SignupState {
   // 회원가입 단계 구분
   signupStep: SignupStep;
@@ -47,6 +51,7 @@ export interface SignupState {
   signupEmailVerification: SignupEmailVerification;
 }
 
+// 회원가입 스토어 actions
 export interface SignupActions {
   // 회원가입 단계 변경 함수
   setSignupStep: (step: 1 | 2 | 3) => void;
