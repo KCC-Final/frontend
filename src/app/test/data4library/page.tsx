@@ -145,9 +145,7 @@ export default function Data4LibraryTestPage() {
         {/* 인기/추천 도서 API */}
         <button
           type="button"
-          onClick={() =>
-            handleAPICall(() => getPopularBooks('20250901', '20250923', 1, 5), '인기 대출도서')
-          }
+          onClick={() => handleAPICall(() => getPopularBooks('20250901', '20250923', 1, 5), '인기 대출도서')}
           disabled={loading}>
           인기 대출도서
         </button>
@@ -183,18 +181,14 @@ export default function Data4LibraryTestPage() {
 
         <button
           type="button"
-          onClick={() =>
-            handleAPICall(() => getLibraryIntegratedInfo(1, 3, region), '도서관 통합정보')
-          }
+          onClick={() => handleAPICall(() => getLibraryIntegratedInfo(1, 3, region), '도서관 통합정보')}
           disabled={loading}>
           도서관 통합정보
         </button>
 
         <button
           type="button"
-          onClick={() =>
-            handleAPICall(() => getLibraryItems(libCode, 'ALL', 1, 5), '도서관별 장서')
-          }
+          onClick={() => handleAPICall(() => getLibraryItems(libCode, 'ALL', 1, 5), '도서관별 장서')}
           disabled={loading}>
           도서관별 장서
         </button>
@@ -237,9 +231,7 @@ export default function Data4LibraryTestPage() {
 
         <button
           type="button"
-          onClick={() =>
-            handleAPICall(() => getRegionalReadingStats(region, '2024'), '지역별 독서통계')
-          }
+          onClick={() => handleAPICall(() => getRegionalReadingStats(region, '2024'), '지역별 독서통계')}
           disabled={loading}>
           지역별 독서통계
         </button>

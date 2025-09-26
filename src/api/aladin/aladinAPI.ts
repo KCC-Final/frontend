@@ -2,9 +2,7 @@ import { ALADIN_PROXY_CONFIG } from './config';
 
 // 1. 검색
 export async function searchBooks(query: string) {
-  const res = await fetch(
-    `${ALADIN_PROXY_CONFIG.BASE_URL}/search?query=${encodeURIComponent(query)}`
-  );
+  const res = await fetch(`${ALADIN_PROXY_CONFIG.BASE_URL}/search?query=${encodeURIComponent(query)}`);
   if (!res.ok) throw new Error('백엔드 검색 API 호출 실패');
   return await res.json();
 }

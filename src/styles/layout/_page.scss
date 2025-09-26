@@ -1,0 +1,36 @@
+@mixin login-layout() {
+  .container {
+    display: flex;
+
+    .image {
+      flex: 1;
+      min-height: 100vh;
+      position: relative;
+
+      img {
+        object-fit: cover;
+      }
+    }
+
+    .main {
+      flex-basis: 580px;
+      min-height: 100vh;
+
+      section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+
+        > * {
+          width: 400px;
+        }
+      }
+
+      .signup {
+        justify-content: flex-start;
+      }
+    }
+  }
+}
