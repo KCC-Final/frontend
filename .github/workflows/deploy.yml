@@ -9,7 +9,7 @@ name: Deploy Frontend to AWS S3 and CloudFront
 # 워크플로우 실행 조건
 on:
   push:
-    branches: ['main', 'dev'] # main, dev 브랜치에 push될 때 자동 실행
+    branches: ['main', 'dev', 'feat/20/test브랜치'] # main, dev 브랜치에 push될 때 자동 실행
   pull_request:
     branches: ['main'] # main 브랜치에 PR 생성 시에도 실행
 
