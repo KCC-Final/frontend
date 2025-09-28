@@ -1,5 +1,4 @@
-import { axiosGroo } from './config';
-
+import axiosGroo from '@/apis/groo/config';
 import { LoginReqBody } from '@/types';
 
 export const auth = {

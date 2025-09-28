@@ -1,4 +1,4 @@
-import { axiosGroo } from './config';
+import axiosGroo from './config';
 
 import { SendEmailCodeReqBody, SignupReqBody, VerifyEmailReqBody, VerifyUserIdReqBody } from '@/types';
 
