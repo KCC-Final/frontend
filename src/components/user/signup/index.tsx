@@ -1,15 +1,21 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
+import { fetchGroo } from '@/apis';
 import SignupButton from '@/components/user/signup/button';
 import styles from '@/components/user/signup/signup.module.scss';
 import SignupStep1 from '@/components/user/signup/step1';
 import SignupStep2 from '@/components/user/signup/step2';
 import SignupStep3 from '@/components/user/signup/step3';
 import useBoundStore from '@/stores';
+import { devLogger } from '@/utils/dev-logger';
+import { ApiError } from '@/utils/error/api';
 
 function Signup() {
+  const router = useRouter();
+
   // 회원가입 저장소의 state 및 actions 불러오기
   const { step, setStep, signupInputField, signupValidateAndVerifyField } = useBoundStore(
     useShallow((state) => ({
@@ -23,7 +29,7 @@ function Signup() {
   /**
    * 회원가입 다음단계로 진행 또는 회원가입 요청을 하기 위한 버튼
    */
-  const mainButtonHandler = () => {
+  const mainButtonHandler = async () => {
     // TODO: 다음단계로 넘어가기 위해 필요한 로직 구현
     if (step === 1) {
       if (signupValidateAndVerifyField().isSuccess) {
@@ -39,19 +45,29 @@ function Signup() {
       }
     } else {
       if (signupValidateAndVerifyField().isSuccess) {
-        alert('회원가입 요청 예정(요청body는 임시로 콘솔창 출력)');
-        console.log({
-          userId: signupInputField.userId,
-          password1: signupInputField.password1,
-          password2: signupInputField.password2,
-          nickname: signupInputField.nickname,
-          email: signupInputField.email,
-          name: signupInputField.name,
-          gender: signupInputField.gender,
-          birth: `${signupInputField.birthYear}-${signupInputField.birthMonth}-${signupInputField.birthDay}`,
-          checkService: signupInputField.isCheckedService,
-          checkPrivacy: signupInputField.isCheckedPrivacy
-        });
+        try {
+          const result = await fetchGroo.user.signup({
+            userId: signupInputField.userId,
+            password1: signupInputField.password1,
+            password2: signupInputField.password2,
+            nickname: signupInputField.nickname,
+            email: signupInputField.email,
+            name: signupInputField.name,
+            gender: signupInputField.gender as 'm' | 'f',
+            birth: `${signupInputField.birthYear}-${signupInputField.birthMonth}-${signupInputField.birthDay}`,
+            checkService: signupInputField.isCheckedService,
+            checkPrivacy: signupInputField.isCheckedPrivacy
+          });
+          devLogger(result.data); // TODO: 개발 테스트용 로그 삭제 필요
+          alert('회원가입에 성공했습니다. 로그인 페이지로 이동합니다.');
+          router.replace('/login');
+        } catch (error) {
+          if (error instanceof ApiError) {
+            alert(error.message);
+          } else {
+            alert('회원가입에 실패했습니다.');
+          }
+        }
       } else {
         alert(signupValidateAndVerifyField().message);
       }
