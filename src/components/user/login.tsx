@@ -1,11 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
+import { fetchGroo } from '@/apis';
 import styles from '@/components/user/login.module.scss';
 import { useInputText } from '@/hooks/useInput';
+import { ApiError } from '@/utils/error/api';
 
 function Login() {
+  const router = useRouter();
+
   // 로그인 입력 폼의 value에 사용할 값과 onChange에 사용할 함수
   const [userId, changeUserId] = useInputText('');
   const [password, changePassword] = useInputText('');
@@ -21,13 +26,22 @@ function Login() {
     if (!userId) {
       alert('아이디를 입력해주세요.');
       return;
-    }
-    if (!password) {
+    } else if (!password) {
       alert('비밀번호를 입력해주세요.');
       return;
+    } else {
+      try {
+        await fetchGroo.auth.login({ userId: userId, password: password });
+        alert('로그인에 성공했습니다.');
+        router.push('/');
+      } catch (error) {
+        if (error instanceof ApiError) {
+          alert(error.message);
+        } else {
+          alert('이메일 인증에 실패하였습니다.');
+        }
+      }
     }
-
-    alert(`로그인 기능은 아직 구현되지 않았습니다.\nid: ${userId}\npw: ${password}`);
   };
 
   return (

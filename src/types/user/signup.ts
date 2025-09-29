@@ -63,8 +63,8 @@ export interface SignupActions {
   ) => void;
 
   // 아이디 중복확인, 이메일 인증 결과 반영 함수
-  setSignupIdVerification: (verificationStatus: SignupState['signupIdVerification']) => void;
-  setSignupEmailVerification: (verificationStatus: SignupState['signupEmailVerification']) => void;
+  setSignupIdVerification: (verificationStatus: SignupIdVerification) => void;
+  setSignupEmailVerification: (verificationStatus: SignupEmailVerification) => void;
 
   // 회원가입의 입력값 확인
   signupValidateAndVerifyField: () => { isSuccess: boolean | null; message: string };

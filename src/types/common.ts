@@ -1,4 +1,4 @@
-export type CommonResDTO<D = object> = {
+export type CommonResDTO<D = unknown> = {
   message: string;
   data: D;
 };

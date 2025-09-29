@@ -20,9 +20,9 @@ export type VerifyUserIdReqBody = { userId: string };
 export type VerifyUserIdResDTO = CommonResDTO<{ userId: string }>;
 
 // 이메일 인증번호 전송
-export type SendEmailCodeReqBody = { email: string };
+export type SendEmailCodeReqQuery = { purpose: string; email: string };
 export type SendEmailCodeResDTO = CommonResDTO<{ email: string }>;
 
 // 이메일 인증번호 확인
-export type VerifyEmailReqBody = { email: string; code: string };
+export type VerifyEmailReqQuery = { purpose: string; email: string; code: string };
 export type VerifyEmailResDTO = CommonResDTO<{ email: string }>;

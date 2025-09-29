@@ -1,10 +1,9 @@
-import { axiosGroo } from './config';
-
-import { LoginReqBody } from '@/types';
+import axiosGroo from '@/apis/groo/config';
+import { CommonResDTO, LoginReqBody } from '@/types';
 
 export const auth = {
   // 로그인
-  login: async (data: LoginReqBody) => {
+  login: async (data: LoginReqBody): Promise<CommonResDTO> => {
     const response = await axiosGroo.post('/auth/login', data);
     return response.data;
   },
