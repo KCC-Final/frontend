@@ -3,10 +3,9 @@ import { devtools } from 'zustand/middleware';
 
 import { createFindIdSlice } from '@/stores/slices/find-id';
 import { createSignupSlice } from '@/stores/slices/signup';
-import { SignupSlice } from '@/types';
-import { FindIdSlice } from '@/types/user/find-id';
+import { FindLoginDataSlice, SignupSlice } from '@/types';
 
-export type BoundState = SignupSlice & FindIdSlice;
+export type BoundState = SignupSlice & FindLoginDataSlice;
 
 const useBoundStore = create<BoundState>()(
   devtools((...a) => ({

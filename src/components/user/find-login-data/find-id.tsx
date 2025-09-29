@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
@@ -14,10 +13,10 @@ import { ApiError } from '@/utils/error/api';
 import { validate } from '@/utils/validation/signup';
 
 function FindUserId() {
-  const router = useRouter();
-
-  // 아이디 찾기 저장소의 state 및 actions 불러오기
-  const { setFindIdState } = useBoundStore(useShallow((state) => ({ setFindIdState: state.setFindIdState })));
+  // 로그인 정보 찾기 저장소의 state 및 actions 불러오기
+  const { setFindIdState, setStep } = useBoundStore(
+    useShallow((state) => ({ setFindIdState: state.setFindIdState, setStep: state.setFindLoginDataStep }))
+  );
 
   // 아이디 찾기 입력 폼의 value에 사용할 값과 onChange에 사용할 함수
   const [name, changeName] = useInputText('');
@@ -88,13 +87,16 @@ function FindUserId() {
     }
   };
 
+  /**
+   * 아이디 찾기 요청 버튼
+   */
   const findId = async () => {
     try {
       const result = await fetchGroo.user.findId({ name: name, email: email });
       devLogger(result.data); // TODO: 개발 테스트용 로그 삭제 필요
       alert('아이디 찾기에 성공했습니다. 비밀번호 재설정 페이지로 이동합니다.');
       setFindIdState({ isSuccess: true, userId: result.data });
-      router.replace('/login/find-pw');
+      setStep(2);
     } catch (error) {
       setFindIdState({ isSuccess: false, userId: '' });
       if (error instanceof ApiError) {

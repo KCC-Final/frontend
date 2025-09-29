@@ -54,7 +54,7 @@ export interface SignupState {
 // 회원가입 스토어 actions
 export interface SignupActions {
   // 회원가입 단계 변경 함수
-  setSignupStep: (step: 1 | 2 | 3) => void;
+  setSignupStep: (step: SignupStep) => void;
 
   // 회원가입 입력값이 변함에 따라 상태를 변경하는 함수
   setSignupInputField: <K extends SignupInputFieldKey>(

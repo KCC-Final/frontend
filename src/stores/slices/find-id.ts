@@ -1,15 +1,26 @@
 import { StateCreator } from 'zustand';
 
-import { FindIdSlice, FindIdState } from '@/types/user/find-id';
+import { FindId, FindLoginDataSlice, FindLoginDataState, FindLoginDataStep } from '@/types';
 
-const initialFindIdState: FindIdState = {
-  findIdisSuccess: false,
-  findIdResult: ''
+const initialFindIdState: FindLoginDataState = {
+  findLoginDataStep: 1,
+  findId: {
+    isSuccess: false,
+    userId: ''
+  },
+  findPw: {
+    isSuccess: false
+  }
 };
 
-export const createFindIdSlice: StateCreator<FindIdSlice> = (set) => ({
+export const createFindIdSlice: StateCreator<FindLoginDataSlice> = (set) => ({
   ...initialFindIdState,
-  setFindIdState: (result: FindIdState) =>
-    set({ findIdisSuccess: result.findIdisSuccess, findIdResult: result.findIdResult }),
-  resetFindIdState: () => set({ findIdisSuccess: false, findIdResult: '' })
+
+  setFindLoginDataStep: (step: FindLoginDataStep) => set({ findLoginDataStep: step }),
+
+  setFindIdState: (findId: FindId) => set({ findId: findId }),
+
+  setFindPwState: (isSuccess: boolean) => set({ findPw: { isSuccess: isSuccess } }),
+
+  resetFindLoginDataState: () => set(initialFindIdState)
 });
