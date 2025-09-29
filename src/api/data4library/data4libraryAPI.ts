@@ -26,11 +26,7 @@ export async function getPopularBooks(
 }
 
 // 도서 상세 조회 API
-export async function getBookDetail(
-  isbn13: string,
-  loaninfoYN: string = 'Y',
-  displayInfo: string = 'age'
-) {
+export async function getBookDetail(isbn13: string, loaninfoYN: string = 'Y', displayInfo: string = 'age') {
   const url = `${API_BASE}/api/data4library/srchDtlList?authKey=${DATA4LIBRARY_KEY}&isbn13=${isbn13}&loaninfoYN=${loaninfoYN}&displayInfo=${displayInfo}&format=json`;
 
   const res = await fetch(url);
@@ -143,11 +139,7 @@ export async function getBookUsageAnalysis(isbn13: string) {
 }
 
 // 도서관별 통합정보 API
-export async function getLibraryIntegratedInfo(
-  pageNo: number = 1,
-  pageSize: number = 10,
-  region?: string
-) {
+export async function getLibraryIntegratedInfo(pageNo: number = 1, pageSize: number = 10, region?: string) {
   let url = `${API_BASE}/api/data4library/extends/libSrch?authKey=${DATA4LIBRARY_KEY}&pageNo=${pageNo}&pageSize=${pageSize}&format=json`;
 
   if (region) {

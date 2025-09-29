@@ -119,12 +119,7 @@ export default function AladinTestPage() {
                     textAlign: 'left',
                     width: '100%'
                   }}>
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    width={60}
-                    style={{ marginRight: '0.5rem' }}
-                  />
+                  <img src={book.cover} alt={book.title} width={60} style={{ marginRight: '0.5rem' }} />
                   <span>
                     {book.title} - {book.author}
                     {console.log(book)}
@@ -146,12 +141,7 @@ export default function AladinTestPage() {
                   onClick={() => handleDetail(book.isbn13)}
                   className="flex items-center cursor-pointer"
                   style={{ background: 'none', border: 'none', padding: 0, textAlign: 'left' }}>
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    width={60}
-                    style={{ marginRight: '0.5rem' }}
-                  />
+                  <img src={book.cover} alt={book.title} width={60} style={{ marginRight: '0.5rem' }} />
                   <span>
                     {book.title} - {book.author}
                   </span>

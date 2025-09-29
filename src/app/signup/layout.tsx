@@ -1,13 +1,13 @@
 import Image from 'next/image';
 
 import treeImage from '@/assets/login-tree.jpg';
-import styles from '@/components/user/login.module.scss';
+import styles from '@/components/user/signup/signup.module.scss';
 
-interface LoginLayoutProps {
+interface SignupLayoutProps {
   children: React.ReactNode;
 }
 
-function LoginLayout({ children }: LoginLayoutProps) {
+function SignupLayout({ children }: SignupLayoutProps) {
   return (
     <div className={styles.container}>
       <section className={styles.image}>
@@ -18,4 +18,4 @@ function LoginLayout({ children }: LoginLayoutProps) {
   );
 }
 
-export default LoginLayout;
+export default SignupLayout;
