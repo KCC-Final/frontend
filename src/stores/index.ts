@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { createFindIdSlice } from '@/stores/slices/find-id';
+import { createFindIdSlice } from '@/stores/slices/find-login-data';
 import { createSignupSlice } from '@/stores/slices/signup';
 import { FindLoginDataSlice, SignupSlice } from '@/types';
 

@@ -24,3 +24,15 @@
   border-radius: 6px;
   padding: 8px 10px;
 }
+
+@mixin common-gray-button-md($width: auto, $height: auto) {
+  width: $width;
+  height: $height;
+  color: $black-1;
+  font-size: 1.4rem;
+  font-weight: 500;
+  background-color: $black-d;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
