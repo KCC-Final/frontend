@@ -2,6 +2,8 @@ import axiosGroo from './config';
 
 import {
   CommonResDTO,
+  FindIdReqBody,
+  FindIdResDTO,
   SendEmailCodeReqQuery,
   SendEmailCodeResDTO,
   SignupReqBody,
@@ -34,6 +36,12 @@ export const user = {
     const response = await axiosGroo.post(
       `/email/verify?purpose=${query.purpose}&email=${query.email}&code=${query.code}`
     );
+    return response.data;
+  },
+
+  // 아이디 찾기
+  findId: async (data: FindIdReqBody): Promise<FindIdResDTO> => {
+    const response = await axiosGroo.post('/users/id', data);
     return response.data;
   }
 };
