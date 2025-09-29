@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import styles from '@/components/user/find-id.module.scss';
+import styles from '@/components/user/find-login-data/find-login-data.module.scss';
 import { useInputText } from '@/hooks/useInput';
 import useBoundStore from '@/stores';
 import { EmailVerification } from '@/types';
@@ -13,7 +13,7 @@ import { devLogger } from '@/utils/dev-logger';
 import { ApiError } from '@/utils/error/api';
 import { validate } from '@/utils/validation/signup';
 
-function FindLoginId() {
+function FindUserId() {
   const router = useRouter();
 
   // 아이디 찾기 저장소의 state 및 actions 불러오기
@@ -93,10 +93,10 @@ function FindLoginId() {
       const result = await fetchGroo.user.findId({ name: name, email: email });
       devLogger(result.data); // TODO: 개발 테스트용 로그 삭제 필요
       alert('아이디 찾기에 성공했습니다. 비밀번호 재설정 페이지로 이동합니다.');
-      setFindIdState({ findIdisSuccess: true, findIdResult: result.data });
+      setFindIdState({ isSuccess: true, userId: result.data });
       router.replace('/login/find-pw');
     } catch (error) {
-      setFindIdState({ findIdisSuccess: false, findIdResult: '' });
+      setFindIdState({ isSuccess: false, userId: '' });
       if (error instanceof ApiError) {
         alert(error.message);
       } else {
@@ -156,4 +156,4 @@ function FindLoginId() {
   );
 }
 
-export default FindLoginId;
+export default FindUserId;

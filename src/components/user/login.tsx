@@ -78,7 +78,7 @@ function Login() {
       <div className={styles.sub_btn}>
         <Link href="/signup">회원가입</Link>
         <span>|</span>
-        <Link href="/login/find-id">ID/PW 찾기</Link>
+        <Link href="/login/find-login-data">ID/PW 찾기</Link>
       </div>
     </section>
   );
