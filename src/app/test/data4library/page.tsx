@@ -2,25 +2,7 @@
 
 import React, { useState } from 'react';
 
-import {
-  searchBooks,
-  getPopularBooks,
-  getBookDetail,
-  getLibraries,
-  getHotTrendBooks,
-  getLibraryItems,
-  getManiaRecommendBooks,
-  getReaderRecommendBooks,
-  getLibrariesByBook,
-  checkBookAvailability,
-  getLibraryUsageTrend,
-  getBookKeywords,
-  getBookUsageAnalysis,
-  getLibraryIntegratedInfo,
-  getMonthlyKeywords,
-  getRegionalReadingStats,
-  getNewArrivalBooks
-} from '@/api/data4library';
+import { fetchLibrary } from '@/apis';
 
 export default function Data4LibraryTestPage() {
   const [query, setQuery] = useState('해리포터');
@@ -28,30 +10,12 @@ export default function Data4LibraryTestPage() {
   const [libCode, setLibCode] = useState('141321'); // 도서관 코드 예시
   const [region, setRegion] = useState('11'); // 서울 지역코드
   const [result, setResult] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleAPICall = async (apiFunction: () => Promise<any>, description: string) => {
-    try {
-      setLoading(true);
-      setResult(null);
-      console.log(` ${description} API 호출 시작`);
-
-      const data = await apiFunction();
-      setResult(data);
-      console.log(` ${description} API 성공:`, data);
-    } catch (err: any) {
-      console.error(` ${description} API 에러:`, err);
-      setResult({ error: err.message });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div style={{ padding: '2rem' }}>
       <h1> 도서관정보나루 API 종합 테스트</h1>
 
-      {/* 입력 필드들 - htmlFor 속성 추가로 접근성 개선 */}
+      {/* 입력 필드들 */}
       <div
         style={{
           marginBottom: '2rem',
@@ -109,135 +73,102 @@ export default function Data4LibraryTestPage() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', // 반응형 그리드
           gap: '0.5rem',
           marginBottom: '2rem'
         }}>
         {/* 도서 관련 API */}
-        <button
-          type="button"
-          onClick={() => handleAPICall(() => searchBooks(query, 1, 5), '도서 검색')}
-          disabled={loading}>
-          도서 검색
+
+        <button type="button" onClick={async () => setResult(await fetchLibrary.searchBooks(query, 1, 5))}>
+          (신규) 도서 검색
+        </button>
+
+        <button type="button" onClick={async () => setResult(await fetchLibrary.getBookDetail(isbn))}>
+          (신규) 도서 상세조회
+        </button>
+
+        <button type="button" onClick={async () => setResult(await fetchLibrary.getBookKeywords(isbn))}>
+          (신규) 도서 키워드
+        </button>
+
+        <button type="button" onClick={async () => setResult(await fetchLibrary.getBookUsageAnalysis(isbn))}>
+          (신규) 도서 이용분석
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getBookDetail(isbn), '도서 상세조회')}
-          disabled={loading}>
-          도서 상세조회
+          onClick={async () => setResult(await fetchLibrary.getPopularBooks('20250901', '20250923', 1, 5))}>
+          (신규) 인기 대출도서
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getBookKeywords(isbn), '도서 키워드')}
-          disabled={loading}>
-          도서 키워드
+          onClick={async () => setResult(await fetchLibrary.getHotTrendBooks('2025-09-23'))}>
+          (신규) 급상승 도서
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getBookUsageAnalysis(isbn), '도서 이용분석')}
-          disabled={loading}>
-          도서 이용분석
-        </button>
-
-        {/* 인기/추천 도서 API */}
-        <button
-          type="button"
-          onClick={() => handleAPICall(() => getPopularBooks('20250901', '20250923', 1, 5), '인기 대출도서')}
-          disabled={loading}>
-          인기 대출도서
+          onClick={async () => setResult(await fetchLibrary.getManiaRecommendBooks(isbn))}>
+          (신규) 마니아 추천
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getHotTrendBooks('2025-09-23'), '급상승 도서')}
-          disabled={loading}>
-          급상승 도서
+          onClick={async () => setResult(await fetchLibrary.getReaderRecommendBooks(isbn))}>
+          (신규) 다독자 추천
+        </button>
+
+        <button type="button" onClick={async () => setResult(await fetchLibrary.getLibraries(1, 5, region))}>
+          (신규) 도서관 조회
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getManiaRecommendBooks(isbn), '마니아 추천')}
-          disabled={loading}>
-          마니아 추천
+          onClick={async () => setResult(await fetchLibrary.getLibraryIntegratedInfo(1, 3, region))}>
+          (신규) 도서관 통합정보
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getReaderRecommendBooks(isbn), '다독자 추천')}
-          disabled={loading}>
-          다독자 추천
-        </button>
-
-        {/* 도서관 관련 API */}
-        <button
-          type="button"
-          onClick={() => handleAPICall(() => getLibraries(1, 5, region), '도서관 조회')}
-          disabled={loading}>
-          도서관 조회
+          onClick={async () => setResult(await fetchLibrary.getLibraryItems(libCode, 'ALL', 1, 5))}>
+          (신규) 도서관별 장서
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getLibraryIntegratedInfo(1, 3, region), '도서관 통합정보')}
-          disabled={loading}>
-          도서관 통합정보
+          onClick={async () => setResult(await fetchLibrary.getLibrariesByBook(isbn, region, 1, 5))}>
+          (신규) 소장 도서관
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getLibraryItems(libCode, 'ALL', 1, 5), '도서관별 장서')}
-          disabled={loading}>
-          도서관별 장서
+          onClick={async () => setResult(await fetchLibrary.checkBookAvailability(libCode, isbn))}>
+          (신규) 도서 소장여부
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getLibrariesByBook(isbn, region, 1, 5), '소장 도서관')}
-          disabled={loading}>
-          소장 도서관
+          onClick={async () => setResult(await fetchLibrary.getLibraryUsageTrend(libCode, 'D'))}>
+          (신규) 대출반납추이
+        </button>
+
+        <button type="button" onClick={async () => setResult(await fetchLibrary.getNewArrivalBooks(libCode))}>
+          (신규) 신착도서
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => checkBookAvailability(libCode, isbn), '도서 소장여부')}
-          disabled={loading}>
-          도서 소장여부
+          onClick={async () => setResult(await fetchLibrary.getMonthlyKeywords('2025-09'))}>
+          (신규) 이달의 키워드
         </button>
 
         <button
           type="button"
-          onClick={() => handleAPICall(() => getLibraryUsageTrend(libCode, 'D'), '대출반납추이')}
-          disabled={loading}>
-          대출반납추이
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleAPICall(() => getNewArrivalBooks(libCode), '신착도서')}
-          disabled={loading}>
-          신착도서
-        </button>
-
-        {/* 통계 관련 API */}
-        <button
-          type="button"
-          onClick={() => handleAPICall(() => getMonthlyKeywords('2025-09'), '이달의 키워드')}
-          disabled={loading}>
-          이달의 키워드
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleAPICall(() => getRegionalReadingStats(region, '2024'), '지역별 독서통계')}
-          disabled={loading}>
-          지역별 독서통계
+          onClick={async () => setResult(await fetchLibrary.getRegionalReadingStats(region, '2024'))}>
+          (신규) 지역별 독서통계
         </button>
       </div>
-
-      {loading && <p>⏳ 로딩 중...</p>}
 
       {/* 결과 JSON 출력 */}
       {result && (

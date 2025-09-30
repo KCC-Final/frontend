@@ -1,108 +1,202 @@
-import axios, { isAxiosError } from 'axios';
+import axiosLibrary from '@/apis/library/config';
 
-import { devLogger } from '@/utils/dev-logger';
-import { ApiError } from '@/utils/error/api';
-
-const libraryApiBaseURL = process.env.NEXT_PUBLIC_API_URL;
-
-const axiosLibrary = axios.create({
-  baseURL: libraryApiBaseURL,
-  withCredentials: true,
-  timeout: 10 * 1000
-});
-
-// axios 요청 공통 설정
-axiosLibrary.interceptors.request.use(
-  // axios 요청시 공통 작업
-  (config) => {
-    // 요청 발생시 로그 출력
-    const { method, url } = config;
-    devLogger(`[Library API]|[Request Info]: ${method?.toUpperCase()} | ${url}`);
-
-    return config;
-  },
-  // axios 요청오류시 공통 작업
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// axios 응답 공통 설정
-axiosLibrary.interceptors.response.use(
-  // axios 응답시 공통작업
-  (response) => {
-    // 응답 발생시 로그 출력
-    const { status } = response;
-    const { method, url } = response.config;
-    devLogger(`[Library API]|[Response Info]: ${status} | ${method?.toUpperCase()} | ${url}`);
-
+export const fetchLibrary = {
+  // 책 검색 API
+  searchBooks: async (keyword: string, pageNo: number = 1, pageSize: number = 10) => {
+    const response = await axiosLibrary.get('/srchBooks', {
+      params: {
+        keyword: encodeURIComponent(keyword),
+        pageNo,
+        pageSize
+      }
+    });
     return response;
   },
-  // axios 응답오류시 공통작업
-  (error) => {
-    // axios 에러인지 확인
-    if (isAxiosError(error)) {
-      // 응답을 받은 경우 (응답 상태코드가 2xx가 아닌 경우)
-      if (error.response) {
-        const status = error.response.status;
-        const { method, url } = error.response.config;
-        const data = error.response.data;
 
-        devLogger(`[Library API]|[Response Error]: ${status} | ${method?.toUpperCase()} | ${url}`, true);
-        throw new ApiError({
-          message: '정보나루 데이터 요청에 실패했습니다.',
-          status: status,
-          apiMessage: '',
-          apiData: data,
-          original: error
-        });
+  // 인기대출도서 조회 API
+  getPopularBooks: async (startDt: string, endDt: string, pageNo: number = 1, pageSize: number = 10) => {
+    const response = await axiosLibrary.get('/loanItemSrch', {
+      params: {
+        startDt,
+        endDt,
+        pageNo,
+        pageSize
       }
+    });
+    return response.data;
+  },
 
-      // 요청은 성공했으나, 응답이 없는 경우
-      if (error.request) {
-        devLogger('[Library API]|[Response Error]: Failed to get a response', true);
-        throw new ApiError({
-          message: '서버에서 응답을 받지 못했습니다. 네트워크를 확인해주세요',
-          original: error
-        });
+  // 도서 상세 조회 API
+  getBookDetail: async (isbn13: string, loaninfoYN: string = 'Y', displayInfo: string = 'age') => {
+    const response = await axiosLibrary.get('/srchDtlList', {
+      params: {
+        isbn13,
+        loaninfoYN,
+        displayInfo
       }
-    }
+    });
+    return response.data;
+  },
 
-    devLogger('[Library API]|[Response Error]: Occuered unknown Error', true);
-    throw new ApiError({ message: '알 수 없는 오류가 발생했습니다.', original: error });
+  // 정보공개 도서관 조회 API
+  getLibraries: async (pageNo: number = 1, pageSize: number = 10, region?: string) => {
+    const response = await axiosLibrary.get('/libSrch', {
+      params: {
+        pageNo,
+        pageSize,
+        region
+      }
+    });
+    return response.data;
+  },
+
+  // 대출 급상승 도서 API
+  getHotTrendBooks: async (searchDt: string) => {
+    const response = await axiosLibrary.get('/hotTrend', {
+      params: {
+        searchDt
+      }
+    });
+    return response.data;
+  },
+
+  // 도서관별 장서/대출 데이터 조회 API
+  getLibraryItems: async (
+    libCode: string,
+    type: string = 'ALL',
+    pageNo: number = 1,
+    pageSize: number = 10
+  ) => {
+    const response = await axiosLibrary.get('/itemSrch', {
+      params: {
+        libCode,
+        type,
+        pageNo,
+        pageSize
+      }
+    });
+    return response.data;
+  },
+
+  // 마니아를 위한 추천도서 API
+  getManiaRecommendBooks: async (isbn13: string) => {
+    const response = await axiosLibrary.get('/recommandList', {
+      params: {
+        isbn13: isbn13
+      }
+    });
+    return response.data;
+  },
+
+  // 다독자를 위한 추천도서 API
+  getReaderRecommendBooks: async (isbn13: string) => {
+    const response = await axiosLibrary.get('/recommandList', {
+      params: {
+        type: 'reader',
+        isbn13
+      }
+    });
+    return response.data;
+  },
+
+  // 도서 소장 도서관 조회 API
+  getLibrariesByBook: async (isbn: string, region: string, pageNo: number = 1, pageSize: number = 10) => {
+    const response = await axiosLibrary.get('/libSrchByBook', {
+      params: {
+        isbn,
+        region,
+        pageNo,
+        pageSize
+      }
+    });
+    return response.data;
+  },
+
+  // 도서관별 도서 소장여부 및 대출 가능여부 조회 API
+  checkBookAvailability: async (libCode: string, isbn13: string) => {
+    const response = await axiosLibrary.get('/bookExist', {
+      params: {
+        libCode,
+        isbn13
+      }
+    });
+    return response.data;
+  },
+
+  // 도서관별 대출반납추이 API
+  getLibraryUsageTrend: async (libCode: string, type: string = 'D') => {
+    const response = await axiosLibrary.get('/usageTrend', {
+      params: {
+        libCode,
+        type
+      }
+    });
+    return response.data;
+  },
+
+  // 도서별 키워드 목록 API
+  getBookKeywords: async (isbn13: string, additionalYN: string = 'Y') => {
+    const response = await axiosLibrary.get('/keywordList', {
+      params: {
+        isbn13,
+        additionalYN
+      }
+    });
+    return response.data;
+  },
+
+  // 도서별 이용 분석 API
+  getBookUsageAnalysis: async (isbn13: string) => {
+    const response = await axiosLibrary.get('/usageAnalysisList', {
+      params: {
+        isbn13
+      }
+    });
+    return response.data;
+  },
+
+  // 도서관별 통합정보 API
+  getLibraryIntegratedInfo: async (pageNo: number = 1, pageSize: number = 10, region?: string) => {
+    const response = await axiosLibrary.get('/extends/libSrch', {
+      params: {
+        pageNo,
+        pageSize,
+        region
+      }
+    });
+    return response.data;
+  },
+
+  // 이달의 키워드 API
+  getMonthlyKeywords: async (month?: string) => {
+    const response = await axiosLibrary.get('/monthlyKeywords', {
+      params: {
+        month
+      }
+    });
+    return response.data;
+  },
+
+  // 지역별 독서량/독서율 API
+  getRegionalReadingStats: async (region?: string, year?: string, month?: string) => {
+    const response = await axiosLibrary.get('/readQt', {
+      params: {
+        region,
+        year,
+        month
+      }
+    });
+    return response.data;
+  },
+
+  // 신착도서 조회 API
+  getNewArrivalBooks: async (libCode: string, searchDt?: string) => {
+    const response = await axiosLibrary.get('/newArrivalBook', {
+      params: {
+        libCode,
+        searchDt
+      }
+    });
+    return response.data;
   }
-);
-
-// TODO: 사용하는 API가 확정이 안되어서 작성X (아래 주석은 알라딘 API 예시코드)
-
-// export const fetchLibrary = {
-//   /**
-//    * 도서 검색
-//    * @param search 검색어
-//    * @returns
-//    */
-//   searchBooks: async (search: string) => {
-//     const response = await axiosLibrary.get(`/search?query=${search}`);
-//     return response.data;
-//   },
-
-//   /**
-//    * 도서 상세정보 조회
-//    * @param ISBN 책 ISBN값
-//    * @returns
-//    */
-//   getBookDetails: async (ISBN: string) => {
-//     const response = await axiosLibrary.get(`/detail?isbn13=${ISBN}`);
-//     return response.data;
-//   },
-
-//   /**
-//    * 베스트셀러 도서 조회
-//    * @param count 조회할 도서수
-//    * @returns
-//    */
-//   getBestSellers: async (count: number = 10) => {
-//     const response = await axiosLibrary.get(`/bestseller?maxResults=${count}`);
-//     return response.data;
-//   }
-// };
+};

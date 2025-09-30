@@ -1,10 +1,7 @@
 'use client';
 
-import axios from 'axios';
-import { useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
 
-import { BACKEND_API_BASE } from '@/api/backend/config';
 import { fetchGroo } from '@/apis';
 import styles from '@/components/user/signup/signup.module.scss';
 import useBoundStore from '@/stores';
