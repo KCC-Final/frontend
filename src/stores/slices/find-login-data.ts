@@ -7,9 +7,6 @@ const initialFindIdState: FindLoginDataState = {
   findId: {
     isSuccess: false,
     userId: ''
-  },
-  findPw: {
-    isSuccess: false
   }
 };
 
@@ -19,8 +16,6 @@ export const createFindIdSlice: StateCreator<FindLoginDataSlice> = (set) => ({
   setFindLoginDataStep: (step: FindLoginDataStep) => set({ findLoginDataStep: step }),
 
   setFindIdState: (findId: FindId) => set({ findId: findId }),
-
-  setFindPwState: (isSuccess: boolean) => set({ findPw: { isSuccess: isSuccess } }),
 
   resetFindLoginDataState: () => set(initialFindIdState)
 });

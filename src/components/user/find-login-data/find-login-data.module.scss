@@ -4,17 +4,15 @@
 @include login-layout();
 
 .find_id,
-.success {
+.success,
+.find_pw {
   justify-content: flex-start;
   padding-top: 20%;
 }
 
 .find_id {
   h1 {
-    text-align: center;
-    font-size: 2.8rem;
-    font-weight: 800;
-    margin-bottom: 36px;
+    @include find-login-data-h1;
   }
 
   form {
@@ -58,6 +56,7 @@
 
   .submit {
     margin: 16px 0;
+
     button {
       @include login-green-button();
     }
@@ -65,17 +64,10 @@
 }
 
 .success {
-  display: flex;
-  flex-direction: column;
   gap: 2.4rem;
 
   h1 {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
+    @include find-login-data-h1;
   }
 
   .id {
@@ -106,6 +98,43 @@
     button {
       flex-grow: 1;
       @include common-gray-button-md();
+    }
+  }
+}
+
+.find_pw {
+  h1 {
+    @include find-login-data-h1;
+  }
+
+  .pw {
+    display: flex;
+    flex-direction: column;
+    gap: $input-label-gap;
+
+    input {
+      @include common-input-md();
+    }
+
+    .message {
+      font-size: 1.2rem;
+      margin-left: 10px;
+
+      &.success {
+        color: $blue-1;
+      }
+
+      &.fail {
+        color: $red-1;
+      }
+    }
+  }
+
+  .submit {
+    margin: 16px 0;
+
+    button {
+      @include login-green-button();
     }
   }
 }

@@ -7,16 +7,10 @@ export type FindId = {
   userId: string;
 };
 
-// 비밀번호 찾기
-export type FindPw = {
-  isSuccess: boolean;
-};
-
 // ID/PW 찾기 스토어 state
 export interface FindLoginDataState {
   findLoginDataStep: FindLoginDataStep; // ID/PW 찾기 단계
   findId: FindId; // 아이디 찾기
-  findPw: FindPw; // 비밀번호 찾기
 }
 
 // ID/PW 찾기 스토어 actions
@@ -26,9 +20,6 @@ export interface FindLoginDataActions {
 
   // 아이디 찾기 상태 변경
   setFindIdState: (findId: FindId) => void;
-
-  // 비밀번호 찾기 상태 변경
-  setFindPwState: (isSuccess: boolean) => void;
 
   // 스토어 초기화
   resetFindLoginDataState: () => void;

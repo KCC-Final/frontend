@@ -30,3 +30,7 @@ export type VerifyEmailResDTO = CommonResDTO<string>;
 // 아이디 찾기
 export type FindIdReqBody = { name: string; email: string };
 export type FindIdResDTO = CommonResDTO<string>;
+
+// 비밀번호 재설정
+export type ChangePasswordReqBody = { userId: string; password1: string; password2: string };
+export type ChangePasswordResDTO = CommonResDTO;

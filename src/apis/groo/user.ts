@@ -1,6 +1,8 @@
 import axiosGroo from './config';
 
 import {
+  ChangePasswordReqBody,
+  ChangePasswordResDTO,
   CommonResDTO,
   FindIdReqBody,
   FindIdResDTO,
@@ -42,6 +44,12 @@ export const user = {
   // 아이디 찾기
   findId: async (data: FindIdReqBody): Promise<FindIdResDTO> => {
     const response = await axiosGroo.post('/users/id', data);
+    return response.data;
+  },
+
+  // 비밀번호 재설정
+  changePassword: async (data: ChangePasswordReqBody): Promise<ChangePasswordResDTO> => {
+    const response = await axiosGroo.post('/users/password', data);
     return response.data;
   }
 };
