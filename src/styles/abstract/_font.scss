@@ -1,0 +1,11 @@
+@mixin font-NotoSansKR() {
+  font-family: var(--font-noto-sans-kr);
+}
+
+@mixin font-NotoSerifKR() {
+  font-family: var(--font-noto-serif-kr);
+}
+
+@mixin font-SeoulAlrim() {
+  font-family: var(--font-seoul-notice);
+}
