@@ -1,4 +1,4 @@
-export interface Data4LibraryBook {
+export interface LibraryBook {
   bookname: string;
   authors: string;
   publisher: string;
@@ -10,7 +10,7 @@ export interface Data4LibraryBook {
   bookDtlUrl: string;
 }
 
-export interface Data4LibrarySearchResponse {
+export interface LibrarySearchResponse {
   response: {
     request: {
       keyword: string;
@@ -18,6 +18,6 @@ export interface Data4LibrarySearchResponse {
       pageSize: number;
     };
     numFound: number;
-    docs: { doc: Data4LibraryBook }[];
+    docs: { doc: LibraryBook }[];
   };
 }
