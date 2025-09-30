@@ -1,14 +1,16 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import { createFindIdSlice } from '@/stores/slices/find-login-data';
 import { createSignupSlice } from '@/stores/slices/signup';
-import { SignupSlice } from '@/types';
+import { FindLoginDataSlice, SignupSlice } from '@/types';
 
-export type BoundState = SignupSlice;
+export type BoundState = SignupSlice & FindLoginDataSlice;
 
 const useBoundStore = create<BoundState>()(
   devtools((...a) => ({
-    ...createSignupSlice(...a)
+    ...createSignupSlice(...a),
+    ...createFindIdSlice(...a)
   }))
 );
 

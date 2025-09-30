@@ -1,4 +1,4 @@
-import { SignupEmailVerification, SignupIdVerification } from '@/types';
+import { EmailVerification, SignupIdVerification } from '@/types';
 
 interface ValidateReturn {
   result: boolean;
@@ -190,7 +190,7 @@ export const validateSignupStep1 = (
   return { isSuccess: true, message: '1단계 검증 완료' };
 };
 
-export const validateSignupStep2 = (email: string, emailVerification: SignupEmailVerification) => {
+export const validateSignupStep2 = (email: string, emailVerification: EmailVerification) => {
   if (!validate.email(email).result) {
     return { isSuccess: false, message: validate.email(email).message };
   }

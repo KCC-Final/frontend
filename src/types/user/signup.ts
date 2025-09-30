@@ -29,7 +29,7 @@ export type SignupIdVerification = {
 };
 
 // 회원가입 이메일 인증결과
-export type SignupEmailVerification = {
+export type EmailVerification = {
   isLoading: boolean;
   isSuccess: boolean | null;
   email: string;
@@ -48,13 +48,13 @@ export interface SignupState {
   signupIdVerification: SignupIdVerification;
 
   // 이메일 인증 요청 정보
-  signupEmailVerification: SignupEmailVerification;
+  signupEmailVerification: EmailVerification;
 }
 
 // 회원가입 스토어 actions
 export interface SignupActions {
   // 회원가입 단계 변경 함수
-  setSignupStep: (step: 1 | 2 | 3) => void;
+  setSignupStep: (step: SignupStep) => void;
 
   // 회원가입 입력값이 변함에 따라 상태를 변경하는 함수
   setSignupInputField: <K extends SignupInputFieldKey>(
@@ -64,7 +64,7 @@ export interface SignupActions {
 
   // 아이디 중복확인, 이메일 인증 결과 반영 함수
   setSignupIdVerification: (verificationStatus: SignupIdVerification) => void;
-  setSignupEmailVerification: (verificationStatus: SignupEmailVerification) => void;
+  setSignupEmailVerification: (verificationStatus: EmailVerification) => void;
 
   // 회원가입의 입력값 확인
   signupValidateAndVerifyField: () => { isSuccess: boolean | null; message: string };

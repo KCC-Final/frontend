@@ -21,8 +21,16 @@ export type VerifyUserIdResDTO = CommonResDTO<{ userId: string }>;
 
 // 이메일 인증번호 전송
 export type SendEmailCodeReqQuery = { purpose: string; email: string };
-export type SendEmailCodeResDTO = CommonResDTO<{ email: string }>;
+export type SendEmailCodeResDTO = CommonResDTO<string>;
 
 // 이메일 인증번호 확인
 export type VerifyEmailReqQuery = { purpose: string; email: string; code: string };
-export type VerifyEmailResDTO = CommonResDTO<{ email: string }>;
+export type VerifyEmailResDTO = CommonResDTO<string>;
+
+// 아이디 찾기
+export type FindIdReqBody = { name: string; email: string };
+export type FindIdResDTO = CommonResDTO<string>;
+
+// 비밀번호 재설정
+export type ChangePasswordReqBody = { userId: string; password1: string; password2: string };
+export type ChangePasswordResDTO = CommonResDTO;
