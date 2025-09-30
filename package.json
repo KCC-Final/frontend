@@ -17,12 +17,17 @@
     ]
   },
   "dependencies": {
+    "@tiptap/extension-link": "^3.6.2",
+    "@tiptap/extension-placeholder": "^3.6.2",
+    "@tiptap/extension-underline": "^3.6.2",
+    "@tiptap/react": "^3.6.2",
+    "@tiptap/starter-kit": "^3.6.2",
     "axios": "^1.12.2",
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "zustand": "^5.0.8",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
