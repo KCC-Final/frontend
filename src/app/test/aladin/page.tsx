@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.groo.site';
-const TTB_KEY = process.env.NEXT_PUBLIC_ALADIN_TTBKEY;
+import { fetchAladin } from '@/apis';
 
 type TabType = 'search' | 'bestseller' | 'detail';
 
@@ -14,20 +13,14 @@ export default function AladinTestPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('search');
 
-  // 🔎 검색
+  // 검색
   const handleSearch = async () => {
     try {
       setLoading(true);
       setResult(null);
       setSelectedBook(null);
 
-      const url = `${API_BASE}/api/aladin/ItemSearch.aspx?ttbkey=${TTB_KEY}&Query=${encodeURIComponent(
-        query
-      )}&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101`;
-
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('검색 API 호출 실패');
-      const data = await res.json();
+      const data = await fetchAladin.searchBooks(query);
       setResult(data);
       setActiveTab('search');
     } catch (err: any) {
@@ -37,18 +30,14 @@ export default function AladinTestPage() {
     }
   };
 
-  // 🏆 베스트셀러
+  // 베스트셀러
   const handleBestsellers = async () => {
     try {
       setLoading(true);
       setResult(null);
       setSelectedBook(null);
 
-      const url = `${API_BASE}/api/aladin/ItemList.aspx?ttbkey=${TTB_KEY}&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101`;
-
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('베스트셀러 API 호출 실패');
-      const data = await res.json();
+      const data = await fetchAladin.getBestSellers();
       setResult(data);
       setActiveTab('bestseller');
     } catch (err: any) {
@@ -58,17 +47,13 @@ export default function AladinTestPage() {
     }
   };
 
-  // 📖 상세 조회
+  // 상세 조회
   const handleDetail = async (isbn13: string) => {
     try {
       setLoading(true);
       setSelectedBook(null);
 
-      const url = `${API_BASE}/api/aladin/ItemLookUp.aspx?ttbkey=${TTB_KEY}&itemIdType=ISBN13&ItemId=${isbn13}&output=js&Version=20131101`;
-
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('상세 조회 API 호출 실패');
-      const data = await res.json();
+      const data = await fetchAladin.getBookDetails(isbn13);
       setSelectedBook(data);
       setActiveTab('detail');
     } catch (err: any) {
@@ -80,7 +65,7 @@ export default function AladinTestPage() {
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1>📚 알라딘 API 테스트</h1>
+      <h1>알라딘 API 테스트</h1>
 
       {/* 검색창 + 버튼 */}
       <div style={{ marginBottom: '1rem' }}>
@@ -92,9 +77,9 @@ export default function AladinTestPage() {
           style={{ padding: '0.5rem', marginRight: '1rem', width: '300px' }}
         />
         <button onClick={handleSearch} style={{ marginRight: '0.5rem' }}>
-          🔍 검색
+          검색
         </button>
-        <button onClick={handleBestsellers}>🏆 베스트셀러</button>
+        <button onClick={handleBestsellers}>베스트셀러 조회</button>
       </div>
 
       {loading && <p>⏳ 로딩 중...</p>}
@@ -102,7 +87,7 @@ export default function AladinTestPage() {
       {/* 탭 콘텐츠 */}
       {activeTab === 'search' && result?.item && (
         <div>
-          <h2>🔎 검색 결과</h2>
+          <h2>검색 결과</h2>
           <ul>
             {result.item.map((book: any, idx: number) => (
               <li key={idx} style={{ margin: '0.5rem 0' }}>
