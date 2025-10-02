@@ -8,42 +8,53 @@ import StarterKit from '@tiptap/starter-kit';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-import { fetchGroo, fetchAladin, fetchLibrary } from '@/apis';
-import styles from '@/components/reviews/review-create.module.scss';
+import { fetchGroo, fetchAladin } from '@/apis';
 import BookInfoCard from '@/components/reviews/write/book-info-card';
 import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import DraftListModal from '@/components/reviews/write/draft-list-modal';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
-import { ReviewCreateReqBody, AladinBook, LibraryBook } from '@/types/reviews';
+import styles from '@/components/reviews/write/review-create.module.scss';
+import { ReviewCreateReqBody, ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
+
+// categoryName에서 두 번째 카테고리 추출 함수
+const extractSecondCategory = (categoryName: string): string | null => {
+  console.log('=== extractSecondCategory 시작 ===');
+  console.log('입력 categoryName:', categoryName);
+
+  const categories = categoryName.split('>');
+  console.log('split 결과:', categories);
+  console.log('배열 길이:', categories.length);
+
+  if (categories.length >= 2) {
+    const result = categories[1].trim();
+    console.log('추출된 카테고리:', result);
+    return result;
+  }
+
+  console.log('카테고리 추출 실패 - 배열 길이 부족');
+  return null;
+};
 
 function ReviewCreatePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draftId');
 
-  // 선택된 도서 정보
   const [selectedBook, setSelectedBook] = useState<AladinBook | null>(null);
-  const [libraryBook, setLibraryBook] = useState<LibraryBook | null>(null);
-  const [codeId, setCodeId] = useState<number | null>(null);
-
-  // 독후감 작성 폼 데이터
+  const [category, setCategory] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [isSecret, setIsSecret] = useState(false);
-
-  // 모달 상태
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
 
-  // Tiptap 에디터 설정
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Underline,
       Link.configure({
         openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-600 underline'
-        }
+        HTMLAttributes: { class: 'text-blue-600 underline' }
       }),
       Placeholder.configure({
         placeholder: '독후감 내용을 입력해주세요'
@@ -57,25 +68,21 @@ function ReviewCreatePage() {
     }
   });
 
-  // 임시저장 불러오기
   useEffect(() => {
     if (draftId) {
       loadDraft(Number(draftId));
     }
   }, [draftId]);
 
-  // 임시저장 불러오기 함수
   const loadDraft = async (id: number) => {
     try {
-      const response = await fetchGroo.review.getDraft(id);
-      const draft = response.data;
+      const draft = await fetchGroo.review.getDraft(id);
 
       if (draft) {
         setTitle(draft.reviewTitle);
         editor?.commands.setContent(draft.reviewContent);
-        setIsSecret(false); // 임시저장에는 secret 정보가 없으므로 기본값
+        setIsSecret(false);
 
-        // ISBN으로 도서 정보 다시 불러오기
         if (draft.isbn) {
           await loadBookInfo(draft.isbn);
         }
@@ -86,25 +93,31 @@ function ReviewCreatePage() {
     }
   };
 
-  // 도서 정보 불러오기
   const loadBookInfo = async (isbn: string) => {
+    console.log('=== loadBookInfo 시작 ===');
+    console.log('ISBN:', isbn);
+
     try {
-      // 알라딘 API로 도서 기본 정보 조회
       const aladinResponse = await fetchAladin.getBookDetails(isbn);
-      if (aladinResponse.data.item && aladinResponse.data.item.length > 0) {
-        setSelectedBook(aladinResponse.data.item[0]);
-      }
+      console.log('알라딘 API 응답:', aladinResponse);
 
-      // 정보나루 API로 도서 카테고리 정보 조회
-      const libraryResponse = await fetchLibrary.getBookDetail(isbn);
-      if (libraryResponse.response?.docs && libraryResponse.response.docs.length > 0) {
-        const bookData = libraryResponse.response.docs[0].doc;
-        setLibraryBook(bookData);
+      if (aladinResponse.item && aladinResponse.item.length > 0) {
+        const book = aladinResponse.item[0];
+        console.log('선택된 도서:', book);
+        console.log('도서 categoryName:', book.categoryName);
 
-        // class_no를 codeId로 매핑 (KDC 분류 코드)
-        if (bookData.class_no) {
-          const kdcCode = Math.floor(parseInt(bookData.class_no) / 100);
-          setCodeId(kdcCode);
+        setSelectedBook(book);
+
+        if (book.categoryName) {
+          const secondCategory = extractSecondCategory(book.categoryName);
+          console.log('최종 카테고리:', secondCategory);
+
+          if (secondCategory) {
+            setCategory(secondCategory);
+            console.log('카테고리 state 설정 완료');
+          }
+        } else {
+          console.log('categoryName이 없습니다');
         }
       }
     } catch (error) {
@@ -112,37 +125,36 @@ function ReviewCreatePage() {
     }
   };
 
-  // 도서 선택 핸들러
   const handleBookSelect = async (book: AladinBook) => {
+    console.log('=== handleBookSelect 시작 ===');
+    console.log('선택된 도서:', book);
+    console.log('도서 categoryName:', book.categoryName);
+
     setSelectedBook(book);
     setIsBookModalOpen(false);
 
-    // 정보나루 API로 카테고리 정보 가져오기
-    try {
-      const response = await fetchLibrary.getBookDetail(book.isbn13);
-      if (response.response?.docs && response.response.docs.length > 0) {
-        const bookData = response.response.docs[0].doc;
-        setLibraryBook(bookData);
+    if (book.categoryName) {
+      const secondCategory = extractSecondCategory(book.categoryName);
+      console.log('추출된 카테고리:', secondCategory);
 
-        // KDC 분류번호를 codeId로 변환
-        if (bookData.class_no) {
-          const kdcCode = Math.floor(parseInt(bookData.class_no) / 100);
-          setCodeId(kdcCode);
-        }
+      if (secondCategory) {
+        setCategory(secondCategory);
+        console.log('카테고리 state 설정:', secondCategory);
+      } else {
+        console.error('카테고리 추출 실패:', book.categoryName);
       }
-    } catch (error) {
-      console.error('정보나루 도서 정보 조회 실패:', error);
+    } else {
+      console.error('categoryName이 없습니다');
     }
   };
 
-  // 임시저장 핸들러
   const handleSaveDraft = async () => {
     if (!selectedBook || !title || !editor) {
       alert('도서와 제목을 입력해주세요.');
       return;
     }
 
-    if (!codeId) {
+    if (!category) {
       alert('도서 카테고리 정보를 가져올 수 없습니다.');
       return;
     }
@@ -153,8 +165,11 @@ function ReviewCreatePage() {
       reviewContent: editor.getHTML(),
       secret: isSecret,
       temporary: true,
-      codeId: codeId
+      category: category
     };
+
+    console.log('=== 임시저장 요청 데이터 ===');
+    console.log(JSON.stringify(requestData, null, 2));
 
     try {
       await fetchGroo.review.createReview(requestData);
@@ -162,18 +177,24 @@ function ReviewCreatePage() {
       router.push('/reviews');
     } catch (error) {
       alert('임시저장에 실패했습니다.');
-      console.error(error);
+      console.error('임시저장 에러:', error);
     }
   };
 
-  // 독후감 제출 핸들러
   const handleSubmit = async () => {
+    console.log('=== handleSubmit 시작 ===');
+    console.log('selectedBook:', selectedBook);
+    console.log('title:', title);
+    console.log('category:', category);
+    console.log('draftId:', draftId);
+
     if (!selectedBook || !title || !editor) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
 
-    if (!codeId) {
+    if (!category) {
+      console.error('카테고리가 없습니다!');
       alert('도서 카테고리 정보를 가져올 수 없습니다.');
       return;
     }
@@ -184,22 +205,44 @@ function ReviewCreatePage() {
       return;
     }
 
-    const requestData: ReviewCreateReqBody = {
-      isbn: selectedBook.isbn13,
-      reviewTitle: title,
-      reviewContent: content,
-      secret: isSecret,
-      temporary: false,
-      codeId: codeId
-    };
-
     try {
-      await fetchGroo.review.createReview(requestData);
-      alert('독후감이 작성되었습니다.');
+      if (draftId) {
+        // 임시저장 글에서 온 경우: 수정 API 사용하여 temporary를 false로 변경
+        const updateData: ReviewUpdateReqBody = {
+          reviewTitle: title,
+          reviewContent: content,
+          secret: isSecret,
+          temporary: false // 정식 글로 전환
+        };
+
+        console.log('=== 임시저장 글 수정 요청 데이터 ===');
+        console.log(JSON.stringify(updateData, null, 2));
+
+        await fetchGroo.review.updateReview(Number(draftId), updateData);
+        alert('독후감이 작성되었습니다.');
+      } else {
+        // 새 글 작성인 경우: 생성 API 사용
+        const requestData: ReviewCreateReqBody = {
+          isbn: selectedBook.isbn13,
+          reviewTitle: title,
+          reviewContent: content,
+          secret: isSecret,
+          temporary: false,
+          category: category
+        };
+
+        console.log('=== 새 독후감 작성 요청 데이터 ===');
+        console.log(JSON.stringify(requestData, null, 2));
+
+        await fetchGroo.review.createReview(requestData);
+        alert('독후감이 작성되었습니다.');
+      }
+
       router.push('/reviews');
     } catch (error) {
+      console.error('=== 독후감 작성 에러 ===');
+      console.error('에러 상세:', error);
       alert('독후감 작성에 실패했습니다.');
-      console.error(error);
     }
   };
 
@@ -224,16 +267,13 @@ function ReviewCreatePage() {
       </div>
 
       <div className={styles.content}>
-        {/* 도서 선택 영역 */}
         <section className={styles.bookSection}>
           {selectedBook ? (
             <BookInfoCard
               book={selectedBook}
-              libraryBook={libraryBook}
               onRemove={() => {
                 setSelectedBook(null);
-                setLibraryBook(null);
-                setCodeId(null);
+                setCategory(null);
               }}
             />
           ) : (
@@ -243,7 +283,6 @@ function ReviewCreatePage() {
           )}
         </section>
 
-        {/* 제목 입력 */}
         <section className={styles.titleSection}>
           <input
             type="text"
@@ -256,15 +295,12 @@ function ReviewCreatePage() {
           <span className={styles.charCount}>{title.length} / 200</span>
         </section>
 
-        {/* 에디터 툴바 */}
         {editor && <EditorToolbar editor={editor} />}
 
-        {/* 에디터 영역 */}
         <section className={styles.editorSection}>
           <EditorContent editor={editor} />
         </section>
 
-        {/* 옵션 */}
         <section className={styles.optionsSection}>
           <label className={styles.checkbox}>
             <input type="checkbox" checked={isSecret} onChange={(e) => setIsSecret(e.target.checked)} />
@@ -273,12 +309,10 @@ function ReviewCreatePage() {
         </section>
       </div>
 
-      {/* 도서 검색 모달 */}
       {isBookModalOpen && (
         <BookSearchModal onSelect={handleBookSelect} onClose={() => setIsBookModalOpen(false)} />
       )}
 
-      {/* 임시저장 목록 모달 */}
       {isDraftModalOpen && (
         <DraftListModal
           onClose={() => setIsDraftModalOpen(false)}

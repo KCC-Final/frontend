@@ -7,7 +7,7 @@ export type ReviewCreateReqBody = {
   reviewContent: string;
   secret: boolean;
   temporary: boolean;
-  codeId: number;
+  category?: string;
 };
 export type ReviewCreateResDTO = CommonResDTO<null>;
 
@@ -35,7 +35,7 @@ export type ReviewDetailResDTO = CommonResDTO<{
   createdAt: string;
   updatedAt: string;
   userId: string;
-  codeId: number;
+  category: string;
   likeCount: number;
   liked: boolean;
   comments?: CommentData[];
@@ -56,7 +56,7 @@ export type ReviewData = {
   createdAt: string;
   updatedAt: string;
   userId: string;
-  codeId: number;
+  category: string;
   likeCount: number;
   liked: boolean;
 };
@@ -75,7 +75,7 @@ export type DraftData = {
   reviewContent: string;
   createdAt: string;
   updatedAt: string;
-  codeId: number;
+  category: string;
 };
 
 // 임시저장 삭제

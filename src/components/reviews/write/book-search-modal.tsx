@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 
 import { fetchAladin } from '@/apis';
@@ -32,6 +31,7 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
     setHasSearched(true);
 
     try {
+      // 기존 searchBooks 함수 사용 (Query, MaxResults만 받음)
       const response = await fetchAladin.searchBooks(keyword, 20);
 
       if (response.item && response.item.length > 0) {
@@ -49,19 +49,19 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
     }
   };
 
-  // 도서 선택 핸들러
   const handleSelectBook = (book: AladinBook) => {
     onSelect(book);
   };
 
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div
-      className={styles.modalOverlay}
-      onClick={onClose}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}>
-      <div className={styles.modalContent} role="document">
+    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h2>도서 검색</h2>
           <button onClick={onClose} className={styles.closeButton}>
@@ -89,13 +89,15 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
             <div className={styles.noResults}>검색 결과가 없습니다.</div>
           ) : (
             searchResults.map((book) => (
-              <button key={book.itemId} className={styles.bookItem} onClick={() => handleSelectBook(book)}>
-                <Image
+              <div key={book.itemId} className={styles.bookItem} onClick={() => handleSelectBook(book)}>
+                <img
                   src={book.cover}
                   alt={book.title}
-                  width={80}
-                  height={120}
                   className={styles.bookCover}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/default-book-cover.png'; // 기본 이미지 경로
+                  }}
                 />
                 <div className={styles.bookInfo}>
                   <h3 className={styles.bookTitle}>{book.title}</h3>
@@ -104,8 +106,9 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
                     {book.publisher} | {book.pubDate}
                   </p>
                   <p className={styles.bookIsbn}>ISBN: {book.isbn13}</p>
+                  <p className={styles.bookCategory}>{book.categoryName}</p>
                 </div>
-              </button>
+              </div>
             ))
           )}
         </div>

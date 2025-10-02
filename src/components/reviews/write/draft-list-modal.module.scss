@@ -54,6 +54,11 @@
       background: #f3f4f6;
       color: #111827;
     }
+
+    &:focus-visible {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+    }
   }
 }
 
@@ -74,20 +79,34 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    gap: 12px;
     margin-bottom: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
 
-    &:hover {
-      border-color: #3b82f6;
-      background: #eff6ff;
+    .draftContent {
+      flex: 1;
+      width: 100%;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+        border-color: #3b82f6;
+      }
     }
 
     .draftInfo {
-      flex: 1;
+      pointer-events: none;
 
       .draftTitle {
         font-size: 16px;
@@ -107,6 +126,12 @@
         color: #9ca3af;
         margin: 0;
       }
+
+      .draftCategory {
+        font-size: 12px;
+        color: #9ca3af;
+        margin: 4px 0 0 0;
+      }
     }
 
     .deleteButton {
@@ -118,9 +143,15 @@
       font-size: 13px;
       cursor: pointer;
       transition: all 0.2s;
+      flex-shrink: 0;
 
       &:hover {
         background: #dc2626;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #ef4444;
+        outline-offset: 2px;
       }
     }
   }

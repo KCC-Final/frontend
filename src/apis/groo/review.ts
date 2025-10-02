@@ -1,3 +1,4 @@
+// review.ts
 import axiosGroo from '@/apis/groo/config';
 import {
   ReviewCreateReqBody,
@@ -7,13 +8,13 @@ import {
   ReviewDeleteResDTO,
   ReviewDetailResDTO,
   ReviewListResDTO,
-  DraftListResDTO,
-  DraftDetailResDTO,
-  DraftDeleteResDTO,
+  ReviewData,
+  DraftData,
   LikeCreateResDTO,
   LikeDeleteResDTO,
   LikedReviewsResDTO
 } from '@/types/reviews';
+import { devLogger } from '@/utils/dev-logger';
 
 export const review = {
   // 독후감 작성
@@ -52,22 +53,39 @@ export const review = {
     return response.data;
   },
 
-  // 임시저장 목록 조회
-  getDrafts: async (): Promise<DraftListResDTO> => {
-    const response = await axiosGroo.get<DraftListResDTO>('/reviews/drafts');
-    return response.data;
+  // 임시저장 목록 조회 - 배열 직접 반환, DraftData 타입으로 매핑
+  getDrafts: async (): Promise<DraftData[]> => {
+    const response = await axiosGroo.get<any[]>('/reviews/drafts');
+    // 백엔드 응답을 DraftData 타입으로 매핑
+    return response.data.map((draft) => ({
+      reviewId: draft.reviewId,
+      isbn: draft.isbn,
+      reviewTitle: draft.reviewTitle,
+      reviewContent: draft.reviewContent,
+      createdAt: draft.createdAt,
+      updatedAt: draft.updatedAt,
+      category: draft.category
+    }));
   },
 
-  // 임시저장 글 단건 조회
-  getDraft: async (id: number): Promise<DraftDetailResDTO> => {
-    const response = await axiosGroo.get<DraftDetailResDTO>(`/reviews/drafts/${id}`);
-    return response.data;
+  // 임시저장 글 단건 조회 - 객체 직접 반환, DraftData 타입으로 매핑
+  getDraft: async (id: number): Promise<DraftData> => {
+    const response = await axiosGroo.get<any>(`/reviews/drafts/${id}`);
+    // 백엔드 응답을 DraftData 타입으로 매핑
+    return {
+      reviewId: response.data.reviewId,
+      isbn: response.data.isbn,
+      reviewTitle: response.data.reviewTitle,
+      reviewContent: response.data.reviewContent,
+      createdAt: response.data.createdAt,
+      updatedAt: response.data.updatedAt,
+      category: response.data.category
+    };
   },
 
   // 임시저장 글 삭제
-  deleteDraft: async (id: number): Promise<DraftDeleteResDTO> => {
-    const response = await axiosGroo.delete<DraftDeleteResDTO>(`/reviews/drafts/${id}`);
-    return response.data;
+  deleteDraft: async (id: number): Promise<void> => {
+    await axiosGroo.delete(`/reviews/drafts/${id}`);
   },
 
   // 좋아요 추가

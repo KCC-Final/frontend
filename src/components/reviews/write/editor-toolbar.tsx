@@ -2,7 +2,7 @@
 
 import { Editor } from '@tiptap/react';
 
-import styles from '@/components/reviews/editor-toolbar.module.scss';
+import styles from '@/components/reviews/write/editor-toolbar.module.scss';
 
 interface EditorToolbarProps {
   editor: Editor;
