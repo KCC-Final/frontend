@@ -1,6 +1,9 @@
+'use client';
+
+import { Bell, CircleUserRound, Search } from 'lucide-react';
 import Link from 'next/link';
 
-import styles from './header.module.scss';
+import styles from '@/components/layout/header.module.scss';
 
 function HeaderLayout() {
   return (
@@ -25,10 +28,22 @@ function HeaderLayout() {
             </li>
           </ul>
         </nav>
-        <div className={styles.user}>
-          <button>알림</button>
-          <button>회원</button>
-        </div>
+        <nav className={styles.function}>
+          <Link href="/search" className={styles.search}>
+            <span>검색어를 입력하세요</span>
+            <span>
+              <Search size="20px" color="#333333" />
+            </span>
+          </Link>
+          <div className={styles.user}>
+            <button>
+              <Bell />
+            </button>
+            <button>
+              <CircleUserRound />
+            </button>
+          </div>
+        </nav>
       </header>
     </section>
   );
