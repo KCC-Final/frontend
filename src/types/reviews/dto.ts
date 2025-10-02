@@ -29,7 +29,6 @@ export type ReviewDetailResDTO = CommonResDTO<{
   isbn: string;
   reviewTitle: string;
   reviewContent: string;
-  viewCnt: number;
   secret: boolean;
   temporary: boolean;
   createdAt: string;
@@ -50,7 +49,6 @@ export type ReviewData = {
   isbn: string;
   reviewTitle: string;
   reviewContent: string;
-  viewCnt: number;
   secret: boolean;
   temporary: boolean;
   createdAt: string;
