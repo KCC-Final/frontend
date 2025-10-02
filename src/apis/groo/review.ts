@@ -104,5 +104,17 @@ export const review = {
   getLikedReviews: async (): Promise<LikedReviewsResDTO> => {
     const response = await axiosGroo.get<LikedReviewsResDTO>('/reviews/likes');
     return response.data;
+  },
+
+  // 독후감 인기순 조회 (1주일간 좋아요 많은 순)
+  getAllReviewsOrderByLikes: async (): Promise<ReviewListResDTO> => {
+    const response = await axiosGroo.get<ReviewListResDTO>('/reviews/popular');
+    return response.data;
+  },
+
+  // 팔로잉 유저 독후감 조회
+  getReviewsByFollowing: async (): Promise<ReviewListResDTO> => {
+    const response = await axiosGroo.get<ReviewListResDTO>('/reviews/following');
+    return response.data;
   }
 };
