@@ -8,7 +8,7 @@ function HeaderLayout() {
       <header className={styles.gnb}>
         <nav className={styles.nav}>
           <Link href="/" className={styles.logo}>
-            로고
+            그루
           </Link>
           <ul className={styles.pages}>
             <li>

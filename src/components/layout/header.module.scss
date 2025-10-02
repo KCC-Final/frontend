@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 1400px;
+  width: $header-width;
   height: $header-height;
 
   .nav {
@@ -17,8 +17,10 @@
     gap: 14px;
 
     .logo {
-      font-size: 2rem;
-      font-weight: 700;
+      @include font-SeoulAlrim();
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: $groo-green;
       padding: 6px 8px;
     }
 

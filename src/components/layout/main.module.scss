@@ -6,6 +6,6 @@
 }
 
 .main {
-  width: 1400px;
+  width: $main-width;
   min-height: calc(100vh - $header-height);
 }

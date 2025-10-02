@@ -109,7 +109,7 @@ function FindUserId() {
 
   return (
     <section className={styles.find_id}>
-      <h1>아이디 찾기/비밀번호 재설정</h1>
+      <h1>아이디 찾기</h1>
       <form>
         <div className={styles.name}>
           <div>이름</div>
