@@ -196,7 +196,7 @@ export default function ReviewFeed() {
 
                 <div className={styles.stats}>
                   <span className={styles.stat}>좋아요 {review.likeCount || 0}</span>
-                  <span className={styles.stat}>댓글 {review.comments?.length || 0}</span>
+                  <span className={styles.stat}> 댓글 {review.commentCount || 0}</span>
                 </div>
               </div>
             </article>
