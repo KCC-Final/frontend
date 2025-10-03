@@ -1,4 +1,5 @@
-import { Noto_Sans_KR } from 'next/font/google';
+import { Noto_Sans_KR, Noto_Serif_KR } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import type { Metadata } from 'next';
 
@@ -6,7 +7,24 @@ import '@/styles/globals.scss';
 
 const notoSansKr = Noto_Sans_KR({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900']
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-noto-sans-kr'
+});
+
+const notoSerifKr = Noto_Serif_KR({
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  variable: '--font-noto-serif-kr'
+});
+
+const seoulNotice = localFont({
+  src: [
+    {
+      path: './SeoulAlrimTTF-Heavy.woff2',
+      weight: '900'
+    }
+  ],
+  variable: '--font-seoul-notice'
 });
 
 export const metadata: Metadata = {
