@@ -57,6 +57,7 @@ export type ReviewData = {
   category: string;
   likeCount: number;
   liked: boolean;
+  commentCount: number;
 };
 
 // 임시저장 목록 조회

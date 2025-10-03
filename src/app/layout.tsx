@@ -38,8 +38,8 @@ interface RootLayoutProps {
 
 function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
-    <html lang="ko">
-      <body className={`${notoSansKr.variable} ${notoSerifKr.variable} ${seoulNotice.variable}`}>
+    <html lang="ko" suppressHydrationWarning>
+      <body className={notoSansKr.className} suppressHydrationWarning>
         {children}
       </body>
     </html>
