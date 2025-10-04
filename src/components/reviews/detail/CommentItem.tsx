@@ -18,25 +18,30 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Pr
   const [editContent, setEditContent] = useState(comment.content);
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
+  const [error, setError] = useState<string>('');
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return '방금 전';
-    if (diffMins < 60) return `${diffMins}분 전`;
-    if (diffHours < 24) return `${diffHours}시간 전`;
-    if (diffDays < 7) return `${diffDays}일 전`;
+      if (diffMins < 1) return '방금 전';
+      if (diffMins < 60) return `${diffMins}분 전`;
+      if (diffHours < 24) return `${diffHours}시간 전`;
+      if (diffDays < 7) return `${diffDays}일 전`;
 
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+      return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   const handleUpdateSubmit = async () => {
@@ -46,10 +51,12 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Pr
     }
 
     try {
+      setError('');
       await onUpdate(comment.commentId, editContent.trim());
       setIsEditing(false);
     } catch (error) {
-      console.error('댓글 수정 실패:', error);
+      setError('댓글 수정에 실패했습니다.');
+      alert('댓글 수정에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -60,28 +67,33 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Pr
     }
 
     try {
+      setError('');
       await onReply(replyContent.trim(), comment.commentId);
       setReplyContent('');
       setIsReplying(false);
     } catch (error) {
-      console.error('답글 작성 실패:', error);
+      setError('답글 작성에 실패했습니다.');
+      alert('답글 작성에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
   const handleDelete = async () => {
     try {
+      setError('');
       await onDelete(comment.commentId);
     } catch (error) {
-      console.error('댓글 삭제 실패:', error);
+      setError('댓글 삭제에 실패했습니다.');
+      alert('댓글 삭제에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
-  // 수정 여부 확인
   const isEdited = comment.updatedAt && comment.updatedAt !== comment.createdAt;
   const displayDate = isEdited ? comment.updatedAt : comment.createdAt;
 
   return (
     <div className={`${styles.container} ${comment.parentId ? styles.reply : ''}`}>
+      {error && <div className={styles.errorMessage}>{error}</div>}
+
       <div className={styles.header}>
         <span className={styles.author}>{comment.userId}</span>
         <span className={styles.date}>
@@ -102,7 +114,13 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Pr
             <button onClick={handleUpdateSubmit} className={styles.saveBtn}>
               저장
             </button>
-            <button onClick={() => setIsEditing(false)} className={styles.cancelBtn}>
+            <button
+              onClick={() => {
+                setIsEditing(false);
+                setEditContent(comment.content);
+                setError('');
+              }}
+              className={styles.cancelBtn}>
               취소
             </button>
           </div>
@@ -138,7 +156,13 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Pr
             <button onClick={handleReplySubmit} className={styles.submitBtn}>
               답글 작성
             </button>
-            <button onClick={() => setIsReplying(false)} className={styles.cancelBtn}>
+            <button
+              onClick={() => {
+                setIsReplying(false);
+                setReplyContent('');
+                setError('');
+              }}
+              className={styles.cancelBtn}>
               취소
             </button>
           </div>

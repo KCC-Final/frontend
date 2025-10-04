@@ -16,33 +16,42 @@ export default function RelatedReviewCard({ review }: Props) {
   const router = useRouter();
   const [bookCover, setBookCover] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchBookCover = async () => {
+      if (!review.isbn) {
+        setLoading(false);
+        return;
+      }
+
       try {
+        setError(false);
         const data = await fetchAladin.getBookDetails(review.isbn);
         if (data.item && data.item[0] && data.item[0].cover) {
           setBookCover(data.item[0].cover);
         }
-      } catch (error) {
-        console.error('책 표지 로드 실패:', error);
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    if (review.isbn) {
-      fetchBookCover();
-    }
+    fetchBookCover();
   }, [review.isbn]);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   const handleClick = () => {
@@ -54,7 +63,7 @@ export default function RelatedReviewCard({ review }: Props) {
       <div className={styles.coverSection}>
         {loading ? (
           <div className={styles.coverLoading}>로딩...</div>
-        ) : bookCover ? (
+        ) : bookCover && !error ? (
           <>
             <div className={styles.blurBackground} style={{ backgroundImage: `url(${bookCover})` }} />
             <img src={bookCover} alt={review.reviewTitle} className={styles.bookCover} />

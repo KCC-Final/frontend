@@ -15,12 +15,16 @@ type Props = {
 
 export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, onEdit, onDelete }: Props) {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   return (
@@ -29,7 +33,6 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
         <div className={styles.headerTop}>
           <h1 className={styles.title}>{reviewData.reviewTitle}</h1>
 
-          {/* 여기에 조건 추가 */}
           {reviewData.isOwner && (
             <div className={styles.actions}>
               <button onClick={onEdit} className={styles.editBtn}>

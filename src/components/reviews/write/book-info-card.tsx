@@ -18,7 +18,7 @@ function BookInfoCard({ book, onRemove }: BookInfoCardProps) {
           className={styles.cover}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = '/images/default-book-cover.png'; // 기본 이미지 경로
+            target.src = '/images/default-book-cover.png';
           }}
         />
       </div>

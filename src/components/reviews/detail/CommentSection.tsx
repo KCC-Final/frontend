@@ -17,6 +17,7 @@ type Props = {
 export default function CommentSection({ comments, onSubmit, onUpdate, onDelete }: Props) {
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,19 +29,19 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
 
     try {
       setIsSubmitting(true);
+      setError('');
       await onSubmit(newComment.trim());
       setNewComment('');
     } catch (error) {
-      console.error('댓글 작성 실패:', error);
+      setError('댓글 작성에 실패했습니다.');
+      alert('댓글 작성에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // 최상위 댓글만 필터링 (parentId가 null인 것들)
   const topLevelComments = comments.filter((comment) => !comment.parentId);
 
-  // 특정 댓글의 대댓글 찾기
   const getReplies = (parentId: number) => {
     return comments.filter((comment) => comment.parentId === parentId);
   };
@@ -51,6 +52,8 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
         <h3 className={styles.title}>댓글</h3>
         <span className={styles.count}>{comments.length}</span>
       </div>
+
+      {error && <div className={styles.errorMessage}>{error}</div>}
 
       <form onSubmit={handleSubmit} className={styles.commentForm}>
         <textarea
@@ -72,10 +75,8 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
         ) : (
           topLevelComments.map((comment) => (
             <div key={comment.commentId}>
-              {/* 부모 댓글 */}
               <CommentItem comment={comment} onUpdate={onUpdate} onDelete={onDelete} onReply={onSubmit} />
 
-              {/* 해당 댓글의 대댓글들 */}
               {getReplies(comment.commentId).map((reply) => (
                 <CommentItem
                   key={reply.commentId}

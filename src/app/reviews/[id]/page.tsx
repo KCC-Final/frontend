@@ -20,20 +20,15 @@ export default function ReviewDetailPage() {
     const fetchReviewDetail = async () => {
       try {
         setLoading(true);
+        setError(null);
         const response = await reviewApi.getReview(reviewId);
-
-        console.log('=== API Response ===');
-        console.log('Full response:', response);
 
         if (response && response.reviewId) {
           setReviewData(response);
-          console.log('✅ 데이터 설정 완료');
         } else {
-          console.log('❌ 유효한 데이터가 없음');
           setError('독후감을 불러오는데 실패했습니다.');
         }
-      } catch (err) {
-        console.error('❌ API 호출 에러:', err);
+      } catch {
         setError('독후감을 불러오는 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);

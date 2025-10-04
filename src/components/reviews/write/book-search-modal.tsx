@@ -17,8 +17,8 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
   const [searchResults, setSearchResults] = useState<AladinBook[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [error, setError] = useState<string>('');
 
-  // 도서 검색 함수
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -29,9 +29,9 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
 
     setIsLoading(true);
     setHasSearched(true);
+    setError('');
 
     try {
-      // 기존 searchBooks 함수 사용 (Query, MaxResults만 받음)
       const response = await fetchAladin.searchBooks(keyword, 20);
 
       if (response.item && response.item.length > 0) {
@@ -40,10 +40,10 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
         setSearchResults([]);
         alert('검색 결과가 없습니다.');
       }
-    } catch (error) {
-      console.error('도서 검색 실패:', error);
-      alert('도서 검색에 실패했습니다.');
+    } catch {
+      setError('도서 검색에 실패했습니다.');
       setSearchResults([]);
+      alert('도서 검색에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +65,7 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
         <div className={styles.modalHeader}>
           <h2>도서 검색</h2>
           <button onClick={onClose} className={styles.closeButton}>
-            ✕
+            X
           </button>
         </div>
 
@@ -82,6 +82,8 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
           </button>
         </form>
 
+        {error && <div className={styles.errorMessage}>{error}</div>}
+
         <div className={styles.searchResults}>
           {isLoading ? (
             <div className={styles.loading}>검색 중입니다...</div>
@@ -96,7 +98,7 @@ function BookSearchModal({ onSelect, onClose }: BookSearchModalProps) {
                   className={styles.bookCover}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = '/images/default-book-cover.png'; // 기본 이미지 경로
+                    target.src = '/images/default-book-cover.png';
                   }}
                 />
                 <div className={styles.bookInfo}>
