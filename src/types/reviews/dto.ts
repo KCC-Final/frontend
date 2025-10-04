@@ -38,6 +38,7 @@ export type ReviewDetailResDTO = CommonResDTO<{
   likeCount: number;
   liked: boolean;
   comments?: CommentData[];
+  isOwner: boolean; // 추가
 }>;
 
 // 독후감 목록 조회

@@ -1,0 +1,85 @@
+.container {
+  background: #ffffff;
+  border-radius: 0 0 12px 12px; // 위쪽 라운드 제거
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.count {
+  font-size: 16px;
+  font-weight: 600;
+  color: #007664;
+}
+
+.commentForm {
+  margin-bottom: 32px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+
+  &:focus {
+    outline: none;
+    border-color: #007664;
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+.submitBtn {
+  padding: 10px 24px;
+  background: #007664;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #006655;
+  }
+
+  &:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+  }
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+  font-size: 14px;
+}

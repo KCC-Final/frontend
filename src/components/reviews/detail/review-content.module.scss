@@ -1,0 +1,156 @@
+.container {
+  background: #ffffff;
+  border-radius: 0; // 라운드 제거
+  box-shadow: none;
+  overflow: hidden;
+  border-bottom: 1px solid #e5e7eb; // 구분선 추가
+}
+
+.header {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.editBtn,
+.deleteBtn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editBtn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+}
+
+.deleteBtn {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+
+  &:hover {
+    background: #fecaca;
+  }
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.author {
+  font-weight: 600;
+  color: #111827;
+}
+
+.separator {
+  color: #d1d5db;
+}
+
+.date {
+  color: #6b7280;
+}
+
+.updated {
+  color: #f59e0b;
+  font-size: 13px;
+}
+
+.secret {
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.content {
+  padding: 32px;
+}
+
+.reviewText {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #111827;
+  word-break: break-word;
+}
+
+.footer {
+  padding: 24px 32px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.likeBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #007664;
+  }
+
+  &.liked {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
+
+    .likeIcon {
+      color: #dc2626;
+    }
+  }
+}
+
+.likeIcon {
+  font-size: 20px;
+  transition: all 0.2s;
+}
+
+.likeCount {
+  font-weight: 600;
+  color: #111827;
+}
