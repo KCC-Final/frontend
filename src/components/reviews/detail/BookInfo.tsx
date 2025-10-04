@@ -1,6 +1,6 @@
 'use client';
 
-import styles from './bookinfo.module.scss';
+import styles from './BookInfo.module.scss';
 
 import { AladinBook } from '@/types/reviews/book-search';
 
