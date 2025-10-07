@@ -36,8 +36,8 @@ export const review = {
   },
 
   // 독후감 단건 조회
-  getReview: async (reviewId: number): Promise<ReviewDetailResDTO> => {
-    const response = await axiosGroo.get<ReviewDetailResDTO>(`/reviews/${reviewId}`);
+  getReview: async (reviewId: number): Promise<ReviewDetailResDTO['data']> => {
+    const response = await axiosGroo.get<ReviewDetailResDTO['data']>(`/reviews/${reviewId}`);
     return response.data;
   },
 
@@ -90,19 +90,19 @@ export const review = {
 
   // 좋아요 추가
   likeReview: async (reviewId: number): Promise<LikeCreateResDTO> => {
-    const response = await axiosGroo.post<LikeCreateResDTO>(`/reviews/${reviewId}/likes`);
+    const response = await axiosGroo.post<LikeCreateResDTO>(`/reviews/${reviewId}/like`);
     return response.data;
   },
 
   // 좋아요 취소
   unlikeReview: async (reviewId: number): Promise<LikeDeleteResDTO> => {
-    const response = await axiosGroo.delete<LikeDeleteResDTO>(`/reviews/${reviewId}/likes`);
+    const response = await axiosGroo.delete<LikeDeleteResDTO>(`/reviews/${reviewId}/like`);
     return response.data;
   },
 
   // 좋아요한 독후감 목록 조회
   getLikedReviews: async (): Promise<LikedReviewsResDTO> => {
-    const response = await axiosGroo.get<LikedReviewsResDTO>('/reviews/likes');
+    const response = await axiosGroo.get<LikedReviewsResDTO>('/reviews/like');
     return response.data;
   },
 
@@ -115,6 +115,20 @@ export const review = {
   // 팔로잉 유저 독후감 조회
   getReviewsByFollowing: async (): Promise<ReviewListResDTO> => {
     const response = await axiosGroo.get<ReviewListResDTO>('/reviews/following');
+    return response.data;
+  },
+
+  // ISBN으로 독후감 조회
+  getReviewsByIsbn: async (isbn: string): Promise<ReviewData[]> => {
+    const response = await axiosGroo.get<ReviewData[]>(`/reviews/isbn/${isbn}`);
+    return response.data;
+  },
+
+  // 카테고리로 독후감 조회
+  getReviewsByCategory: async (category: string, limit: number = 20): Promise<ReviewData[]> => {
+    const response = await axiosGroo.get<ReviewData[]>(`/reviews/category`, {
+      params: { name: category, limit }
+    });
     return response.data;
   }
 };

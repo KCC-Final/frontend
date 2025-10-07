@@ -72,7 +72,7 @@ function EditorToolbar({ editor }: EditorToolbarProps) {
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? styles.active : ''}
         title="글머리 기호">
-        •
+        목록
       </button>
 
       <button

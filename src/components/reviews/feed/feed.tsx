@@ -18,25 +18,30 @@ interface BookCoverProps {
 function BookCover({ isbn, title }: BookCoverProps) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchBookCover = async () => {
+      if (!isbn) {
+        setLoading(false);
+        return;
+      }
+
       try {
+        setError(false);
         const data = await fetchAladin.getBookDetails(isbn);
 
         if (data.item && data.item[0] && data.item[0].cover) {
           setImageUrl(data.item[0].cover);
         }
-      } catch (error) {
-        console.error('책 표지 로드 실패:', error);
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    if (isbn) {
-      fetchBookCover();
-    }
+    fetchBookCover();
   }, [isbn]);
 
   if (loading) {
@@ -51,8 +56,10 @@ function BookCover({ isbn, title }: BookCoverProps) {
 
   return (
     <div className={styles.bookCover}>
-      {imageUrl && <div className={styles.blurBackground} style={{ backgroundImage: `url(${imageUrl})` }} />}
-      {imageUrl ? (
+      {imageUrl && !error && (
+        <div className={styles.blurBackground} style={{ backgroundImage: `url(${imageUrl})` }} />
+      )}
+      {imageUrl && !error ? (
         <img src={imageUrl} alt={title} className={styles.bookImage} />
       ) : (
         <div className={styles.noImage}>
@@ -67,6 +74,7 @@ export default function ReviewFeed() {
   const router = useRouter();
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
   const [filter, setFilter] = useState<'latest' | 'popular' | 'following'>('latest');
   const [mounted, setMounted] = useState(false);
 
@@ -78,20 +86,19 @@ export default function ReviewFeed() {
   const loadReviews = async (filterType: 'latest' | 'popular' | 'following') => {
     try {
       setLoading(true);
+      setError('');
       let response;
 
       if (filterType === 'popular') {
         try {
           response = await fetchGroo.review.getAllReviewsOrderByLikes();
-        } catch (error) {
-          console.error('인기순 조회 실패, 최신순으로 대체:', error);
+        } catch {
           response = await fetchGroo.review.getAllReviews();
         }
       } else if (filterType === 'following') {
         try {
           response = await fetchGroo.review.getReviewsByFollowing();
-        } catch (error) {
-          console.error('팔로잉 조회 실패, 최신순으로 대체:', error);
+        } catch {
           response = await fetchGroo.review.getAllReviews();
         }
       } else {
@@ -99,13 +106,11 @@ export default function ReviewFeed() {
       }
 
       let reviewsData = Array.isArray(response) ? response : response.data || [];
-
-      // 비공개 글 제외
       reviewsData = reviewsData.filter((review: ReviewData) => !review.secret);
 
       setReviews(reviewsData);
-    } catch (error) {
-      console.error('독후감 목록 조회 실패:', error);
+    } catch {
+      setError('독후감 목록을 불러오는데 실패했습니다.');
       setReviews([]);
     } finally {
       setLoading(false);
@@ -125,10 +130,33 @@ export default function ReviewFeed() {
     router.push(`/reviews/${reviewId}`);
   };
 
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
   if (!mounted || loading) {
     return (
       <div className={styles.container}>
         <div className={styles.loading}>로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.error}>{error}</div>
+        <button onClick={() => loadReviews(filter)} className={styles.retryButton}>
+          다시 시도
+        </button>
       </div>
     );
   }
@@ -176,13 +204,7 @@ export default function ReviewFeed() {
                   <div className={styles.avatar}>{review.userId?.[0]?.toUpperCase() || 'U'}</div>
                   <div className={styles.userDetails}>
                     <span className={styles.nickname}>{review.userId}</span>
-                    <span className={styles.date}>
-                      {new Date(review.createdAt).toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </span>
+                    <span className={styles.date}>{formatDate(review.createdAt)}</span>
                   </div>
                 </div>
 
@@ -196,7 +218,7 @@ export default function ReviewFeed() {
 
                 <div className={styles.stats}>
                   <span className={styles.stat}>좋아요 {review.likeCount || 0}</span>
-                  <span className={styles.stat}> 댓글 {review.commentCount || 0}</span>
+                  <span className={styles.stat}>댓글 {review.commentCount || 0}</span>
                 </div>
               </div>
             </article>

@@ -107,7 +107,6 @@ export default function AladinTestPage() {
                   <img src={book.cover} alt={book.title} width={60} style={{ marginRight: '0.5rem' }} />
                   <span>
                     {book.title} - {book.author}
-                    {console.log(book)}
                   </span>
                 </button>
               </li>

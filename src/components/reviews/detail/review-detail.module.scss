@@ -1,0 +1,30 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  /* 첫 번째 자식 요소 (BookInfo) */
+  > :first-child {
+    border-radius: 12px 12px 0 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* 마지막 자식 요소 (CommentSection) */
+  > :last-child {
+    border-radius: 0 0 12px 12px !important;
+  }
+
+  /* 중간 요소들 (ReviewContent) */
+  > :not(:first-child):not(:last-child) {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
