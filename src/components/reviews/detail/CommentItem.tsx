@@ -11,14 +11,16 @@ type Props = {
   onUpdate: (commentId: number, content: string) => Promise<void>;
   onDelete: (commentId: number) => Promise<void>;
   onReply: (content: string, parentId: number) => Promise<void>;
+  depth?: number; // 댓글 깊이 추가
 };
 
-export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Props) {
+export default function CommentItem({ comment, onUpdate, onDelete, onReply, depth = 0 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [error, setError] = useState<string>('');
+  const MAX_DEPTH = 5; // 최대 뎁스 설정
 
   const formatDate = (dateString: string) => {
     try {
@@ -90,8 +92,13 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Pr
   const isEdited = comment.updatedAt && comment.updatedAt !== comment.createdAt;
   const displayDate = isEdited ? comment.updatedAt : comment.createdAt;
 
+  // 깊이에 따른 왼쪽 여백 계산 (최대 5단계까지)
+  const marginLeft = Math.min(depth, 5) * 40;
+
   return (
-    <div className={`${styles.container} ${comment.parentId ? styles.reply : ''}`}>
+    <div
+      className={`${styles.container} ${depth > 0 ? styles.reply : ''}`}
+      style={{ marginLeft: `${marginLeft}px` }}>
       {error && <div className={styles.errorMessage}>{error}</div>}
 
       <div className={styles.header}>
@@ -110,18 +117,18 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply }: Pr
             className={styles.textarea}
             rows={3}
           />
-          <div className={styles.editActions}>
-            <button onClick={handleUpdateSubmit} className={styles.saveBtn}>
-              저장
+          <div className={styles.actions}>
+            {/* depth가 MAX_DEPTH 미만일 때만 답글 버튼 표시 */}
+            {depth < MAX_DEPTH && (
+              <button onClick={() => setIsReplying(!isReplying)} className={styles.actionBtn}>
+                답글
+              </button>
+            )}
+            <button onClick={() => setIsEditing(true)} className={styles.actionBtn}>
+              수정
             </button>
-            <button
-              onClick={() => {
-                setIsEditing(false);
-                setEditContent(comment.content);
-                setError('');
-              }}
-              className={styles.cancelBtn}>
-              취소
+            <button onClick={handleDelete} className={styles.actionBtn}>
+              삭제
             </button>
           </div>
         </div>
