@@ -60,7 +60,7 @@ function HeaderLayout() {
               <Link href="/">도서 추천</Link>
             </li>
             <li>
-              <Link href="/feeds">피드</Link>
+              <Link href="/reviews/feed">피드</Link>
             </li>
             <li>
               <Link href="/my-library">내 서재</Link>
