@@ -310,7 +310,8 @@ function ReviewCreatePage() {
       <div className={styles.content}>
         <section className={styles.bookSection}>
           {selectedBook ? (
-            <BookInfoCard book={selectedBook} onRemove={() => setSelectedBook(null)} />
+            // onRemove를 setSelectedBook(null)에서 setIsBookModalOpen(true)로 변경
+            <BookInfoCard book={selectedBook} onRemove={() => setIsBookModalOpen(true)} />
           ) : (
             <button onClick={() => setIsBookModalOpen(true)} className={styles.selectBookButton}>
               도서 선택
