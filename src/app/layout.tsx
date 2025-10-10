@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 
 import type { Metadata } from 'next';
 
+import '@/styles/tailwind.css';
 import '@/styles/globals.scss';
 
 const notoSansKr = Noto_Sans_KR({
