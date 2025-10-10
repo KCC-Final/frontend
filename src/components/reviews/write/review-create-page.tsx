@@ -306,7 +306,6 @@ function ReviewCreatePage() {
           </button>
         </div>
       </div>
-
       <div className={styles.content}>
         <section className={styles.bookSection}>
           {selectedBook ? (
@@ -347,12 +346,18 @@ function ReviewCreatePage() {
           </label>
         </section>
       </div>
-
       {isBookModalOpen && (
         <BookSearchModal onSelect={handleBookSelect} onClose={() => setIsBookModalOpen(false)} />
       )}
-
-      {isDraftModalOpen && <DraftListModal onClose={() => setIsDraftModalOpen(false)} />}
+      {isDraftModalOpen && (
+        <DraftListModal
+          onClose={() => setIsDraftModalOpen(false)}
+          onSelect={(draftId) => {
+            setIsDraftModalOpen(false);
+            router.push(`/reviews/write?draftId=${draftId}`);
+          }}
+        />
+      )}{' '}
     </div>
   );
 }
