@@ -12,12 +12,6 @@
   padding-bottom: 20px;
   border-bottom: 2px solid #e5e7eb;
 
-  h1 {
-    font-size: 28px;
-    font-weight: bold;
-    color: #111827;
-  }
-
   .backButton {
     padding: 8px 16px;
     background: #f3f4f6;
@@ -26,52 +20,37 @@
     cursor: pointer;
     font-size: 14px;
     transition: all 0.2s;
+    flex-shrink: 0;
 
     &:hover {
       background: #e5e7eb;
     }
   }
 
-  .actions {
-    display: flex;
-    gap: 10px;
+  h1 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    font-weight: bold;
+    color: #111827;
+    margin: 0;
+  }
 
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
+  .draftButton {
+    padding: 10px 20px;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.2s;
+    flex-shrink: 0;
 
-    .draftButton {
-      background: #fff;
-      border: 1px solid #d1d5db;
-      color: #374151;
-
-      &:hover {
-        background: #f9fafb;
-      }
-    }
-
-    .saveButton {
-      background: #10b981;
-      color: white;
-
-      &:hover {
-        background: #059669;
-      }
-    }
-
-    .submitButton {
-      background: #3b82f6;
-      color: white;
-
-      &:hover {
-        background: #2563eb;
-      }
+    &:hover {
+      background: #f9fafb;
     }
   }
 }
@@ -140,14 +119,14 @@
 }
 
 .editorSection {
-  min-height: 500px;
-  padding: 20px;
   background: white;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
+  overflow: hidden;
 
   :global(.ProseMirror) {
     min-height: 400px;
+    padding: 20px;
     outline: none;
 
     &:focus {
@@ -165,6 +144,9 @@
 }
 
 .optionsSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 20px;
   background: #f9fafb;
   border-radius: 8px;
@@ -183,35 +165,81 @@
       cursor: pointer;
     }
   }
+
+  .submitActions {
+    display: flex;
+    gap: 10px;
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .saveButton {
+      background: #10b981;
+      color: white;
+
+      &:hover {
+        background: #059669;
+      }
+    }
+
+    .submitButton {
+      background: #3b82f6;
+      color: white;
+
+      &:hover {
+        background: #2563eb;
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
   .header {
+    position: relative;
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
 
     h1 {
+      position: static;
+      transform: none;
       font-size: 24px;
+      width: 100%;
+      text-align: center;
     }
 
-    .actions {
-      width: 100%;
-      justify-content: flex-end;
+    .draftButton {
+      align-self: flex-end;
     }
   }
 
   .titleSection .titleInput {
     font-size: 18px;
   }
+
+  .optionsSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+
+    .submitActions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
 }
 
 .characterCount {
-  padding: 12px 16px;
+  padding: 12px 20px;
   background: #f9fafb;
-  border: 2px solid #e5e7eb;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
+  border-top: 1px solid #e5e7eb;
   font-size: 13px;
   color: #6b7280;
   text-align: right;

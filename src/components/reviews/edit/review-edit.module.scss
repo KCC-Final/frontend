@@ -1,102 +1,94 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 20px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 2px solid #e5e7eb;
 
+  .backButton {
+    padding: 8px 16px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #e5e7eb;
+    }
+  }
+
   h1 {
-    font-size: 32px;
-    font-weight: 700;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    font-weight: bold;
     color: #111827;
+    margin: 0;
   }
-}
 
-.backButton {
-  padding: 10px 20px;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #e5e7eb;
-  }
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
-}
-
-.submitButton {
-  padding: 12px 24px;
-  background: #007664;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #006655;
+  .placeholder {
+    flex-shrink: 0;
+    width: 100px;
   }
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .bookSection {
   padding: 20px;
   background: #f9fafb;
   border-radius: 8px;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #e5e7eb;
 }
 
 .titleSection {
+  position: relative;
+
   .titleInput {
     width: 100%;
     padding: 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
     font-size: 20px;
     font-weight: 600;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    outline: none;
     transition: all 0.2s;
 
     &:focus {
-      outline: none;
-      border-color: #007664;
+      border-color: #3b82f6;
     }
 
     &::placeholder {
       color: #9ca3af;
+      font-weight: 400;
     }
   }
 }
 
 .editorSection {
-  min-height: 500px;
   background: white;
+  border: 2px solid #e5e7eb;
   border-radius: 8px;
+  overflow: hidden;
 
   :global(.ProseMirror) {
     min-height: 400px;
+    padding: 20px;
     outline: none;
 
     &:focus {
@@ -114,6 +106,9 @@
 }
 
 .optionsSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 20px;
   background: #f9fafb;
   border-radius: 8px;
@@ -132,6 +127,27 @@
       cursor: pointer;
     }
   }
+
+  .submitActions {
+    display: flex;
+    gap: 10px;
+
+    .submitButton {
+      padding: 10px 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #2563eb;
+      }
+    }
+  }
 }
 
 .loading {
@@ -139,37 +155,50 @@
   justify-content: center;
   align-items: center;
   min-height: 400px;
-  font-size: 18px;
+  font-size: 16px;
   color: #6b7280;
 }
 
 @media (max-width: 768px) {
   .header {
+    position: relative;
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
 
     h1 {
+      position: static;
+      transform: none;
       font-size: 24px;
+      width: 100%;
+      text-align: center;
     }
 
-    .actions {
-      width: 100%;
-      justify-content: flex-end;
+    .placeholder {
+      display: none;
     }
   }
 
   .titleSection .titleInput {
     font-size: 18px;
   }
+
+  .optionsSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+
+    .submitActions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
 }
 
 .characterCount {
-  padding: 12px 16px;
+  padding: 12px 20px;
   background: #f9fafb;
-  border: 2px solid #e5e7eb;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
+  border-top: 1px solid #e5e7eb;
   font-size: 13px;
   color: #6b7280;
   text-align: right;

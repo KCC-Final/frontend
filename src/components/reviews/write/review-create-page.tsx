@@ -30,7 +30,8 @@ import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import styles from '@/components/reviews/write/review-create.module.scss';
 import { ReviewCreateReqBody, ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
 
-// categoryName에서 두 번째 카테고리 추출 함수
+const MAX_CONTENT_LENGTH = 10000;
+
 const extractSecondCategory = (categoryName: string): string | null => {
   console.log('=== extractSecondCategory 시작 ===');
   console.log('입력 categoryName:', categoryName);
@@ -60,7 +61,7 @@ function ReviewCreatePage() {
   const [isSecret, setIsSecret] = useState(false);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
-  const [charCount, setCharCount] = useState({ characters: 0, words: 0 }); // 추가
+  const [charCount, setCharCount] = useState(0);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -82,7 +83,9 @@ function ReviewCreatePage() {
       }),
       TextStyle,
       Color,
-      CharacterCount,
+      CharacterCount.configure({
+        limit: MAX_CONTENT_LENGTH
+      }),
       TaskList,
       TaskItem.configure({
         nested: true
@@ -102,12 +105,16 @@ function ReviewCreatePage() {
         class: 'editor-content'
       }
     },
-    // onUpdate 콜백 추가
     onUpdate: ({ editor }) => {
-      setCharCount({
-        characters: editor.storage.characterCount.characters(),
-        words: editor.storage.characterCount.words()
-      });
+      const textContent = editor.getText();
+      const currentLength = textContent.length;
+      setCharCount(currentLength);
+
+      if (currentLength > MAX_CONTENT_LENGTH) {
+        const truncatedText = textContent.substring(0, MAX_CONTENT_LENGTH);
+        editor.commands.setContent(truncatedText);
+        setCharCount(MAX_CONTENT_LENGTH);
+      }
     }
   });
 
@@ -279,7 +286,7 @@ function ReviewCreatePage() {
         alert('독후감이 작성되었습니다.');
       }
 
-      router.push('/reviews');
+      router.push('/reviews/feed');
     } catch (error) {
       console.error('=== 독후감 작성 에러 ===');
       console.error('에러 상세:', error);
@@ -294,22 +301,13 @@ function ReviewCreatePage() {
           뒤로가기
         </button>
         <h1>독후감 작성</h1>
-        <div className={styles.actions}>
-          <button onClick={() => setIsDraftModalOpen(true)} className={styles.draftButton}>
-            임시저장 목록
-          </button>
-          <button onClick={handleSaveDraft} className={styles.saveButton}>
-            임시저장
-          </button>
-          <button onClick={handleSubmit} className={styles.submitButton}>
-            등록
-          </button>
-        </div>
+        <button onClick={() => setIsDraftModalOpen(true)} className={styles.draftButton}>
+          임시저장 목록
+        </button>
       </div>
       <div className={styles.content}>
         <section className={styles.bookSection}>
           {selectedBook ? (
-            // onRemove를 setSelectedBook(null)에서 setIsBookModalOpen(true)로 변경
             <BookInfoCard book={selectedBook} onRemove={() => setIsBookModalOpen(true)} />
           ) : (
             <button onClick={() => setIsBookModalOpen(true)} className={styles.selectBookButton}>
@@ -333,9 +331,8 @@ function ReviewCreatePage() {
           <div className={editorStyles.editorContent}>
             <EditorContent editor={editor} />
           </div>
-          {/* 글자수 표시 수정 */}
           <div className={styles.characterCount}>
-            {charCount.characters}자 / {charCount.words}단어
+            {charCount} / {MAX_CONTENT_LENGTH}자
           </div>
         </section>
 
@@ -344,6 +341,14 @@ function ReviewCreatePage() {
             <input type="checkbox" checked={isSecret} onChange={(e) => setIsSecret(e.target.checked)} />
             비밀글로 설정
           </label>
+          <div className={styles.submitActions}>
+            <button onClick={handleSaveDraft} className={styles.saveButton}>
+              임시저장
+            </button>
+            <button onClick={handleSubmit} className={styles.submitButton}>
+              등록
+            </button>
+          </div>
         </section>
       </div>
       {isBookModalOpen && (
@@ -357,7 +362,7 @@ function ReviewCreatePage() {
             router.push(`/reviews/write?draftId=${draftId}`);
           }}
         />
-      )}{' '}
+      )}
     </div>
   );
 }
