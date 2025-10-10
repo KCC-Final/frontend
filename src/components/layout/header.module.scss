@@ -66,7 +66,28 @@
 
       button {
         padding: 8px 10px;
+        outline: none;
       }
     }
   }
+}
+
+.profile_title {
+  font-size: 1.6rem;
+  width: 400px;
+  padding: 6px;
+  line-height: normal;
+}
+
+.profile_description {
+  font-size: 1.4rem;
+  line-height: normal;
+  width: 400px;
+  padding: 4px 6px 24px 6px;
+}
+.profile_confirm {
+  font-size: 1.4rem;
+  padding: 16px;
+  // width: 50px;
+  // height: 40px;
 }
