@@ -28,6 +28,8 @@ import editorStyles from '@/components/reviews/write/editor-content.module.scss'
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import { ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
 
+const MAX_CONTENT_LENGTH = 10000;
+
 function ReviewEditPage() {
   const router = useRouter();
   const params = useParams();
@@ -38,7 +40,7 @@ function ReviewEditPage() {
   const [selectedBook, setSelectedBook] = useState<AladinBook | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewContent, setReviewContent] = useState('');
-  const [charCount, setCharCount] = useState({ characters: 0, words: 0 }); // 추가
+  const [charCount, setCharCount] = useState(0);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -60,7 +62,9 @@ function ReviewEditPage() {
       }),
       TextStyle,
       Color,
-      CharacterCount,
+      CharacterCount.configure({
+        limit: MAX_CONTENT_LENGTH
+      }),
       TaskList,
       TaskItem.configure({
         nested: true
@@ -80,23 +84,24 @@ function ReviewEditPage() {
         class: 'editor-content'
       }
     },
-    // onUpdate 콜백 추가
     onUpdate: ({ editor }) => {
-      setCharCount({
-        characters: editor.storage.characterCount.characters(),
-        words: editor.storage.characterCount.words()
-      });
+      const textContent = editor.getText();
+      const currentLength = textContent.length;
+      setCharCount(currentLength);
+
+      if (currentLength > MAX_CONTENT_LENGTH) {
+        const truncatedText = textContent.substring(0, MAX_CONTENT_LENGTH);
+        editor.commands.setContent(truncatedText);
+        setCharCount(MAX_CONTENT_LENGTH);
+      }
     }
   });
 
   useEffect(() => {
     if (editor && reviewContent) {
       editor.commands.setContent(reviewContent);
-      // 초기 로드 시에도 글자수 설정
-      setCharCount({
-        characters: editor.storage.characterCount.characters(),
-        words: editor.storage.characterCount.words()
-      });
+      const textContent = editor.getText();
+      setCharCount(textContent.length);
     }
   }, [editor, reviewContent]);
 
@@ -189,11 +194,7 @@ function ReviewEditPage() {
           뒤로가기
         </button>
         <h1>독후감 수정</h1>
-        <div className={styles.actions}>
-          <button onClick={handleSubmit} className={styles.submitButton}>
-            수정 완료
-          </button>
-        </div>
+        <div className={styles.placeholder}></div>
       </div>
 
       <div className={styles.content}>
@@ -218,9 +219,8 @@ function ReviewEditPage() {
           <div className={editorStyles.editorContent}>
             <EditorContent editor={editor} />
           </div>
-          {/* 글자수 표시 수정 */}
           <div className={styles.characterCount}>
-            {charCount.characters}자 / {charCount.words}단어
+            {charCount} / {MAX_CONTENT_LENGTH}자
           </div>
         </section>
 
@@ -229,6 +229,11 @@ function ReviewEditPage() {
             <input type="checkbox" checked={isSecret} onChange={(e) => setIsSecret(e.target.checked)} />
             비밀글로 설정
           </label>
+          <div className={styles.submitActions}>
+            <button onClick={handleSubmit} className={styles.submitButton}>
+              수정 완료
+            </button>
+          </div>
         </section>
       </div>
     </div>
