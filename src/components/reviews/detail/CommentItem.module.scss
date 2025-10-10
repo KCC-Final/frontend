@@ -1,0 +1,155 @@
+.container {
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  transition: all 0.2s;
+
+  &.reply {
+    margin-left: 40px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+
+    @media (max-width: 768px) {
+      margin-left: 20px;
+    }
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.author {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.date {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 12px;
+  word-break: break-word;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.actionBtn {
+  font-size: 13px;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #007664;
+  }
+}
+
+// 수정 폼 스타일 개선
+.editForm {
+  margin-top: 12px;
+  padding: 16px;
+  background: #ffffff;
+  border: 2px solid #007664;
+  border-radius: 8px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #007664;
+    box-shadow: 0 0 0 3px rgba(0, 118, 100, 0.1);
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+.editActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+// 답글 폼 스타일 개선
+.replyForm {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f0fdf4;
+  border: 2px solid #10b981;
+  border-radius: 8px;
+}
+
+.replyActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.saveBtn,
+.submitBtn {
+  padding: 8px 20px;
+  background: #007664;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #006655;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 118, 100, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.cancelBtn {
+  padding: 8px 20px;
+  background: #ffffff;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+  }
+}
