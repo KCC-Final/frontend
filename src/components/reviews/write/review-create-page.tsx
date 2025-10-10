@@ -1,7 +1,20 @@
 'use client';
 
+import { CharacterCount } from '@tiptap/extension-character-count';
+import { Color } from '@tiptap/extension-color';
+import { Highlight } from '@tiptap/extension-highlight';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { Table } from '@tiptap/extension-table';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TaskItem } from '@tiptap/extension-task-item';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -12,6 +25,7 @@ import { fetchGroo, fetchAladin } from '@/apis';
 import BookInfoCard from '@/components/reviews/write/book-info-card';
 import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import DraftListModal from '@/components/reviews/write/draft-list-modal';
+import editorStyles from '@/components/reviews/write/editor-content.module.scss';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import styles from '@/components/reviews/write/review-create.module.scss';
 import { ReviewCreateReqBody, ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
@@ -46,6 +60,7 @@ function ReviewCreatePage() {
   const [isSecret, setIsSecret] = useState(false);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
+  const [charCount, setCharCount] = useState({ characters: 0, words: 0 }); // 추가
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -58,13 +73,41 @@ function ReviewCreatePage() {
       }),
       Placeholder.configure({
         placeholder: '독후감 내용을 입력해주세요'
-      })
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph']
+      }),
+      Highlight.configure({
+        multicolor: true
+      }),
+      TextStyle,
+      Color,
+      CharacterCount,
+      TaskList,
+      TaskItem.configure({
+        nested: true
+      }),
+      Table.configure({
+        resizable: true
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      Superscript,
+      Subscript
     ],
     content: '',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl focus:outline-none min-h-[400px] p-4'
+        class: 'editor-content'
       }
+    },
+    // onUpdate 콜백 추가
+    onUpdate: ({ editor }) => {
+      setCharCount({
+        characters: editor.storage.characterCount.characters(),
+        words: editor.storage.characterCount.words()
+      });
     }
   });
 
@@ -207,12 +250,11 @@ function ReviewCreatePage() {
 
     try {
       if (draftId) {
-        // 임시저장 글에서 온 경우: 수정 API 사용하여 temporary를 false로 변경
         const updateData: ReviewUpdateReqBody = {
           reviewTitle: title,
           reviewContent: content,
           secret: isSecret,
-          temporary: false // 정식 글로 전환
+          temporary: false
         };
 
         console.log('=== 임시저장 글 수정 요청 데이터 ===');
@@ -221,7 +263,6 @@ function ReviewCreatePage() {
         await fetchGroo.review.updateReview(Number(draftId), updateData);
         alert('독후감이 작성되었습니다.');
       } else {
-        // 새 글 작성인 경우: 생성 API 사용
         const requestData: ReviewCreateReqBody = {
           isbn: selectedBook.isbn13,
           reviewTitle: title,
@@ -265,20 +306,14 @@ function ReviewCreatePage() {
           </button>
         </div>
       </div>
-
       <div className={styles.content}>
         <section className={styles.bookSection}>
           {selectedBook ? (
-            <BookInfoCard
-              book={selectedBook}
-              onRemove={() => {
-                setSelectedBook(null);
-                setCategory(null);
-              }}
-            />
+            // onRemove를 setSelectedBook(null)에서 setIsBookModalOpen(true)로 변경
+            <BookInfoCard book={selectedBook} onRemove={() => setIsBookModalOpen(true)} />
           ) : (
             <button onClick={() => setIsBookModalOpen(true)} className={styles.selectBookButton}>
-              도서 선택하기
+              도서 선택
             </button>
           )}
         </section>
@@ -288,31 +323,32 @@ function ReviewCreatePage() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="독후감 제목을 작성해주세요"
+            placeholder="독후감 제목을 입력하세요"
             className={styles.titleInput}
-            maxLength={200}
           />
-          <span className={styles.charCount}>{title.length} / 200</span>
         </section>
 
-        {editor && <EditorToolbar editor={editor} />}
-
         <section className={styles.editorSection}>
-          <EditorContent editor={editor} />
+          {editor && <EditorToolbar editor={editor} />}
+          <div className={editorStyles.editorContent}>
+            <EditorContent editor={editor} />
+          </div>
+          {/* 글자수 표시 수정 */}
+          <div className={styles.characterCount}>
+            {charCount.characters}자 / {charCount.words}단어
+          </div>
         </section>
 
         <section className={styles.optionsSection}>
           <label className={styles.checkbox}>
             <input type="checkbox" checked={isSecret} onChange={(e) => setIsSecret(e.target.checked)} />
-            <span>비밀글로 설정</span>
+            비밀글로 설정
           </label>
         </section>
       </div>
-
       {isBookModalOpen && (
         <BookSearchModal onSelect={handleBookSelect} onClose={() => setIsBookModalOpen(false)} />
       )}
-
       {isDraftModalOpen && (
         <DraftListModal
           onClose={() => setIsDraftModalOpen(false)}
@@ -321,7 +357,7 @@ function ReviewCreatePage() {
             router.push(`/reviews/write?draftId=${draftId}`);
           }}
         />
-      )}
+      )}{' '}
     </div>
   );
 }

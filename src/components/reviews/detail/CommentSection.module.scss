@@ -1,9 +1,10 @@
 .container {
   background: #ffffff;
-  border-radius: 0 0 12px 12px; // 위쪽 라운드 제거
+  border-radius: 0 0 12px 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   padding: 32px;
 }
+
 .header {
   display: flex;
   align-items: center;
@@ -77,9 +78,22 @@
   gap: 16px;
 }
 
+.replyContainer {
+  // 재귀 답글 컨테이너 - 추가 스타일 불필요 (CommentItem에서 marginLeft로 처리)
+}
+
 .empty {
   text-align: center;
   padding: 60px 20px;
   color: #9ca3af;
+  font-size: 14px;
+}
+
+.errorMessage {
+  padding: 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  margin-bottom: 16px;
   font-size: 14px;
 }

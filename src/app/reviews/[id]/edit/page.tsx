@@ -1,4 +1,4 @@
-import ReviewEdit from '@/components/reviews/edit';
+import ReviewEdit from '@/components/reviews/edit/edit';
 
 import type { Metadata } from 'next';
 

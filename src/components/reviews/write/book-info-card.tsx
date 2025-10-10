@@ -6,9 +6,10 @@ import { AladinBook } from '@/types/reviews';
 interface BookInfoCardProps {
   book: AladinBook;
   onRemove: () => void;
+  readOnly?: boolean; // 추가
 }
 
-function BookInfoCard({ book, onRemove }: BookInfoCardProps) {
+function BookInfoCard({ book, onRemove, readOnly = false }: BookInfoCardProps) {
   return (
     <div className={styles.bookCard}>
       <div className={styles.bookImage}>
@@ -39,14 +40,16 @@ function BookInfoCard({ book, onRemove }: BookInfoCardProps) {
           )}
         </div>
 
-        <div className={styles.bookActions}>
-          <button onClick={onRemove} className={styles.removeButton} aria-label="선택된 도서 제거">
-            다른 도서 선택
-          </button>
-        </div>
+        {/* readOnly가 false일 때만 버튼 표시 */}
+        {!readOnly && (
+          <div className={styles.bookActions}>
+            <button onClick={onRemove} className={styles.removeButton} aria-label="선택된 도서 제거">
+              다른 도서 선택
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
 export default BookInfoCard;

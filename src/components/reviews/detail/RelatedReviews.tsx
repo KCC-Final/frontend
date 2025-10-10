@@ -74,10 +74,6 @@ export default function RelatedReviews({ isbn, category, currentReviewId }: Prop
     );
   }
 
-  if (isbnReviews.length === 0 && categoryReviews.length === 0) {
-    return null;
-  }
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -86,14 +82,12 @@ export default function RelatedReviews({ isbn, category, currentReviewId }: Prop
         <div className={styles.tabs}>
           <button
             className={`${styles.tab} ${activeTab === 'isbn' ? styles.active : ''}`}
-            onClick={() => setActiveTab('isbn')}
-            disabled={isbnReviews.length === 0}>
+            onClick={() => setActiveTab('isbn')}>
             같은 도서 ({isbnReviews.length})
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'category' ? styles.active : ''}`}
-            onClick={() => setActiveTab('category')}
-            disabled={categoryReviews.length === 0}>
+            onClick={() => setActiveTab('category')}>
             같은 카테고리 ({categoryReviews.length})
           </button>
         </div>

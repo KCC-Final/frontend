@@ -40,10 +40,36 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
     }
   };
 
+  // 최상위 댓글만 필터링
   const topLevelComments = comments.filter((comment) => !comment.parentId);
 
-  const getReplies = (parentId: number) => {
+  // 특정 댓글의 답글 가져오기
+  const getReplies = (parentId: number): CommentData[] => {
     return comments.filter((comment) => comment.parentId === parentId);
+  };
+
+  // 재귀적으로 댓글 렌더링
+  const renderComment = (comment: CommentData, depth: number = 0) => {
+    const replies = getReplies(comment.commentId);
+
+    return (
+      <div key={comment.commentId}>
+        <CommentItem
+          comment={comment}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          onReply={onSubmit}
+          depth={depth}
+        />
+
+        {/* 답글들을 재귀적으로 렌더링 */}
+        {replies.length > 0 && (
+          <div className={styles.replyContainer}>
+            {replies.map((reply) => renderComment(reply, depth + 1))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -73,21 +99,7 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
         {comments.length === 0 ? (
           <div className={styles.empty}>첫 번째 댓글을 작성해보세요.</div>
         ) : (
-          topLevelComments.map((comment) => (
-            <div key={comment.commentId}>
-              <CommentItem comment={comment} onUpdate={onUpdate} onDelete={onDelete} onReply={onSubmit} />
-
-              {getReplies(comment.commentId).map((reply) => (
-                <CommentItem
-                  key={reply.commentId}
-                  comment={reply}
-                  onUpdate={onUpdate}
-                  onDelete={onDelete}
-                  onReply={onSubmit}
-                />
-              ))}
-            </div>
-          ))
+          topLevelComments.map((comment) => renderComment(comment, 0))
         )}
       </div>
     </div>
