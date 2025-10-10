@@ -1,0 +1,272 @@
+.editorContent {
+  :global(.ProseMirror) {
+    min-height: 400px;
+    outline: none;
+    padding: 1rem;
+
+    // placeholder 스타일
+    p.is-editor-empty:first-child::before {
+      color: #adb5bd;
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
+
+    // 제목 스타일
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: #111827;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      color: #111827;
+    }
+
+    // 본문 스타일
+    p {
+      margin-bottom: 0.75rem;
+      line-height: 1.7;
+      color: #374151;
+    }
+
+    // 굵게
+    strong {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    // 기울임
+    em {
+      font-style: italic;
+    }
+
+    // 밑줄
+    u {
+      text-decoration: underline;
+    }
+
+    // 취소선
+    s {
+      text-decoration: line-through;
+    }
+
+    // 글머리 기호 목록
+    ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+        color: #374151;
+
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      ul {
+        list-style-type: circle;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    // 번호 매기기 목록
+    ol {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+        color: #374151;
+
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      ol {
+        list-style-type: lower-alpha;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    // 체크리스트
+    ul[data-type='taskList'] {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+
+        > label {
+          flex: 0 0 auto;
+          margin-right: 0.5rem;
+          user-select: none;
+        }
+
+        > div {
+          flex: 1 1 auto;
+        }
+
+        input[type='checkbox'] {
+          cursor: pointer;
+          width: 18px;
+          height: 18px;
+          margin-top: 3px;
+        }
+      }
+    }
+
+    // 인용구
+    blockquote {
+      border-left: 4px solid #007664;
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+      color: #6b7280;
+      font-style: italic;
+      background: #f9fafb;
+      padding: 1rem;
+      border-radius: 4px;
+    }
+
+    // 구분선
+    hr {
+      border: none;
+      border-top: 2px solid #e5e7eb;
+      margin: 2rem 0;
+    }
+
+    // 하이라이트
+    mark {
+      background-color: #fff59d;
+      padding: 0.1em 0.2em;
+      border-radius: 2px;
+    }
+
+    // 표
+    table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      width: 100%;
+      margin: 1.5rem 0;
+      overflow: hidden;
+
+      td,
+      th {
+        min-width: 1em;
+        border: 2px solid #d1d5db;
+        padding: 8px 12px;
+        vertical-align: top;
+        box-sizing: border-box;
+        position: relative;
+
+        > * {
+          margin-bottom: 0;
+        }
+      }
+
+      th {
+        font-weight: 700;
+        text-align: left;
+        background-color: #f3f4f6;
+      }
+
+      .selectedCell:after {
+        z-index: 2;
+        position: absolute;
+        content: '';
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: rgba(59, 130, 246, 0.1);
+        pointer-events: none;
+      }
+
+      .column-resize-handle {
+        position: absolute;
+        right: -2px;
+        top: 0;
+        bottom: -2px;
+        width: 4px;
+        background-color: #3b82f6;
+        pointer-events: none;
+      }
+    }
+
+    // 위첨자/아래첨자
+    sup {
+      vertical-align: super;
+      font-size: 0.75em;
+    }
+
+    sub {
+      vertical-align: sub;
+      font-size: 0.75em;
+    }
+
+    // 링크
+    a {
+      color: #3b82f6;
+      text-decoration: underline;
+      cursor: pointer;
+
+      &:hover {
+        color: #2563eb;
+      }
+    }
+
+    // 정렬
+    &[style*='text-align: center'],
+    [style*='text-align: center'] {
+      text-align: center;
+    }
+
+    &[style*='text-align: right'],
+    [style*='text-align: right'] {
+      text-align: right;
+    }
+
+    &[style*='text-align: left'],
+    [style*='text-align: left'] {
+      text-align: left;
+    }
+
+    // 첫 번째 요소 상단 마진 제거
+    > *:first-child {
+      margin-top: 0;
+    }
+
+    // 마지막 요소 하단 마진 제거
+    > *:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

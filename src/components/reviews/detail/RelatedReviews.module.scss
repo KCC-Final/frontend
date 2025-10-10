@@ -82,11 +82,11 @@
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 4px;
-  
+
   /* 스크롤바 숨기기 */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
-  
+
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
