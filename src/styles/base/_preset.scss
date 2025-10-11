@@ -1,15 +1,21 @@
 @use '@/styles/abstract/' as *;
 
-* {
-  color: $black-1;
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
 }
 
-html {
-  font-size: 62.5%;
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
 body {
   @include font-pretendard();
+  color: $font-black-1;
+  line-height: 140%;
+  letter-spacing: -0.025em;
 }
 
 body,
