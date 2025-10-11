@@ -224,7 +224,7 @@ function ReviewCreatePage() {
     try {
       await fetchGroo.review.createReview(requestData);
       alert('임시저장되었습니다.');
-      router.push('/reviews');
+      router.push('/reviews/feed');
     } catch (error) {
       alert('임시저장에 실패했습니다.');
       console.error('임시저장 에러:', error);

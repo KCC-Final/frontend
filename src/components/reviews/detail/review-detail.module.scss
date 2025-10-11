@@ -1,15 +1,102 @@
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
-  background: #f9fafb;
+  padding: 0;
   min-height: 100vh;
+  position: relative;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  background: white;
+  min-height: 100vh;
+  position: relative;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+.backButton {
+  position: absolute;
+  top: 120px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+
+  svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.5;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+
+  @media (max-width: 1024px) {
+    top: 110px;
+    right: 30px;
+  }
+
+  @media (max-width: 768px) {
+    top: 100px;
+    right: 20px;
+    padding: 6px 10px;
+    font-size: 13px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    top: 90px;
+    right: 16px;
+    padding: 5px 8px;
+    font-size: 12px;
+    
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
 }
 
 .contentWrapper {
   display: flex;
   flex-direction: column;
   gap: 0;
+  padding: 60px 40px 40px;
+  max-width: 1000px;
+  margin: 0 auto;
 
   /* 첫 번째 자식 요소 (BookInfo) */
   > :first-child {
@@ -26,5 +113,35 @@
   > :not(:first-child):not(:last-child) {
     border-radius: 0 !important;
     box-shadow: none !important;
+  }
+
+  @media (max-width: 1024px) {
+    max-width: 900px;
+    padding: 60px 30px 40px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 50px 20px 30px;
+    
+    > :first-child {
+      border-radius: 8px 8px 0 0 !important;
+    }
+
+    > :last-child {
+      border-radius: 0 0 8px 8px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 40px 16px 20px;
+    
+    > :first-child {
+      border-radius: 6px 6px 0 0 !important;
+    }
+
+    > :last-child {
+      border-radius: 0 0 6px 6px !important;
+    }
   }
 }

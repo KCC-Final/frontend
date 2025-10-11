@@ -43,6 +43,10 @@ export default function ReviewDetail({ reviewData }: Props) {
     fetchBookInfo();
   }, [reviewData.isbn]);
 
+  const handleBack = () => {
+    router.push('/reviews/feed');
+  };
+
   const handleLike = async () => {
     const previousLiked = isLiked;
     const previousCount = likeCount;
@@ -118,6 +122,21 @@ export default function ReviewDetail({ reviewData }: Props) {
 
   return (
     <div className={styles.container}>
+      <button className={styles.backButton} onClick={handleBack} aria-label="피드로 돌아가기">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>뒤로가기</span>
+      </button>
+
       <div className={styles.contentWrapper}>
         <BookInfo bookInfo={bookInfo} loading={loadingBook} />
 
