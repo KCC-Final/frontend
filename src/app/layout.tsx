@@ -1,4 +1,4 @@
-import { Noto_Sans_KR, Noto_Serif_KR } from 'next/font/google';
+import { Noto_Serif_KR } from 'next/font/google';
 import localFont from 'next/font/local';
 
 import type { Metadata } from 'next';
@@ -6,10 +6,27 @@ import type { Metadata } from 'next';
 import '@/styles/tailwind.css';
 import '@/styles/globals.scss';
 
-const notoSansKr = Noto_Sans_KR({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
-  variable: '--font-noto-sans-kr'
+const pretendard = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Pretendard-Regular.woff2',
+      weight: '400'
+    },
+    {
+      path: '../../public/fonts/Pretendard-Medium.woff2',
+      weight: '500'
+    },
+    {
+      path: '../../public/fonts/Pretendard-SemiBold.woff2',
+      weight: '600'
+    },
+    {
+      path: '../../public/fonts/Pretendard-Bold.woff2',
+      weight: '700'
+    }
+  ],
+  variable: '--font-pretendard',
+  display: 'swap'
 });
 
 const notoSerifKr = Noto_Serif_KR({
@@ -21,7 +38,7 @@ const notoSerifKr = Noto_Serif_KR({
 const seoulNotice = localFont({
   src: [
     {
-      path: './SeoulAlrimTTF-Heavy.woff2',
+      path: '../../public/fonts/SeoulAlrimTTF-Heavy.woff2',
       weight: '900'
     }
   ],
@@ -39,8 +56,8 @@ interface RootLayoutProps {
 
 function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
-      <body className={notoSansKr.className} suppressHydrationWarning>
+    <html lang="ko">
+      <body className={`${pretendard.variable} ${notoSerifKr.variable} ${seoulNotice.variable}`}>
         {children}
       </body>
     </html>
