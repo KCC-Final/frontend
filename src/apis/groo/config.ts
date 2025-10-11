@@ -1,5 +1,6 @@
 import axios, { isAxiosError } from 'axios';
 
+import { fetchGroo } from '@/apis/groo';
 import { devLogger } from '@/utils/dev-logger';
 import { ApiError } from '@/utils/error/api';
 
@@ -39,7 +40,9 @@ axiosGroo.interceptors.response.use(
     return response;
   },
   // axios 응답오류시 공통작업
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
     // axios 에러인지 확인
     if (isAxiosError(error)) {
       // 응답을 받은 경우 (응답 상태코드가 2xx가 아닌 경우)
@@ -50,8 +53,39 @@ axiosGroo.interceptors.response.use(
         const data = error.response.data?.data;
 
         // 401 에러를 받은 경우
-        if (error.response && error.response.status === 401) {
-          // TODO: 401 에러 처리 코드 (로그인 페이지 redirect처리 / accessToken 재발행)
+        if (error.response.status === 401) {
+          devLogger(
+            `[Groo API]|[Response Error]: 401 | ${method?.toUpperCase()} | ${url} | ${message}`,
+            true
+          );
+
+          // 토큰 재발행 요청에서 실패한 경우
+          if (url === '/token-refresh') {
+            // 로그인 페이지로 리디렉션
+            window.location.href = '/login';
+            return Promise.reject(error);
+          }
+
+          // 토큰 재발행이 아닌 요청에서 401을 받은 경우
+          try {
+            // 토큰 재발급 API 호출
+            await fetchGroo.auth.reissueToken();
+
+            // 재발급 성공 시, 원래 실패했던 요청을 다시 실행
+            devLogger('[Groo API] Token Refreshed: 원래 요청을 재시도합니다.');
+            return axiosGroo(originalRequest);
+          } catch (refreshError) {
+            // refreshToken마저 만료되어 재발급에 실패한 경우
+            devLogger(
+              `[Groo API]|[Response Error]: ${status} | ${method?.toUpperCase()} | ${url} | ${message}`,
+              true
+            );
+            devLogger('[Groo API] Refresh Failed: 로그인 페이지로 이동합니다.', true);
+
+            // 로그인 페이지로 리디렉션
+            window.location.href = '/login';
+            return Promise.reject(refreshError);
+          }
         }
 
         devLogger(
