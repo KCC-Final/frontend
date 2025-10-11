@@ -1,6 +1,3 @@
-/**
- * @author uyh
- */
 import axiosAladin from '@/apis/aladin/config';
 
 export const fetchAladin = {

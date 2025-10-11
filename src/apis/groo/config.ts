@@ -1,6 +1,5 @@
 import axios, { isAxiosError } from 'axios';
 
-import { fetchGroo } from '@/apis/groo';
 import { devLogger } from '@/utils/dev-logger';
 import { ApiError } from '@/utils/error/api';
 
@@ -14,15 +13,11 @@ const axiosGroo = axios.create({
 
 // axios 요청 공통 설정
 axiosGroo.interceptors.request.use(
-  // axios 요청시 공통 작업
   (config) => {
-    // 요청 발생시 로그 출력
     const { method, url } = config;
     devLogger(`[Groo API]|[Request Info]: ${method?.toUpperCase()} | ${url}`);
-
     return config;
   },
-  // axios 요청오류시 공통 작업
   (error) => {
     return Promise.reject(error);
   }
@@ -30,22 +25,16 @@ axiosGroo.interceptors.request.use(
 
 // axios 응답 공통 설정
 axiosGroo.interceptors.response.use(
-  // axios 응답시 공통작업
   (response) => {
-    // 응답 발생시 로그 출력
     const { status } = response;
     const { method, url } = response.config;
     devLogger(`[Groo API]|[Response Info]: ${status} | ${method?.toUpperCase()} | ${url}`);
-
     return response;
   },
-  // axios 응답오류시 공통작업
   async (error) => {
     const originalRequest = error.config;
 
-    // axios 에러인지 확인
     if (isAxiosError(error)) {
-      // 응답을 받은 경우 (응답 상태코드가 2xx가 아닌 경우)
       if (error.response) {
         const status = error.response.status;
         const { method, url } = error.response.config;
@@ -61,28 +50,23 @@ axiosGroo.interceptors.response.use(
 
           // 토큰 재발행 요청에서 실패한 경우
           if (url === '/token-refresh') {
-            // 로그인 페이지로 리디렉션
             window.location.href = '/login';
             return Promise.reject(error);
           }
 
           // 토큰 재발행이 아닌 요청에서 401을 받은 경우
           try {
-            // 토큰 재발급 API 호출
-            await fetchGroo.auth.reissueToken();
+            // fetchGroo.auth.reissueToken() 대신 직접 호출
+            await axiosGroo.post('/token-refresh');
 
-            // 재발급 성공 시, 원래 실패했던 요청을 다시 실행
             devLogger('[Groo API] Token Refreshed: 원래 요청을 재시도합니다.');
             return axiosGroo(originalRequest);
           } catch (refreshError) {
-            // refreshToken마저 만료되어 재발급에 실패한 경우
             devLogger(
               `[Groo API]|[Response Error]: ${status} | ${method?.toUpperCase()} | ${url} | ${message}`,
               true
             );
             devLogger('[Groo API] Refresh Failed: 로그인 페이지로 이동합니다.', true);
-
-            // 로그인 페이지로 리디렉션
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }
@@ -93,7 +77,7 @@ axiosGroo.interceptors.response.use(
           true
         );
         throw new ApiError({
-          message: message,
+          message: message || '요청에 실패했습니다.',
           status: status,
           apiMessage: message,
           apiData: data,
@@ -101,7 +85,6 @@ axiosGroo.interceptors.response.use(
         });
       }
 
-      // 요청은 성공했으나, 응답이 없는 경우
       if (error.request) {
         devLogger('[Groo API]|[Response Error]: Failed to get a response', true);
         throw new ApiError({

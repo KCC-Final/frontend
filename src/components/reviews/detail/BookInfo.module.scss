@@ -1,16 +1,17 @@
+// src/components/reviews/detail/BookInfo.module.scss
+
 .container {
   background: #ffffff;
-  border-radius: 12px 12px 0 0; // 아래쪽 라운드 제거
+  border-radius: 12px 12px 0 0;
   overflow: visible;
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid #e5e7eb; // 구분선 추가
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .loading,
 .error {
   text-align: center;
   padding: 60px 20px;
-  color: #6b7280;
   font-size: 14px;
 }
 
@@ -28,6 +29,7 @@
 .coverSection {
   flex-shrink: 0;
   width: 180px;
+  background: transparent; /* 배경 투명 */
 
   @media (max-width: 768px) {
     width: 150px;
@@ -40,6 +42,8 @@
   height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: transparent; /* 이미지 배경 투명 */
+  display: block; /* 하단 여백 제거 */
 }
 
 .infoSection {
