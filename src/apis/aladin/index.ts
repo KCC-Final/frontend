@@ -1,3 +1,6 @@
+/**
+ * @author uyh
+ */
 import axiosAladin from '@/apis/aladin/config';
 
 export const fetchAladin = {
@@ -13,7 +16,8 @@ export const fetchAladin = {
         QueryType: 'Title',
         MaxResults,
         start: 1,
-        SearchTarget: 'Book'
+        SearchTarget: 'Book',
+        Cover: 'Big'
       }
     });
     return response.data;
@@ -28,7 +32,8 @@ export const fetchAladin = {
     const response = await axiosAladin.get('/ItemLookUp.aspx', {
       params: {
         itemIdType: 'ISBN13',
-        ItemId: ISBN
+        ItemId: ISBN,
+        Cover: 'Big'
       }
     });
     return response.data;
@@ -45,7 +50,8 @@ export const fetchAladin = {
         QueryType: 'Bestseller',
         MaxResults,
         start: 1,
-        SearchTarget: 'Book'
+        SearchTarget: 'Book',
+        Cover: 'Big'
       }
     });
     return response.data;
