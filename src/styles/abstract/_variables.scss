@@ -2,6 +2,7 @@
 $header-width: 1400px;
 $header-height: 64px;
 $main-width: 1260px;
+$input-container-gap: 8px;
 
 // theme color
 $groo-green: #007664;
@@ -9,7 +10,25 @@ $groo-beige: #f2ece3;
 $groo-white: #eeeeee;
 
 // font color
-$font-black-1: #111111;
+$font-black-1: #111111; // 기본 폰트 색상
+$font-black-7: #777777; // input태그 placeholder 색상
+$font-red-1: #ee0000;
+$font-blue-1: #0000ee;
+
+// font size
+$font-size-15: 1.5rem;
+$font-size-12: 1.2rem;
+
+// background color
+$input-bg: #fafafa;
+
+// input border style
+$input-outline: none;
+$input-border: 1px solid #dddddd;
+$input-focus-border: 2px solid #555555;
+$input-error-border: 2px solid #ee0000;
+$input-border-radius: 8px;
+$input-transition: border-color 0.15s ease-in-out;
 
 // black and gray
 $black-1: #111111;
@@ -29,11 +48,3 @@ $black-e: #eeeeee;
 
 $red-1: #ee0000;
 $blue-1: #0000ee;
-
-// input tag
-$input-bg: #fafafa;
-$input-border: 1px solid #e5e5e5;
-$input-border-radius: 8px;
-$input-outline: none;
-$input-focus-border: 1px solid #666666;
-$input-label-gap: 8px;
