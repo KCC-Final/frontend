@@ -2,12 +2,14 @@
 
 import { useShallow } from 'zustand/shallow';
 
+import { fetchGroo } from '@/apis';
 import BasicButton from '@/components/layout/button/basic';
 import BasicInputContainer from '@/components/layout/input/basic/container';
 import BasicInputField from '@/components/layout/input/basic/field';
 import BasicInputMessage from '@/components/layout/input/basic/message';
 import useBoundStore from '@/stores';
 import { SignupInputFieldKey } from '@/types';
+import { ApiError } from '@/utils/error/api';
 import { validate } from '@/utils/validation/signup';
 
 type ChangeInputEvent = React.ChangeEvent<HTMLInputElement>;
@@ -37,16 +39,27 @@ function SignupStep1() {
   /**
    * input에 입력된 userId값을 이용하여 아이디 중복확인 요청 버튼
    */
-  const verifyUserId = () => {
-    // TODO: 아이디 중복확인 처리 필요
-    if (Math.random() < 0.5) {
+  const verifyUserId = async () => {
+    try {
+      if (!validate.userId(userId).result) {
+        alert(validate.userId(userId).message);
+        return;
+      }
+
+      const result = await fetchGroo.user.verifyUserId({ userId: userId });
       setIdVerification({
         isLoading: false,
         isSuccess: true,
         userId: userId,
         message: '사용 가능한 아이디입니다.'
       });
-    } else {
+      alert(`${result.data}는 사용 가능한 아이디입니다.`);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        alert(error.message);
+      } else {
+        alert('아이디 중복확인에 실패하였습니다.');
+      }
       setIdVerification({
         isLoading: false,
         isSuccess: false,
