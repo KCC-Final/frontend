@@ -49,6 +49,7 @@ function Login() {
 
   return (
     <section className={styles.login}>
+      <h1 hidden>로그인</h1>
       <h2>
         <p>일상을 심다</p>
         <p>독서 경험의 모든 것</p>

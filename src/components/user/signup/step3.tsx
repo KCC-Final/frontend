@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
@@ -138,7 +139,7 @@ function SignupStep3() {
                 onChange={changeInputHandler('gender')}
                 hidden
               />
-              <span className={`${gender === option.value ? styles.checked : ''}`}>{option.label}</span>
+              <div className={clsx({ [styles.checked]: gender === option.value })}>{option.label}</div>
             </label>
           ))}
         </div>

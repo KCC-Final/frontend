@@ -1,63 +1,59 @@
 @use '@/styles/abstract/' as *;
 @use '@/styles/layout/' as *;
 
-@include login-layout();
-
-.find_id,
-.success,
-.find_pw {
-  justify-content: flex-start;
-  padding-top: 20%;
-}
+@include login-page-layout();
 
 .find_id {
   h1 {
-    @include find-login-data-h1;
+    @include login-h1-tag();
   }
 
   form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    @include login-form-tag();
   }
 }
 
 .success {
-  gap: 2.4rem;
-
   h1 {
-    @include find-login-data-h1;
+    @include login-h1-tag();
   }
 
-  .id {
-    display: flex;
-    gap: 1.2rem;
-    font-weight: 500;
-  }
+  .response {
+    @include login-form-tag();
 
-  .info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 14px;
-    border: 1px solid $black-b;
-    border-radius: 6px;
-
-    div {
-      font-weight: 500;
+    .id {
       display: flex;
-      justify-content: space-between;
+      gap: 12px;
+      font-weight: 500;
     }
-  }
 
-  .buttons {
-    display: flex;
-    gap: 16px;
+    .info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 14px;
+      border: $input-border;
+      border-radius: $input-border-radius;
+
+      div {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+
+    .buttons {
+      display: flex;
+      gap: 16px;
+    }
   }
 }
 
 .find_pw {
   h1 {
-    @include find-login-data-h1;
+    @include login-h1-tag();
+  }
+
+  form {
+    @include login-form-tag();
   }
 }

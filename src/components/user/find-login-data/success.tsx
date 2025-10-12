@@ -35,35 +35,37 @@ function FindIdSuccess() {
   return (
     <section className={styles.success}>
       <h1>가입 정보를 확인해주세요</h1>
-      <div className={styles.id}>
-        <span>[프로필]</span>
-        <span>ID: {findId.userId}</span>
-      </div>
-      <div className={styles.info}>
-        <div className={styles.created}>
-          <span>가입일</span>
-          <span>2025-09-28</span>
+      <div className={styles.response}>
+        <div className={styles.id}>
+          <span>[프로필]</span>
+          <span>ID: {findId.userId}</span>
         </div>
-        <div className={styles.last_login}>
-          <span>최종로그인</span>
-          <span>2025-09-29</span>
+        <div className={styles.info}>
+          <div className={styles.created}>
+            <span>가입일</span>
+            <span>2025-09-28</span>
+          </div>
+          <div className={styles.last_login}>
+            <span>최종로그인</span>
+            <span>2025-09-29</span>
+          </div>
         </div>
-      </div>
-      <div className={styles.buttons}>
-        <BasicButton
-          name="비밀번호 재설정"
-          handler={routeFindPwPage}
-          width="grow"
-          height="36"
-          bgColor="gray"
-        />
-        <BasicButton
-          name="로그인하러 가기"
-          handler={routeLoginPage}
-          width="grow"
-          height="36"
-          bgColor="gray"
-        />
+        <div className={styles.buttons}>
+          <BasicButton
+            name="비밀번호 재설정"
+            handler={routeFindPwPage}
+            width="grow"
+            height="36"
+            bgColor="gray"
+          />
+          <BasicButton
+            name="로그인하러 가기"
+            handler={routeLoginPage}
+            width="grow"
+            height="36"
+            bgColor="gray"
+          />
+        </div>
       </div>
     </section>
   );

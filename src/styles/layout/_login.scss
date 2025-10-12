@@ -1,4 +1,6 @@
-@mixin login-layout() {
+@use '@/styles/abstract/' as *;
+
+@mixin login-page-layout() {
   .container {
     display: flex;
 
@@ -13,7 +15,7 @@
     }
 
     .main {
-      flex-basis: 580px;
+      flex-basis: 550px;
       min-height: 100vh;
 
       section {
@@ -21,6 +23,8 @@
         flex-direction: column;
         height: 100%;
         align-items: center;
+        justify-content: flex-start;
+        padding-top: 25%;
 
         > * {
           width: 400px;
@@ -28,4 +32,16 @@
       }
     }
   }
+}
+
+@mixin login-h1-tag() {
+  font-size: $font-size-24;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+@mixin login-form-tag() {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
