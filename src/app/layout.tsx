@@ -31,7 +31,7 @@ const pretendard = localFont({
 
 const notoSerifKr = Noto_Serif_KR({
   subsets: ['latin'],
-  weight: ['400', '700', '900'],
+  weight: ['500', '700'],
   variable: '--font-noto-serif-kr'
 });
 
