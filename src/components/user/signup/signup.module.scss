@@ -20,58 +20,18 @@
     gap: 18px;
   }
 
-  .id,
-  .pw,
-  .nickname,
-  .email,
-  .name,
   .gender,
   .birth,
   .agreements {
-    display: flex;
-    flex-direction: column;
-    gap: $input-label-gap;
+    @include input-style-container();
   }
 
   .id,
   .email {
     label {
-      @include common-input-label-md();
-      display: flex;
-      align-items: center;
-      padding-right: 10px;
-
-      input {
-        flex: 1;
-        background-color: inherit;
-        border: none;
-        outline: none;
-      }
-
       button {
         @include common-green-button-sm();
       }
-    }
-  }
-
-  .pw,
-  .nickname,
-  .name {
-    input {
-      @include common-input-md();
-    }
-  }
-
-  .message {
-    font-size: 1.2rem;
-    margin-left: 10px;
-
-    &.success {
-      color: $blue-1;
-    }
-
-    &.fail {
-      color: $red-1;
     }
   }
 

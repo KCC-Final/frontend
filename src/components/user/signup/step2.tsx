@@ -3,7 +3,8 @@
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import styles from '@/components/user/signup/signup.module.scss';
+import BasicInputContainer from '@/components/layout/input/basic/container';
+import BasicInputField from '@/components/layout/input/basic/field';
 import useBoundStore from '@/stores';
 import { SignupInputFieldKey } from '@/types';
 import { devLogger } from '@/utils/dev-logger';
@@ -90,33 +91,30 @@ function SignupStep2() {
 
   return (
     <>
-      <div className={styles.email}>
-        <div>이메일</div>
-        <label>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={changeInputHandler('email')}
-            placeholder="이메일을 입력해주세요."
-          />
-          <button type="button" onClick={sendVerificationCode}>
-            인증요청
-          </button>
-        </label>
-        <label>
-          <input
-            type="text"
-            name="emailVerificationCode"
-            value={emailVerificationCode}
-            onChange={changeInputHandler('emailVerificationCode')}
-            placeholder="인증코드를 입력해주세요."
-          />
-          <button type="button" onClick={verifyEmailCode}>
-            확인
-          </button>
-        </label>
-      </div>
+      <BasicInputContainer labelName="이메일">
+        <BasicInputField
+          inputType="email"
+          inputPlaceholder="이메일을 입력해주세요."
+          inputValue={email}
+          inputChange={changeInputHandler('email')}
+          additionalButton={
+            <button type="button" onClick={sendVerificationCode}>
+              인증요청
+            </button>
+          }
+        />
+        <BasicInputField
+          inputType="text"
+          inputPlaceholder="인증코드를 입력해주세요."
+          inputValue={emailVerificationCode}
+          inputChange={changeInputHandler('emailVerificationCode')}
+          additionalButton={
+            <button type="button" onClick={verifyEmailCode}>
+              확인
+            </button>
+          }
+        />
+      </BasicInputContainer>
     </>
   );
 }

@@ -31,17 +31,6 @@
     gap: 24px;
   }
 
-  .id,
-  .pw {
-    display: flex;
-    flex-direction: column;
-    gap: $input-label-gap;
-
-    input {
-      @include common-input-md();
-    }
-  }
-
   .submit {
     margin: 16px 0;
     button {

@@ -21,33 +21,8 @@
     gap: 18px;
   }
 
-  .name,
-  .email {
-    display: flex;
-    flex-direction: column;
-    gap: $input-label-gap;
-  }
-
-  .name {
-    input {
-      @include common-input-md();
-    }
-  }
-
   .email {
     label {
-      @include common-input-label-md();
-      display: flex;
-      align-items: center;
-      padding-right: 10px;
-
-      input {
-        flex: 1;
-        background-color: inherit;
-        border: none;
-        outline: none;
-      }
-
       button {
         @include common-green-button-sm();
       }
@@ -105,29 +80,6 @@
 .find_pw {
   h1 {
     @include find-login-data-h1;
-  }
-
-  .pw {
-    display: flex;
-    flex-direction: column;
-    gap: $input-label-gap;
-
-    input {
-      @include common-input-md();
-    }
-
-    .message {
-      font-size: 1.2rem;
-      margin-left: 10px;
-
-      &.success {
-        color: $blue-1;
-      }
-
-      &.fail {
-        color: $red-1;
-      }
-    }
   }
 
   .submit {

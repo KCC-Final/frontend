@@ -2,6 +2,9 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
+import BasicInputContainer from '@/components/layout/input/basic/container';
+import BasicInputField from '@/components/layout/input/basic/field';
+import BasicInputMessage from '@/components/layout/input/basic/message';
 import styles from '@/components/user/find-login-data/find-login-data.module.scss';
 import { useInputText } from '@/hooks/useInput';
 import useBoundStore from '@/stores';
@@ -43,31 +46,29 @@ function FindPassword() {
     <section className={styles.find_pw}>
       <h1>비밀번호 재설정</h1>
       <form>
-        <div className={styles.pw}>
-          <div>비밀번호</div>
-          <input
-            type="password"
-            name="password1"
-            value={password1}
-            onChange={changePassword1}
-            placeholder="비밀번호를 입력해주세요."
+        <BasicInputContainer labelName="비밀번호">
+          <BasicInputField
+            inputType="password"
+            inputPlaceholder="비밀번호를 입력해주세요."
+            inputValue={password1}
+            inputChange={changePassword1}
+            isError={!!password1 && !validate.password(password1).result}
           />
-          {password1 && !validate.password(password1).result && (
-            <div className={`${styles.message} ${styles.fail}`}>{validate.password(password1).message}</div>
-          )}
-          <input
-            type="password"
-            name="password2"
-            value={password2}
-            onChange={changePassword2}
-            placeholder="비밀번호를 다시 한번 입력해주세요."
+          {password1 && <BasicInputMessage message={validate.password(password1).message} status={false} />}
+          <BasicInputField
+            inputType="password"
+            inputPlaceholder="비밀번호를 다시 한번 입력해주세요."
+            inputValue={password2}
+            inputChange={changePassword2}
+            isError={!!password2 && !validate.passwordConfirm(password1, password2).result}
           />
-          {password2 && !validate.passwordConfirm(password1, password2).result && (
-            <div className={`${styles.message} ${styles.fail}`}>
-              {validate.passwordConfirm(password1, password2).message}
-            </div>
+          {password2 && (
+            <BasicInputMessage
+              message={validate.passwordConfirm(password1, password2).message}
+              status={false}
+            />
           )}
-        </div>
+        </BasicInputContainer>
         <div className={styles.submit}>
           <button type="button" onClick={changePassword}>
             비밀번호 재설정
