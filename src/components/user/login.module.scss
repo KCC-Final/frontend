@@ -4,6 +4,8 @@
 @include login-page-layout();
 
 .login {
+  margin-top: 48px;
+
   h2 {
     display: flex;
     flex-direction: column;
