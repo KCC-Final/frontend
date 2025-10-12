@@ -6,6 +6,7 @@ import CommentItem from './CommentItem';
 import styles from './CommentSection.module.scss';
 
 import { CommentData } from '@/types/reviews';
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler'; // 👈 이 줄 추가!
 
 type Props = {
   comments: CommentData[];
@@ -19,6 +20,7 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>('');
 
+  // handleSubmit 함수 수정
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -32,9 +34,10 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
       setError('');
       await onSubmit(newComment.trim());
       setNewComment('');
-    } catch (error) {
-      setError('댓글 작성에 실패했습니다.');
-      alert('댓글 작성에 실패했습니다. 다시 시도해주세요.');
+    } catch (error: any) {
+      const errorMsg = getReviewErrorMessage(error);
+      setError(errorMsg);
+      alert(errorMsg);
     } finally {
       setIsSubmitting(false);
     }

@@ -13,7 +13,7 @@ import { fetchAladin } from '@/apis';
 import { comment as commentApi } from '@/apis/groo/comment';
 import { review as reviewApi } from '@/apis/groo/review';
 import { ReviewDetailResDTO, CommentData, AladinBook } from '@/types/reviews';
-
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler'; // 👈 이 줄 추가!
 type Props = {
   reviewData: ReviewDetailResDTO['data'];
 };
@@ -47,6 +47,7 @@ export default function ReviewDetail({ reviewData }: Props) {
     router.push('/reviews/feed');
   };
 
+  // handleLike 함수 수정
   const handleLike = async () => {
     const previousLiked = isLiked;
     const previousCount = likeCount;
@@ -61,10 +62,10 @@ export default function ReviewDetail({ reviewData }: Props) {
         setLikeCount((prev) => prev + 1);
         await reviewApi.likeReview(reviewData.reviewId);
       }
-    } catch {
+    } catch (error: any) {
       setIsLiked(previousLiked);
       setLikeCount(previousCount);
-      alert('좋아요 처리 중 오류가 발생했습니다.');
+      alert(getReviewErrorMessage(error));
     }
   };
 
@@ -72,6 +73,7 @@ export default function ReviewDetail({ reviewData }: Props) {
     router.push(`/reviews/${reviewData.reviewId}/edit`);
   };
 
+  // handleDelete 함수 수정
   const handleDelete = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) {
       return;
@@ -81,31 +83,36 @@ export default function ReviewDetail({ reviewData }: Props) {
       await reviewApi.deleteReview(reviewData.reviewId);
       alert('독후감이 삭제되었습니다.');
       router.push('/reviews/feed');
-    } catch {
-      alert('삭제 중 오류가 발생했습니다.');
+    } catch (error: any) {
+      alert(getReviewErrorMessage(error));
     }
   };
 
+  // handleCommentSubmit 함수 수정
   const handleCommentSubmit = async (content: string, parentId?: number) => {
     try {
       await commentApi.createComment(reviewData.reviewId, { content, parentId });
       const updatedComments = await commentApi.getCommentsByReview(reviewData.reviewId);
       setComments(updatedComments);
-    } catch {
-      throw new Error('댓글 작성에 실패했습니다.');
+    } catch (error: any) {
+      alert(getReviewErrorMessage(error));
+      throw error;
     }
   };
 
+  // handleCommentUpdate 함수 수정
   const handleCommentUpdate = async (commentId: number, content: string) => {
     try {
       await commentApi.updateComment(commentId, { content });
       const updatedComments = await commentApi.getCommentsByReview(reviewData.reviewId);
       setComments(updatedComments);
-    } catch {
-      throw new Error('댓글 수정에 실패했습니다.');
+    } catch (error: any) {
+      alert(getReviewErrorMessage(error));
+      throw error;
     }
   };
 
+  // handleCommentDelete 함수 수정
   const handleCommentDelete = async (commentId: number) => {
     if (!confirm('댓글을 삭제하시겠습니까?')) {
       return;
@@ -115,8 +122,9 @@ export default function ReviewDetail({ reviewData }: Props) {
       await commentApi.deleteComment(commentId);
       const updatedComments = await commentApi.getCommentsByReview(reviewData.reviewId);
       setComments(updatedComments);
-    } catch {
-      throw new Error('댓글 삭제에 실패했습니다.');
+    } catch (error: any) {
+      alert(getReviewErrorMessage(error));
+      throw error;
     }
   };
 

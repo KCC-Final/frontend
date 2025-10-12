@@ -29,6 +29,7 @@ import editorStyles from '@/components/reviews/write/editor-content.module.scss'
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import styles from '@/components/reviews/write/review-create.module.scss';
 import { ReviewCreateReqBody, ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 const MAX_CONTENT_LENGTH = 10000;
 
@@ -137,8 +138,8 @@ function ReviewCreatePage() {
           await loadBookInfo(draft.isbn);
         }
       }
-    } catch (error) {
-      alert('임시저장 글을 불러오는데 실패했습니다.');
+    } catch (error: any) {
+      alert(getReviewErrorMessage(error));
       console.error(error);
     }
   };
@@ -172,6 +173,7 @@ function ReviewCreatePage() {
       }
     } catch (error) {
       console.error('도서 정보 조회 실패:', error);
+      // 도서 정보는 필수가 아니므로 에러 알림 없이 진행
     }
   };
 
@@ -225,8 +227,8 @@ function ReviewCreatePage() {
       await fetchGroo.review.createReview(requestData);
       alert('임시저장되었습니다.');
       router.push('/reviews/feed');
-    } catch (error) {
-      alert('임시저장에 실패했습니다.');
+    } catch (error: any) {
+      alert(getReviewErrorMessage(error));
       console.error('임시저장 에러:', error);
     }
   };
@@ -287,10 +289,10 @@ function ReviewCreatePage() {
       }
 
       router.push('/reviews/feed');
-    } catch (error) {
+    } catch (error: any) {
       console.error('=== 독후감 작성 에러 ===');
       console.error('에러 상세:', error);
-      alert('독후감 작성에 실패했습니다.');
+      alert(getReviewErrorMessage(error));
     }
   };
 
