@@ -1,0 +1,44 @@
+@use '@/styles/abstract/' as *;
+
+.basic {
+  width: auto;
+  height: auto;
+  font-size: $font-size-13;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: $font-white;
+  background-color: $groo-green;
+  border: none;
+  border-radius: $small-button-radius;
+  outline: none;
+  padding: 5px 10px;
+
+  &.grow {
+    width: 100%;
+    flex-grow: 1;
+  }
+
+  &.lg {
+    height: 4.8rem;
+    font-size: $font-size-18;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    border-radius: $large-button-radius;
+    margin: 16px 0;
+  }
+
+  &.md {
+    height: 3.6rem;
+    font-size: $font-size-14;
+    font-weight: 500;
+  }
+
+  &.gray {
+    background-color: $black-d;
+    color: #111111;
+  }
+
+  &.disabled {
+    //
+  }
+}
