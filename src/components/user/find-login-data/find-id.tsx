@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/layout/button/basic';
 import BasicInputContainer from '@/components/layout/input/basic/container';
 import BasicInputField from '@/components/layout/input/basic/field';
 import styles from '@/components/user/find-login-data/find-login-data.module.scss';
@@ -127,29 +128,17 @@ function FindUserId() {
             inputPlaceholder="이메일을 입력해주세요."
             inputValue={email}
             inputChange={changeEmail}
-            additionalButton={
-              <button type="button" onClick={sendVerificationCode}>
-                인증요청
-              </button>
-            }
+            additionalButton={<BasicButton name="인증요청" handler={sendVerificationCode} />}
           />
           <BasicInputField
             inputType="text"
             inputPlaceholder="인증코드를 입력해주세요."
             inputValue={emailVerificationCode}
             inputChange={changeEmailVerificationCode}
-            additionalButton={
-              <button type="button" onClick={verifyEmailCode}>
-                확인
-              </button>
-            }
+            additionalButton={<BasicButton name="확인" handler={verifyEmailCode} />}
           />
         </BasicInputContainer>
-        <div className={styles.submit}>
-          <button type="button" onClick={findId}>
-            아이디 찾기
-          </button>
-        </div>
+        <BasicButton name="아이디 찾기" handler={findId} width="grow" height="48" />
       </form>
     </section>
   );

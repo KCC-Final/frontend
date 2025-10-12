@@ -20,22 +20,6 @@
     flex-direction: column;
     gap: 18px;
   }
-
-  .email {
-    label {
-      button {
-        @include common-green-button-sm();
-      }
-    }
-  }
-
-  .submit {
-    margin: 16px 0;
-
-    button {
-      @include login-green-button();
-    }
-  }
 }
 
 .success {
@@ -68,25 +52,12 @@
 
   .buttons {
     display: flex;
-    gap: 1.6rem;
-
-    button {
-      flex-grow: 1;
-      @include common-gray-button-md();
-    }
+    gap: 16px;
   }
 }
 
 .find_pw {
   h1 {
     @include find-login-data-h1;
-  }
-
-  .submit {
-    margin: 16px 0;
-
-    button {
-      @include login-green-button();
-    }
   }
 }

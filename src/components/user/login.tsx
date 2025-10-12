@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/layout/button/basic';
 import BasicInputContainer from '@/components/layout/input/basic/container';
 import BasicInputField from '@/components/layout/input/basic/field';
 import styles from '@/components/user/login.module.scss';
@@ -69,9 +70,7 @@ function Login() {
             inputChange={changePassword}
           />
         </BasicInputContainer>
-        <div className={styles.submit}>
-          <button type="submit">로그인</button>
-        </div>
+        <BasicButton buttonType="submit" name="로그인" width="grow" height="48" />
       </form>
       <div className={styles.sub_btn}>
         <Link href="/signup">회원가입</Link>

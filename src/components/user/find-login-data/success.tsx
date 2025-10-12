@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
+import BasicButton from '@/components/layout/button/basic';
 import styles from '@/components/user/find-login-data/find-login-data.module.scss';
 import useBoundStore from '@/stores';
 
@@ -49,8 +50,20 @@ function FindIdSuccess() {
         </div>
       </div>
       <div className={styles.buttons}>
-        <button onClick={routeFindPwPage}>비밀번호 재설정</button>
-        <button onClick={routeLoginPage}>로그인하러 가기</button>
+        <BasicButton
+          name="비밀번호 재설정"
+          handler={routeFindPwPage}
+          width="grow"
+          height="36"
+          bgColor="gray"
+        />
+        <BasicButton
+          name="로그인하러 가기"
+          handler={routeLoginPage}
+          width="grow"
+          height="36"
+          bgColor="gray"
+        />
       </div>
     </section>
   );

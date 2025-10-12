@@ -2,6 +2,7 @@
 
 import { useShallow } from 'zustand/shallow';
 
+import BasicButton from '@/components/layout/button/basic';
 import BasicInputContainer from '@/components/layout/input/basic/container';
 import BasicInputField from '@/components/layout/input/basic/field';
 import BasicInputMessage from '@/components/layout/input/basic/message';
@@ -63,11 +64,7 @@ function SignupStep1() {
           inputPlaceholder="아이디를 입력해주세요."
           inputValue={userId}
           inputChange={changeInputHandler('userId')}
-          additionalButton={
-            <button type="button" onClick={verifyUserId}>
-              확인
-            </button>
-          }
+          additionalButton={<BasicButton name="확인" handler={verifyUserId} />}
           isError={!!userId && idVerification.isSuccess === false}
         />
         <BasicInputMessage message={idVerification.message} status={idVerification.isSuccess} />

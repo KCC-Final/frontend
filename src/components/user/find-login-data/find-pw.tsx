@@ -2,6 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/layout/button/basic';
 import BasicInputContainer from '@/components/layout/input/basic/container';
 import BasicInputField from '@/components/layout/input/basic/field';
 import BasicInputMessage from '@/components/layout/input/basic/message';
@@ -69,11 +70,7 @@ function FindPassword() {
             />
           )}
         </BasicInputContainer>
-        <div className={styles.submit}>
-          <button type="button" onClick={changePassword}>
-            비밀번호 재설정
-          </button>
-        </div>
+        <BasicButton name="비밀번호 재설정" handler={changePassword} width="grow" height="48" />
       </form>
     </section>
   );

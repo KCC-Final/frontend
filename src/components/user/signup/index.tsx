@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import SignupButton from '@/components/user/signup/button';
+import BasicButton from '@/components/layout/button/basic';
 import styles from '@/components/user/signup/signup.module.scss';
 import SignupStep1 from '@/components/user/signup/step1';
 import SignupStep2 from '@/components/user/signup/step2';
@@ -81,19 +81,19 @@ function Signup() {
         {step === 1 && (
           <>
             <SignupStep1 />
-            <SignupButton handler={mainButtonHandler} name="다음단계로" />
+            <BasicButton name="다음 단계로" handler={mainButtonHandler} width="grow" height="48" />
           </>
         )}
         {step === 2 && (
           <>
             <SignupStep2 />
-            <SignupButton handler={mainButtonHandler} name="다음단계로" />
+            <BasicButton name="다음 단계로" handler={mainButtonHandler} width="grow" height="48" />
           </>
         )}
         {step === 3 && (
           <>
             <SignupStep3 />
-            <SignupButton handler={mainButtonHandler} name="가입하기" />
+            <BasicButton name="가입하기" handler={mainButtonHandler} width="grow" height="48" />
           </>
         )}
       </form>

@@ -26,15 +26,6 @@
     @include input-style-container();
   }
 
-  .id,
-  .email {
-    label {
-      button {
-        @include common-green-button-sm();
-      }
-    }
-  }
-
   .gender {
     align-items: flex-start;
 

@@ -3,6 +3,7 @@
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/layout/button/basic';
 import BasicInputContainer from '@/components/layout/input/basic/container';
 import BasicInputField from '@/components/layout/input/basic/field';
 import useBoundStore from '@/stores';
@@ -97,22 +98,14 @@ function SignupStep2() {
           inputPlaceholder="이메일을 입력해주세요."
           inputValue={email}
           inputChange={changeInputHandler('email')}
-          additionalButton={
-            <button type="button" onClick={sendVerificationCode}>
-              인증요청
-            </button>
-          }
+          additionalButton={<BasicButton name="인증요청" handler={sendVerificationCode} />}
         />
         <BasicInputField
           inputType="text"
           inputPlaceholder="인증코드를 입력해주세요."
           inputValue={emailVerificationCode}
           inputChange={changeInputHandler('emailVerificationCode')}
-          additionalButton={
-            <button type="button" onClick={verifyEmailCode}>
-              확인
-            </button>
-          }
+          additionalButton={<BasicButton name="확인" handler={verifyEmailCode} />}
         />
       </BasicInputContainer>
     </>
