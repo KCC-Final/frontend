@@ -5,6 +5,7 @@ import { useState } from 'react';
 import styles from './CommentItem.module.scss';
 
 import { CommentData } from '@/types/reviews';
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 type Props = {
   comment: CommentData;
@@ -46,6 +47,7 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
     }
   };
 
+  // handleUpdateSubmit 함수 수정
   const handleUpdateSubmit = async () => {
     if (!editContent.trim()) {
       alert('댓글 내용을 입력해주세요.');
@@ -56,12 +58,14 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
       setError('');
       await onUpdate(comment.commentId, editContent.trim());
       setIsEditing(false);
-    } catch (error) {
-      setError('댓글 수정에 실패했습니다.');
-      alert('댓글 수정에 실패했습니다. 다시 시도해주세요.');
+    } catch (error: any) {
+      const errorMsg = getReviewErrorMessage(error);
+      setError(errorMsg);
+      alert(errorMsg);
     }
   };
 
+  // handleReplySubmit 함수 수정
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) {
       alert('답글 내용을 입력해주세요.');
@@ -73,19 +77,22 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
       await onReply(replyContent.trim(), comment.commentId);
       setReplyContent('');
       setIsReplying(false);
-    } catch (error) {
-      setError('답글 작성에 실패했습니다.');
-      alert('답글 작성에 실패했습니다. 다시 시도해주세요.');
+    } catch (error: any) {
+      const errorMsg = getReviewErrorMessage(error);
+      setError(errorMsg);
+      alert(errorMsg);
     }
   };
 
+  // handleDelete 함수 수정
   const handleDelete = async () => {
     try {
       setError('');
       await onDelete(comment.commentId);
-    } catch (error) {
-      setError('댓글 삭제에 실패했습니다.');
-      alert('댓글 삭제에 실패했습니다. 다시 시도해주세요.');
+    } catch (error: any) {
+      const errorMsg = getReviewErrorMessage(error);
+      setError(errorMsg);
+      alert(errorMsg);
     }
   };
 
@@ -117,18 +124,18 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
             className={styles.textarea}
             rows={3}
           />
-          <div className={styles.actions}>
-            {/* depth가 MAX_DEPTH 미만일 때만 답글 버튼 표시 */}
-            {depth < MAX_DEPTH && (
-              <button onClick={() => setIsReplying(!isReplying)} className={styles.actionBtn}>
-                답글
-              </button>
-            )}
-            <button onClick={() => setIsEditing(true)} className={styles.actionBtn}>
-              수정
+          <div className={styles.editActions}>
+            <button onClick={handleUpdateSubmit} className={styles.saveBtn}>
+              저장
             </button>
-            <button onClick={handleDelete} className={styles.actionBtn}>
-              삭제
+            <button
+              onClick={() => {
+                setIsEditing(false);
+                setEditContent(comment.content);
+                setError('');
+              }}
+              className={styles.cancelBtn}>
+              취소
             </button>
           </div>
         </div>
@@ -137,15 +144,21 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
           <p className={styles.content}>{comment.content}</p>
 
           <div className={styles.actions}>
-            <button onClick={() => setIsReplying(!isReplying)} className={styles.actionBtn}>
-              답글
-            </button>
-            <button onClick={() => setIsEditing(true)} className={styles.actionBtn}>
-              수정
-            </button>
-            <button onClick={handleDelete} className={styles.actionBtn}>
-              삭제
-            </button>
+            {depth < MAX_DEPTH && (
+              <button onClick={() => setIsReplying(!isReplying)} className={styles.actionBtn}>
+                답글
+              </button>
+            )}
+            {comment.isOwner && (
+              <>
+                <button onClick={() => setIsEditing(true)} className={styles.actionBtn}>
+                  수정
+                </button>
+                <button onClick={handleDelete} className={styles.actionBtn}>
+                  삭제
+                </button>
+              </>
+            )}
           </div>
         </>
       )}

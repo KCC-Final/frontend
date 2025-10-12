@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { fetchGroo } from '@/apis';
 import styles from '@/components/reviews/write/draft-list-modal.module.scss';
 import { DraftData } from '@/types/reviews';
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 interface DraftListModalProps {
   onClose: () => void;
@@ -37,9 +38,9 @@ function DraftListModal({ onClose, onSelect }: DraftListModalProps) {
     try {
       const drafts = await fetchGroo.review.getDrafts();
       setDrafts(drafts || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('임시저장 목록 조회 실패:', error);
-      alert('임시저장 목록을 불러오는데 실패했습니다.');
+      alert(getReviewErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -56,9 +57,9 @@ function DraftListModal({ onClose, onSelect }: DraftListModalProps) {
       await fetchGroo.review.deleteDraft(draftId);
       alert('삭제되었습니다.');
       setDrafts(drafts.filter((draft) => draft.reviewId !== draftId));
-    } catch (error) {
+    } catch (error: any) {
       console.error('임시저장 글 삭제 실패:', error);
-      alert('삭제에 실패했습니다.');
+      alert(getReviewErrorMessage(error));
     }
   };
 

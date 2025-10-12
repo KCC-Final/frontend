@@ -27,6 +27,7 @@ import BookInfoCard from '@/components/reviews/write/book-info-card';
 import editorStyles from '@/components/reviews/write/editor-content.module.scss';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import { ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 const MAX_CONTENT_LENGTH = 10000;
 
@@ -124,6 +125,7 @@ function ReviewEditPage() {
       }
     } catch (error) {
       console.error('도서 정보 조회 실패:', error);
+      // 도서 정보는 필수가 아니므로 에러 알림 없이 진행
     }
   };
 
@@ -141,9 +143,9 @@ function ReviewEditPage() {
           await loadBookInfo(review.isbn);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('독후감 불러오기 실패:', error);
-      alert('독후감을 불러오는데 실패했습니다.');
+      alert(getReviewErrorMessage(error));
       router.back();
     } finally {
       setLoading(false);
@@ -173,9 +175,9 @@ function ReviewEditPage() {
       await fetchGroo.review.updateReview(reviewId, updateData);
       alert('독후감이 수정되었습니다.');
       router.push(`/reviews/${reviewId}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('독후감 수정 실패:', error);
-      alert('독후감 수정에 실패했습니다.');
+      alert(getReviewErrorMessage(error));
     }
   };
 

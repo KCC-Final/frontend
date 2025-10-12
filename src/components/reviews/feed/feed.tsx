@@ -9,6 +9,7 @@ import styles from './review-feed.module.scss';
 import { fetchAladin } from '@/apis/aladin';
 import { fetchGroo } from '@/apis/groo';
 import { ReviewData } from '@/types/reviews';
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 interface BookCoverProps {
   isbn: string;
@@ -92,13 +93,15 @@ export default function ReviewFeed() {
       if (filterType === 'popular') {
         try {
           response = await fetchGroo.review.getAllReviewsOrderByLikes();
-        } catch {
+        } catch (popularError: any) {
+          console.error('인기순 조회 실패, 전체 조회로 전환:', popularError);
           response = await fetchGroo.review.getAllReviews();
         }
       } else if (filterType === 'following') {
         try {
           response = await fetchGroo.review.getReviewsByFollowing();
-        } catch {
+        } catch (followingError: any) {
+          console.error('팔로잉 조회 실패, 전체 조회로 전환:', followingError);
           response = await fetchGroo.review.getAllReviews();
         }
       } else {
@@ -109,9 +112,11 @@ export default function ReviewFeed() {
       reviewsData = reviewsData.filter((review: ReviewData) => !review.secret);
 
       setReviews(reviewsData);
-    } catch {
-      setError('독후감 목록을 불러오는데 실패했습니다.');
+    } catch (error: any) {
+      const errorMessage = getReviewErrorMessage(error);
+      setError(errorMessage);
       setReviews([]);
+      console.error('독후감 목록 조회 실패:', error);
     } finally {
       setLoading(false);
     }

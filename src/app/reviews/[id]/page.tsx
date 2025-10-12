@@ -8,6 +8,7 @@ import styles from './page.module.scss';
 import { review as reviewApi } from '@/apis/groo/review';
 import ReviewDetail from '@/components/reviews/detail/review-detail';
 import { ReviewDetailResDTO } from '@/types/reviews';
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 export default function ReviewDetailPage() {
   const params = useParams();
@@ -28,8 +29,11 @@ export default function ReviewDetailPage() {
         } else {
           setError('독후감을 불러오는데 실패했습니다.');
         }
-      } catch {
-        setError('독후감을 불러오는 중 오류가 발생했습니다.');
+      } catch (error: any) {
+        // 👇 에러 핸들러 적용
+        const errorMessage = getReviewErrorMessage(error);
+        setError(errorMessage);
+        console.error('독후감 조회 오류:', error);
       } finally {
         setLoading(false);
       }

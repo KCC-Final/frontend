@@ -98,4 +98,5 @@ export type CommentData = {
   createdAt: string;
   updatedAt: string;
   parentId: number | null;
+  isOwner: boolean; // 추가
 };
