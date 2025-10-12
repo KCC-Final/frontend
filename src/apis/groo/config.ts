@@ -69,7 +69,6 @@ axiosGroo.interceptors.response.use(
           // 토큰 재발행이 아닌 요청에서 401을 받은 경우
           try {
             // 토큰 재발급 API 호출
-            // fetchGroo.auth.reissueToken() 대신 직접 호출
             await axiosGroo.post('/token-refresh');
 
             // 재발급 성공 시, 원래 실패했던 요청을 다시 실행

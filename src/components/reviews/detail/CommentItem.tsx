@@ -5,7 +5,7 @@ import { useState } from 'react';
 import styles from './CommentItem.module.scss';
 
 import { CommentData } from '@/types/reviews';
-import { getReviewErrorMessage } from '@/utils/error/review-error-handler'; // 👈 이 줄 추가!
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 type Props = {
   comment: CommentData;

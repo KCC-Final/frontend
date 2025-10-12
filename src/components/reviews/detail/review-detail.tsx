@@ -13,7 +13,7 @@ import { fetchAladin } from '@/apis';
 import { comment as commentApi } from '@/apis/groo/comment';
 import { review as reviewApi } from '@/apis/groo/review';
 import { ReviewDetailResDTO, CommentData, AladinBook } from '@/types/reviews';
-import { getReviewErrorMessage } from '@/utils/error/review-error-handler'; // 👈 이 줄 추가!
+import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 type Props = {
   reviewData: ReviewDetailResDTO['data'];
 };
