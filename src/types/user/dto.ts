@@ -34,3 +34,24 @@ export type FindIdResDTO = CommonResDTO<string>;
 // 비밀번호 재설정
 export type ChangePasswordReqBody = { userId: string; password1: string; password2: string };
 export type ChangePasswordResDTO = CommonResDTO;
+
+// 내 정보 조회
+export type User = {
+  userId: string;
+  password: string;
+  email: string;
+  nickname: string;
+  profileImage: string | null;
+  introduction: string | null;
+  gender: 'm' | 'f';
+  name: string;
+  birth: string;
+  createdAt: string;
+  withdrawalStatus: boolean;
+  withdrawalDate: string | null;
+  pwdChangedAt: string | null;
+  checkPrivacy: boolean;
+  checkService: boolean;
+  emailVerified: boolean;
+};
+export type GetMyInfoResDTO = CommonResDTO<User>;
