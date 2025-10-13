@@ -10,12 +10,13 @@ const initialFindIdState: FindLoginDataState = {
   }
 };
 
-export const createFindIdSlice: StateCreator<FindLoginDataSlice> = (set) => ({
+export const createFindIdSlice: StateCreator<FindLoginDataSlice, [['zustand/devtools', never]]> = (set) => ({
   ...initialFindIdState,
 
-  setFindLoginDataStep: (step: FindLoginDataStep) => set({ findLoginDataStep: step }),
+  setFindLoginDataStep: (step: FindLoginDataStep) =>
+    set({ findLoginDataStep: step }, false, 'findLoginData/setFindLoginDataStep'),
 
-  setFindIdState: (findId: FindId) => set({ findId: findId }),
+  setFindIdState: (findId: FindId) => set({ findId: findId }, false, 'findLoginData/setFindIdState'),
 
-  resetFindLoginDataState: () => set(initialFindIdState)
+  resetFindLoginDataState: () => set(initialFindIdState, false, 'findLoginData/resetFindLoginDataState')
 });

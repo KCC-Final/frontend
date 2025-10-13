@@ -3,6 +3,7 @@
 import { Bell, CircleUserRound, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
 import styles from '@/components/layout/header.module.scss';
@@ -15,10 +16,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useModalState } from '@/hooks/useModal';
+import useBoundStore from '@/stores';
 import { devLogger } from '@/utils/dev-logger';
 
 function HeaderLayout() {
   const router = useRouter();
+
+  // 로그아웃 성공시 내 정보를 삭제하기 위한 액션
+  const { setMyInfo } = useBoundStore(useShallow((state) => ({ setMyInfo: state.setMyInfo })));
 
   // TODO: 기능 구현이 되지 않은 버튼들 알림 모달 열림 상태
   const [isNicknameModalOpen, setNicknameModalOpen, openNicknameModal] = useModalState(false);
@@ -32,6 +37,7 @@ function HeaderLayout() {
   const logoutHandler = async () => {
     try {
       await fetchGroo.auth.logout();
+      setMyInfo(null);
       router.push('/login');
     } catch (error) {
       devLogger('로그아웃 실패');

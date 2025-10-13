@@ -35,22 +35,28 @@ const initialSignupState: SignupState = {
   }
 };
 
-export const createSignupSlice: StateCreator<SignupSlice> = (set, get) => ({
+export const createSignupSlice: StateCreator<SignupSlice, [['zustand/devtools', never]]> = (set, get) => ({
   ...initialSignupState,
 
-  setSignupStep: (step) => set({ signupStep: step }),
+  setSignupStep: (step) => set({ signupStep: step }, false, 'signup/setSignupStep'),
 
   setSignupInputField: (field, value) =>
-    set((state) => ({
-      signupInputField: {
-        ...state.signupInputField,
-        [field]: value
-      }
-    })),
+    set(
+      (state) => ({
+        signupInputField: {
+          ...state.signupInputField,
+          [field]: value
+        }
+      }),
+      false,
+      'signup/setSignupInputField'
+    ),
 
-  setSignupIdVerification: (idVerification) => set({ signupIdVerification: idVerification }),
+  setSignupIdVerification: (idVerification) =>
+    set({ signupIdVerification: idVerification }, false, 'signup/setSignupIdVerification'),
 
-  setSignupEmailVerification: (emailVerification) => set({ signupEmailVerification: emailVerification }),
+  setSignupEmailVerification: (emailVerification) =>
+    set({ signupEmailVerification: emailVerification }, false, 'signup/setSignupEmailVerification'),
 
   signupValidateAndVerifyField: () => {
     const { signupStep, signupInputField, signupIdVerification, signupEmailVerification } = get();
@@ -88,5 +94,5 @@ export const createSignupSlice: StateCreator<SignupSlice> = (set, get) => ({
     }
   },
 
-  resetSignupState: () => set(initialSignupState)
+  resetSignupState: () => set(initialSignupState, false, 'signup/resetSignupState')
 });

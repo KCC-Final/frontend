@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
 import BasicButton from '@/components/layout/button/basic';
@@ -9,10 +10,14 @@ import BasicInputContainer from '@/components/layout/input/basic/container';
 import BasicInputField from '@/components/layout/input/basic/field';
 import styles from '@/components/user/login.module.scss';
 import { useInputText } from '@/hooks/useInput';
+import useBoundStore from '@/stores';
 import { ApiError } from '@/utils/error/api';
 
 function Login() {
   const router = useRouter();
+
+  // 로그인 성공시 내 정보를 저장하기 위한 액션
+  const { setMyInfo } = useBoundStore(useShallow((state) => ({ setMyInfo: state.setMyInfo })));
 
   // 로그인 입력 폼의 value에 사용할 값과 onChange에 사용할 함수
   const [userId, changeUserId] = useInputText('');
@@ -36,6 +41,9 @@ function Login() {
       try {
         await fetchGroo.auth.login({ userId: userId, password: password });
         alert('로그인에 성공했습니다.');
+        const user = await fetchGroo.user.getMyInfo();
+        console.log(user);
+        setMyInfo(user.data);
         router.push('/');
       } catch (error) {
         if (error instanceof ApiError) {
