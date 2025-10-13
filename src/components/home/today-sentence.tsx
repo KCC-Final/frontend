@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { fetchGroo } from '@/apis/groo';
-import styles from '@/components/book-recommendation/book-recommendation.module.scss';
+import styles from '@/components/home/home.module.scss';
 import { DailyQuoteData } from '@/types';
 import { setMidnightTimer } from '@/utils/time';
 
@@ -40,18 +40,20 @@ function TodaySentence() {
   }
 
   return (
-    <Link href="/" className={styles.sentences}>
-      <div className={styles.content}>
-        <div className={styles.date}>{format(new Date(quoteData.sentence.selectedDate), 'yyyy-MM-dd')}</div>
-        <div className={styles.sentence}>
-          <p>{quoteData.sentence.sentenceContent}</p>
+    <section className={styles.quote}>
+      <Link href="/">
+        <div className={styles.content}>
+          <div className={styles.date}>{format(new Date(quoteData.sentence.selectedDate), 'yyyy-MM-dd')}</div>
+          <div className={styles.sentence}>
+            <p>{quoteData.sentence.sentenceContent}</p>
+          </div>
+          <div className={styles.description}>
+            <div>{quoteData.book.title}</div>
+            <div>{quoteData.book.author}</div>
+          </div>
         </div>
-        <div className={styles.description}>
-          <div>{quoteData.book.title}</div>
-          <div>{quoteData.book.author}</div>
-        </div>
-      </div>
-    </Link>
+      </Link>
+    </section>
   );
 }
 

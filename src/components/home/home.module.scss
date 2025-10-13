@@ -1,0 +1,73 @@
+@use '@/styles/abstract/' as *;
+
+.quote {
+  margin: 24px 0;
+
+  a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 400px;
+    padding: 40px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    color: #333;
+    text-align: center;
+    text-decoration: none;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .date {
+    color: $font-black-7;
+  }
+
+  .sentence {
+    p {
+      @include font-NotoSerifKR();
+      font-size: $font-size-18;
+      font-weight: 700;
+      line-height: 1.6;
+      max-width: 750px;
+      word-break: keep-all;
+    }
+
+    p {
+      &::before,
+      &::after {
+        content: '"';
+        color: $font-black-7;
+        margin: 0 8px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .description {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    div:nth-child(1) {
+      font-size: $font-size-16;
+      font-weight: 600;
+    }
+  }
+}
