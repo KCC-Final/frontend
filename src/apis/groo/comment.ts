@@ -1,4 +1,3 @@
-// src/apis/groo/comment.ts
 import axiosGroo from '@/apis/groo/config';
 import { CommentData } from '@/types/reviews';
 

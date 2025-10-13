@@ -1,7 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 import styles from './review-content.module.scss';
 
+import { follow as followApi } from '@/apis/groo/follow';
 import { ReviewDetailResDTO } from '@/types/reviews';
 
 type Props = {
@@ -13,7 +16,30 @@ type Props = {
   onDelete: () => void;
 };
 
+/**
+ * @author uyh
+ * @created 2025-10-13
+ * 독후감 컨텐츠 컴포넌트
+ */
 export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, onEdit, onDelete }: Props) {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      if (reviewData.isOwner) return;
+
+      try {
+        const response = await followApi.getFollowInfo(reviewData.userId);
+        setIsFollowing(response.data !== null);
+      } catch (error) {
+        setIsFollowing(false);
+      }
+    };
+
+    checkFollowStatus();
+  }, [reviewData.userId, reviewData.isOwner]);
+
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -24,6 +50,38 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
       });
     } catch {
       return dateString;
+    }
+  };
+
+  /**
+   * @author uyh
+   * @created 2025-10-13
+   * 팔로우/언팔로우 토글 핸들러
+   */
+  const handleFollowToggle = async () => {
+    if (followLoading) return;
+
+    setFollowLoading(true);
+    try {
+      if (isFollowing) {
+        await followApi.deleteFollow(reviewData.userId);
+        setIsFollowing(false);
+        alert('언팔로우 했습니다.');
+      } else {
+        await followApi.createFollow(reviewData.userId);
+        setIsFollowing(true);
+        alert('팔로우 했습니다.');
+      }
+    } catch (error: any) {
+      console.error('팔로우 처리 실패:', error);
+
+      if (error?.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('팔로우 처리 중 오류가 발생했습니다.');
+      }
+    } finally {
+      setFollowLoading(false);
     }
   };
 
@@ -46,8 +104,17 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
         </div>
 
         <div className={styles.metadata}>
-          <span className={styles.author}>{reviewData.userId}</span>
-          <span className={styles.separator}>•</span>
+          <div className={styles.authorSection}>
+            <span className={styles.author}>{reviewData.userId}</span>
+            {!reviewData.isOwner && (
+              <button
+                onClick={handleFollowToggle}
+                disabled={followLoading}
+                className={`${styles.followButton} ${isFollowing ? styles.following : ''}`}>
+                {followLoading ? '처리중...' : isFollowing ? '언팔로우' : '팔로우'}
+              </button>
+            )}
+          </div>
           <span className={styles.date}>{formatDate(reviewData.createdAt)}</span>
           {reviewData.updatedAt && reviewData.updatedAt !== reviewData.createdAt && (
             <>

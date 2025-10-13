@@ -1,13 +1,20 @@
+/**
+ * @author uyh
+ * @created 2025-10-13
+ * 독후감 컨텐츠 스타일
+ */
+
 .container {
-  background: #ffffff;
-  border-radius: 0; // 라운드 제거
-  box-shadow: none;
-  overflow: hidden;
-  border-bottom: 1px solid #e5e7eb; // 구분선 추가
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .header {
-  padding: 32px 32px 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -16,25 +23,21 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 16px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 16px;
-  }
 }
 
 .title {
   font-size: 28px;
   font-weight: 700;
-  color: #111827;
+  color: #1f2937;
   line-height: 1.4;
+  margin: 0;
   flex: 1;
 }
 
 .actions {
   display: flex;
   gap: 8px;
-  flex-shrink: 0;
+  margin-left: 16px;
 }
 
 .editBtn,
@@ -45,76 +48,174 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-}
-
-.editBtn {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
 
   &:hover {
-    background: #e5e7eb;
+    background: #f9fafb;
+    border-color: #d1d5db;
   }
 }
 
 .deleteBtn {
-  background: #fee2e2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  color: #ef4444;
+  border-color: #fee2e2;
 
   &:hover {
-    background: #fecaca;
+    background: #fef2f2;
+    border-color: #fecaca;
   }
 }
 
 .metadata {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
   font-size: 14px;
   color: #6b7280;
 }
 
-.author {
-  font-weight: 600;
-  color: #111827;
+.authorSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.separator {
-  color: #d1d5db;
+.author {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 15px;
+}
+
+.followButton {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #10b981;
+  background: white;
+  color: #10b981;
+
+  &:hover:not(:disabled) {
+    background: #10b981;
+    color: white;
+  }
+
+  &.following {
+    border-color: #6b7280;
+    color: #6b7280;
+
+    &:hover:not(:disabled) {
+      background: #6b7280;
+      color: white;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .date {
-  color: #6b7280;
+  font-size: 14px;
+  color: #9ca3af;
 }
 
-.updated {
-  color: #f59e0b;
+.separator {
+  margin: 0 8px;
+  color: #d1d5db;
+}
+
+.updated,
+.secret {
   font-size: 13px;
+  color: #9ca3af;
 }
 
 .secret {
-  color: #dc2626;
-  font-size: 13px;
-  font-weight: 500;
+  color: #f59e0b;
 }
 
 .content {
-  padding: 32px;
+  margin-bottom: 32px;
 }
 
 .reviewText {
   font-size: 16px;
   line-height: 1.8;
-  color: #111827;
+  color: #374151;
   word-break: break-word;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 16px 0;
+  }
+
+  p {
+    margin-bottom: 16px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  ul,
+  ol {
+    margin: 16px 0;
+    padding-left: 24px;
+  }
+
+  blockquote {
+    border-left: 4px solid #e5e7eb;
+    padding-left: 16px;
+    margin: 16px 0;
+    color: #6b7280;
+    font-style: italic;
+  }
+
+  code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+  }
+
+  pre {
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 16px 0;
+
+    code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+  }
 }
 
 .footer {
-  padding: 24px 32px;
-  border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: flex-start;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .likeBtn {
@@ -123,34 +224,36 @@
   gap: 8px;
   padding: 10px 20px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 15px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
 
   &:hover {
-    background: #f9fafb;
-    border-color: #007664;
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #ef4444;
   }
 
   &.liked {
-    background: #fee2e2;
-    border-color: #fecaca;
-    color: #dc2626;
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #ef4444;
 
     .likeIcon {
-      color: #dc2626;
+      color: #ef4444;
     }
   }
 }
 
 .likeIcon {
-  font-size: 20px;
+  font-size: 18px;
   transition: all 0.2s;
 }
 
 .likeCount {
   font-weight: 600;
-  color: #111827;
 }
