@@ -1,8 +1,11 @@
 'use client';
 
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
+import BasicInputContainer from '@/components/layout/input/basic/container';
+import BasicInputField from '@/components/layout/input/basic/field';
 import styles from '@/components/user/signup/signup.module.scss';
 import useBoundStore from '@/stores';
 import { SignupInputFieldKey } from '@/types';
@@ -115,16 +118,14 @@ function SignupStep3() {
 
   return (
     <>
-      <div className={styles.name}>
-        <div>이름</div>
-        <input
-          type="text"
-          name="name"
-          value={name}
-          onChange={changeInputHandler('name')}
-          placeholder="이름을 입력해주세요."
+      <BasicInputContainer labelName="이름">
+        <BasicInputField
+          inputType="text"
+          inputPlaceholder="이름을 입력해주세요."
+          inputValue={name}
+          inputChange={changeInputHandler('name')}
         />
-      </div>
+      </BasicInputContainer>
       <div className={styles.gender}>
         <div>성별</div>
         <div className={styles.options}>
@@ -138,7 +139,7 @@ function SignupStep3() {
                 onChange={changeInputHandler('gender')}
                 hidden
               />
-              <span className={`${gender === option.value ? styles.checked : ''}`}>{option.label}</span>
+              <div className={clsx({ [styles.checked]: gender === option.value })}>{option.label}</div>
             </label>
           ))}
         </div>

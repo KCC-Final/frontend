@@ -4,13 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import SignupButton from '@/components/user/signup/button';
+import BasicButton from '@/components/layout/button/basic';
+import LoginBackButton from '@/components/user/back-button';
 import styles from '@/components/user/signup/signup.module.scss';
 import SignupStep1 from '@/components/user/signup/step1';
 import SignupStep2 from '@/components/user/signup/step2';
 import SignupStep3 from '@/components/user/signup/step3';
 import useBoundStore from '@/stores';
-import { devLogger } from '@/utils/dev-logger';
 import { ApiError } from '@/utils/error/api';
 
 function Signup() {
@@ -25,6 +25,17 @@ function Signup() {
       signupValidateAndVerifyField: state.signupValidateAndVerifyField
     }))
   );
+
+  /**
+   * 뒤로가기 버튼
+   */
+  const backButtonHandler = () => {
+    if (step === 1) {
+      router.push('/login');
+    } else {
+      setStep((step - 1) as 1 | 2);
+    }
+  };
 
   /**
    * 회원가입 다음단계로 진행 또는 회원가입 요청을 하기 위한 버튼
@@ -46,7 +57,7 @@ function Signup() {
     } else {
       if (signupValidateAndVerifyField().isSuccess) {
         try {
-          const result = await fetchGroo.user.signup({
+          await fetchGroo.user.signup({
             userId: signupInputField.userId,
             password1: signupInputField.password1,
             password2: signupInputField.password2,
@@ -58,7 +69,6 @@ function Signup() {
             checkService: signupInputField.isCheckedService,
             checkPrivacy: signupInputField.isCheckedPrivacy
           });
-          devLogger(result.data); // TODO: 개발 테스트용 로그 삭제 필요
           alert('회원가입에 성공했습니다. 로그인 페이지로 이동합니다.');
           router.replace('/login');
         } catch (error) {
@@ -75,29 +85,23 @@ function Signup() {
   };
 
   return (
-    <section className={styles.signup}>
-      <h1>회원가입</h1>
-      <form>
-        {step === 1 && (
-          <>
-            <SignupStep1 />
-            <SignupButton handler={mainButtonHandler} name="다음단계로" />
-          </>
-        )}
-        {step === 2 && (
-          <>
-            <SignupStep2 />
-            <SignupButton handler={mainButtonHandler} name="다음단계로" />
-          </>
-        )}
-        {step === 3 && (
-          <>
-            <SignupStep3 />
-            <SignupButton handler={mainButtonHandler} name="가입하기" />
-          </>
-        )}
-      </form>
-    </section>
+    <>
+      <LoginBackButton onClick={backButtonHandler} />
+      <section className={styles.signup}>
+        <h1>회원가입</h1>
+        <form>
+          {step === 1 && <SignupStep1 />}
+          {step === 2 && <SignupStep2 />}
+          {step === 3 && <SignupStep3 />}
+          <BasicButton
+            name={step === 3 ? '가입하기' : '다음 단계로'}
+            handler={mainButtonHandler}
+            width="grow"
+            height="48"
+          />
+        </form>
+      </section>
+    </>
   );
 }
 

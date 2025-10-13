@@ -16,8 +16,8 @@ export type SignupReqBody = {
 export type SignupResDTO = CommonResDTO<null>;
 
 // 아이디 중복확인
-export type VerifyUserIdReqBody = { userId: string };
-export type VerifyUserIdResDTO = CommonResDTO<{ userId: string }>;
+export type VerifyUserIdReqQuery = { userId: string };
+export type VerifyUserIdResDTO = CommonResDTO<string>;
 
 // 이메일 인증번호 전송
 export type SendEmailCodeReqQuery = { purpose: string; email: string };

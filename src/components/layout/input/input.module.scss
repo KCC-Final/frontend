@@ -1,0 +1,22 @@
+@use '@/styles/abstract/' as *;
+@use '@/styles/layout/' as *;
+
+.basic {
+  @include input-style-container();
+
+  .name {
+    @include input-style-name();
+  }
+
+  .input_field {
+    @include input-style-field();
+  }
+
+  input {
+    @include input-style-input();
+  }
+
+  .message {
+    @include input-style-message();
+  }
+}

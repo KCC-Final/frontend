@@ -1,9 +1,9 @@
 /* box-sizing 규칙을 명시합니다. */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+// *,
+// *::before,
+// *::after {
+//   box-sizing: border-box;
+// }
 
 /* 폰트 크기의 팽창을 방지합니다. */
 html {

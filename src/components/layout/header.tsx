@@ -4,10 +4,9 @@ import { Bell, CircleUserRound, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import AlertModal from './modal/alert';
-
 import { fetchGroo } from '@/apis';
 import styles from '@/components/layout/header.module.scss';
+import AlertModal from '@/components/layout/modal/alert';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,14 +25,6 @@ function HeaderLayout() {
   const [isMyFeedsModalOpen, setMyFeedsModalOpen, openMyFeedsModal] = useModalState(false);
   const [isMyLibraryModalOpen, setMyLibraryModalOpen, openMyLibraryModal] = useModalState(false);
   const [isMyActivitiesModalOpen, setMyActivitiesModalOpen, openMyActivitiesModal] = useModalState(false);
-
-  /**
-   * 페이지 이동시켜주는 함수
-   * @param url 이동할 위치
-   */
-  const routePage = (url: string) => () => {
-    router.push(url);
-  };
 
   /**
    * 로그아웃 실행 함수
@@ -71,12 +62,14 @@ function HeaderLayout() {
           </ul>
         </nav>
         <nav className={styles.function}>
-          <button className={styles.search} onClick={routePage('/search')}>
-            <span>검색어를 입력하세요</span>
-            <span>
-              <Search size="20px" color="#333333" />
-            </span>
-          </button>
+          <Link href="/search">
+            <div className={styles.search}>
+              <div>검색어를 입력하세요.</div>
+              <span>
+                <Search size="20px" color="#333333" />
+              </span>
+            </div>
+          </Link>
           <div className={styles.user}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

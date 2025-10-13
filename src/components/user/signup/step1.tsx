@@ -2,9 +2,14 @@
 
 import { useShallow } from 'zustand/shallow';
 
-import styles from '@/components/user/signup/signup.module.scss';
+import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/layout/button/basic';
+import BasicInputContainer from '@/components/layout/input/basic/container';
+import BasicInputField from '@/components/layout/input/basic/field';
+import BasicInputMessage from '@/components/layout/input/basic/message';
 import useBoundStore from '@/stores';
 import { SignupInputFieldKey } from '@/types';
+import { ApiError } from '@/utils/error/api';
 import { validate } from '@/utils/validation/signup';
 
 type ChangeInputEvent = React.ChangeEvent<HTMLInputElement>;
@@ -34,16 +39,27 @@ function SignupStep1() {
   /**
    * input에 입력된 userId값을 이용하여 아이디 중복확인 요청 버튼
    */
-  const verifyUserId = () => {
-    // TODO: 아이디 중복확인 처리 필요
-    if (Math.random() < 0.5) {
+  const verifyUserId = async () => {
+    try {
+      if (!validate.userId(userId).result) {
+        alert(validate.userId(userId).message);
+        return;
+      }
+
+      const result = await fetchGroo.user.verifyUserId({ userId: userId });
       setIdVerification({
         isLoading: false,
         isSuccess: true,
         userId: userId,
         message: '사용 가능한 아이디입니다.'
       });
-    } else {
+      alert(`${result.data}는 사용 가능한 아이디입니다.`);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        alert(error.message);
+      } else {
+        alert('아이디 중복확인에 실패하였습니다.');
+      }
       setIdVerification({
         isLoading: false,
         isSuccess: false,
@@ -55,64 +71,50 @@ function SignupStep1() {
 
   return (
     <>
-      <div className={styles.id}>
-        <div>아이디</div>
-        <label>
-          <input
-            type="text"
-            name="userId"
-            value={userId}
-            onChange={changeInputHandler('userId')}
-            placeholder="아이디를 입력해주세요."
+      <BasicInputContainer labelName="아이디">
+        <BasicInputField
+          inputType="text"
+          inputPlaceholder="아이디를 입력해주세요."
+          inputValue={userId}
+          inputChange={changeInputHandler('userId')}
+          additionalButton={<BasicButton name="확인" handler={verifyUserId} />}
+          isError={!!userId && idVerification.isSuccess === false}
+        />
+        <BasicInputMessage message={idVerification.message} status={idVerification.isSuccess} />
+      </BasicInputContainer>
+      <BasicInputContainer labelName="비밀번호">
+        <BasicInputField
+          inputType="password"
+          inputPlaceholder="비밀번호를 입력해주세요."
+          inputValue={password1}
+          inputChange={changeInputHandler('password1')}
+          isError={!!password1 && !validate.password(password1).result}
+        />
+        {password1 && <BasicInputMessage message={validate.password(password1).message} status={false} />}
+        <BasicInputField
+          inputType="password"
+          inputPlaceholder="비밀번호를 다시 한번 입력해주세요."
+          inputValue={password2}
+          inputChange={changeInputHandler('password2')}
+          isError={!!password2 && !validate.passwordConfirm(password1, password2).result}
+        />
+        {password2 && (
+          <BasicInputMessage
+            message={validate.passwordConfirm(password1, password2).message}
+            status={false}
           />
-          <button type="button" onClick={verifyUserId}>
-            확인
-          </button>
-        </label>
-        {idVerification.message && (
-          <div className={`${styles.message} ${idVerification.isSuccess ? styles.success : styles.fail}`}>
-            {idVerification.message}
-          </div>
         )}
-      </div>
-      <div className={styles.pw}>
-        <div>비밀번호</div>
-        <input
-          type="password"
-          name="password1"
-          value={password1}
-          onChange={changeInputHandler('password1')}
-          placeholder="비밀번호를 입력해주세요."
+      </BasicInputContainer>
+      <BasicInputContainer labelName="닉네임">
+        <BasicInputField
+          inputType="text"
+          inputPlaceholder="닉네임을 입력해주세요."
+          inputValue={nickname}
+          inputChange={changeInputHandler('nickname')}
+          isError={!!nickname && !validate.nickname(nickname).result}
         />
-        {password1 && !validate.password(password1).result && (
-          <div className={`${styles.message} ${styles.fail}`}>{validate.password(password1).message}</div>
-        )}
-        <input
-          type="password"
-          name="password2"
-          value={password2}
-          onChange={changeInputHandler('password2')}
-          placeholder="비밀번호를 다시 한번 입력해주세요."
-        />
-        {password2 && !validate.passwordConfirm(password1, password2).result && (
-          <div className={`${styles.message} ${styles.fail}`}>
-            {validate.passwordConfirm(password1, password2).message}
-          </div>
-        )}
-      </div>
-      <div className={styles.nickname}>
-        <div>닉네임</div>
-        <input
-          type="text"
-          name="nickname"
-          value={nickname}
-          onChange={changeInputHandler('nickname')}
-          placeholder="닉네임을 입력해주세요."
-        />
-        {nickname && !validate.nickname(nickname).result && (
-          <div className={`${styles.message} ${styles.fail}`}>{validate.nickname(nickname).message}</div>
-        )}
-      </div>
+        {nickname && <BasicInputMessage message={validate.nickname(nickname).message} status={false} />}
+      </BasicInputContainer>
     </>
   );
 }

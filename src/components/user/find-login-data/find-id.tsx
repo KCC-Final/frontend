@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/layout/button/basic';
+import BasicInputContainer from '@/components/layout/input/basic/container';
+import BasicInputField from '@/components/layout/input/basic/field';
 import styles from '@/components/user/find-login-data/find-login-data.module.scss';
 import { useInputText } from '@/hooks/useInput';
 import useBoundStore from '@/stores';
@@ -111,48 +114,31 @@ function FindUserId() {
     <section className={styles.find_id}>
       <h1>아이디 찾기</h1>
       <form>
-        <div className={styles.name}>
-          <div>이름</div>
-          <input
-            type="text"
-            name="name"
-            value={name}
-            onChange={changeName}
-            placeholder="이름을 입력해주세요."
+        <BasicInputContainer labelName="이름">
+          <BasicInputField
+            inputType="text"
+            inputPlaceholder="이름을 입력해주세요."
+            inputValue={name}
+            inputChange={changeName}
           />
-        </div>
-        <div className={styles.email}>
-          <div>이메일</div>
-          <label>
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={changeEmail}
-              placeholder="이메일을 입력해주세요."
-            />
-            <button type="button" onClick={sendVerificationCode}>
-              인증요청
-            </button>
-          </label>
-          <label>
-            <input
-              type="text"
-              name="emailVerificationCode"
-              value={emailVerificationCode}
-              onChange={changeEmailVerificationCode}
-              placeholder="인증코드를 입력해주세요."
-            />
-            <button type="button" onClick={verifyEmailCode}>
-              확인
-            </button>
-          </label>
-        </div>
-        <div className={styles.submit}>
-          <button type="button" onClick={findId}>
-            아이디 찾기
-          </button>
-        </div>
+        </BasicInputContainer>
+        <BasicInputContainer labelName="이메일">
+          <BasicInputField
+            inputType="email"
+            inputPlaceholder="이메일을 입력해주세요."
+            inputValue={email}
+            inputChange={changeEmail}
+            additionalButton={<BasicButton name="인증요청" handler={sendVerificationCode} />}
+          />
+          <BasicInputField
+            inputType="text"
+            inputPlaceholder="인증코드를 입력해주세요."
+            inputValue={emailVerificationCode}
+            inputChange={changeEmailVerificationCode}
+            additionalButton={<BasicButton name="확인" handler={verifyEmailCode} />}
+          />
+        </BasicInputContainer>
+        <BasicButton name="아이디 찾기" handler={findId} width="grow" height="48" />
       </form>
     </section>
   );

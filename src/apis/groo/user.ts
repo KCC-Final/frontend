@@ -11,7 +11,8 @@ import {
   SignupReqBody,
   VerifyEmailReqQuery,
   VerifyEmailResDTO,
-  VerifyUserIdReqBody
+  VerifyUserIdReqQuery,
+  VerifyUserIdResDTO
 } from '@/types';
 
 export const user = {
@@ -22,8 +23,8 @@ export const user = {
   },
 
   // 아이디 중복확인
-  verifyUserId: async (data: VerifyUserIdReqBody): Promise<CommonResDTO> => {
-    const response = await axiosGroo.post('/users/id/verify', data);
+  verifyUserId: async (query: VerifyUserIdReqQuery): Promise<VerifyUserIdResDTO> => {
+    const response = await axiosGroo.post(`/users/id/verify?userId=${query.userId}`);
     return response.data;
   },
 

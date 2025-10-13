@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/layout/button/basic';
+import BasicInputContainer from '@/components/layout/input/basic/container';
+import BasicInputField from '@/components/layout/input/basic/field';
 import styles from '@/components/user/login.module.scss';
 import { useInputText } from '@/hooks/useInput';
 import { ApiError } from '@/utils/error/api';
@@ -46,34 +49,29 @@ function Login() {
 
   return (
     <section className={styles.login}>
+      <h1 hidden>로그인</h1>
       <h2>
         <p>일상을 심다</p>
         <p>독서 경험의 모든 것</p>
       </h2>
       <form onSubmit={loginSubmitHandler}>
-        <div className={styles.id}>
-          <div>아이디</div>
-          <input
-            type="text"
-            name="userId"
-            value={userId}
-            onChange={changeUserId}
-            placeholder="아이디를 입력해주세요."
+        <BasicInputContainer labelName="아이디">
+          <BasicInputField
+            inputType="text"
+            inputPlaceholder="아이디를 입력해주세요."
+            inputValue={userId}
+            inputChange={changeUserId}
           />
-        </div>
-        <div className={styles.pw}>
-          <div>비밀번호</div>
-          <input
-            type="password"
-            name="password"
-            value={password}
-            onChange={changePassword}
-            placeholder="비밀번호를 입력해주세요."
+        </BasicInputContainer>
+        <BasicInputContainer labelName="비밀번호">
+          <BasicInputField
+            inputType="password"
+            inputPlaceholder="비밀번호를 입력해주세요."
+            inputValue={password}
+            inputChange={changePassword}
           />
-        </div>
-        <div className={styles.submit}>
-          <button type="submit">로그인</button>
-        </div>
+        </BasicInputContainer>
+        <BasicButton buttonType="submit" name="로그인" width="grow" height="48" />
       </form>
       <div className={styles.sub_btn}>
         <Link href="/signup">회원가입</Link>
