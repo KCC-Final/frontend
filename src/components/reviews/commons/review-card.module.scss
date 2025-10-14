@@ -1,0 +1,159 @@
+.reviewCard {
+  position: relative;
+  background: white;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.secretBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+
+  svg {
+    color: #666;
+  }
+}
+
+.bookCover {
+  position: relative;
+  width: 100%;
+  height: 32rem;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.blurBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px);
+  transform: scale(1.1);
+}
+
+.coverImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.noImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
+  color: #999;
+  font-size: 1.4rem;
+}
+
+.reviewInfo {
+  padding: 1.6rem;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.avatar {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d5a3d 0%, #1f4029 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.nickname {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.date {
+  font-size: 1.2rem;
+  color: #999;
+}
+
+.reviewTitle {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.category {
+  font-size: 1.3rem;
+  color: #2d5a3d;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.reviewContent {
+  font-size: 1.4rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.stats {
+  display: flex;
+  gap: 1.6rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.stat {
+  font-size: 1.3rem;
+  color: #666;
+}

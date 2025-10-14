@@ -1,11 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
 
 import styles from './RelatedReviewCard.module.scss';
 
-import { fetchAladin } from '@/apis';
+import BookCover from '@/components/reviews/commons/book-cover';
 import { ReviewData } from '@/types/reviews';
 
 type Props = {
@@ -14,32 +13,6 @@ type Props = {
 
 export default function RelatedReviewCard({ review }: Props) {
   const router = useRouter();
-  const [bookCover, setBookCover] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchBookCover = async () => {
-      if (!review.isbn) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setError(false);
-        const data = await fetchAladin.getBookDetails(review.isbn);
-        if (data.item && data.item[0] && data.item[0].cover) {
-          setBookCover(data.item[0].cover);
-        }
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookCover();
-  }, [review.isbn]);
 
   const formatDate = (dateString: string) => {
     try {
@@ -60,18 +33,12 @@ export default function RelatedReviewCard({ review }: Props) {
 
   return (
     <article className={styles.card} onClick={handleClick}>
-      <div className={styles.coverSection}>
-        {loading ? (
-          <div className={styles.coverLoading}>로딩...</div>
-        ) : bookCover && !error ? (
-          <>
-            <div className={styles.blurBackground} style={{ backgroundImage: `url(${bookCover})` }} />
-            <img src={bookCover} alt={review.reviewTitle} className={styles.bookCover} />
-          </>
-        ) : (
-          <div className={styles.noCover}>표지 없음</div>
-        )}
-      </div>
+      <BookCover
+        isbn={review.isbn}
+        title={review.reviewTitle}
+        className={styles.coverSection}
+        noImageClassName={styles.noCover}
+      />
 
       <div className={styles.content}>
         <h3 className={styles.title}>{review.reviewTitle}</h3>

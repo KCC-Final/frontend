@@ -1,6 +1,5 @@
 import axios, { isAxiosError } from 'axios';
 
-import { fetchGroo } from '@/apis/groo';
 import { devLogger } from '@/utils/dev-logger';
 import { ApiError } from '@/utils/error/api';
 

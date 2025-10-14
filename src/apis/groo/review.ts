@@ -14,7 +14,6 @@ import {
   LikeDeleteResDTO,
   LikedReviewsResDTO
 } from '@/types/reviews';
-import { devLogger } from '@/utils/dev-logger';
 
 export const review = {
   // 독후감 작성
@@ -102,7 +101,7 @@ export const review = {
 
   // 좋아요한 독후감 목록 조회
   getLikedReviews: async (): Promise<LikedReviewsResDTO> => {
-    const response = await axiosGroo.get<LikedReviewsResDTO>('/reviews/like');
+    const response = await axiosGroo.get<LikedReviewsResDTO>('/reviews/likes/me');
     return response.data;
   },
 
@@ -129,6 +128,18 @@ export const review = {
     const response = await axiosGroo.get<ReviewData[]>(`/reviews/category`, {
       params: { name: category, limit }
     });
+    return response.data;
+  },
+
+  // 특정 유저의 독후감 조회
+  getReviewsByUserId: async (userId: string): Promise<ReviewListResDTO> => {
+    const response = await axiosGroo.get<ReviewListResDTO>(`/reviews/user/${userId}`);
+    return response.data;
+  },
+
+  // 특정 유저가 좋아요한 독후감 조회
+  getLikedReviewsByUserId: async (userId: string): Promise<ReviewListResDTO> => {
+    const response = await axiosGroo.get<ReviewListResDTO>(`/reviews/user/${userId}/likes`);
     return response.data;
   }
 };
