@@ -7,12 +7,24 @@ const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
 
 // 실행 환경을 터미널/빌드 로그에 출력하여 확인을 용이하게 합니다.
-console.log('개발 환경:', isDev);
-console.log('운영 환경:', isProd);
+if (isDev) console.log('개발 환경에서 실행');
+if (isProd) console.log('운영 환경에서 실행');
 
 const nextConfig: NextConfig = {
+  // 알라딘 api에서 제공하는 이미지 도메인을 허용
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'image.aladin.co.kr',
+        port: '',
+        pathname: '/product/**'
+      }
+    ]
+  },
+
   sassOptions: {
-    // SCSS 파일에서 @/ 경로를 인식할 수 있도록 src 폴더를 경로에 추가합니다.
+    // SCSS 파일에서 @/ 경로를 인식할 수 있도록 src 폴더를 경로에 추가
     includePaths: [path.join(__dirname, 'src')]
   },
 
