@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import styles from './review-content.module.scss';
@@ -16,12 +17,8 @@ type Props = {
   onDelete: () => void;
 };
 
-/**
- * @author uyh
- * @created 2025-10-13
- * 독후감 컨텐츠 컴포넌트
- */
 export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, onEdit, onDelete }: Props) {
+  const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
@@ -85,67 +82,54 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
     }
   };
 
+  const handleUserClick = () => {
+    router.push(`/my-feeds?userId=${reviewData.userId}`);
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.headerTop}>
-          <h1 className={styles.title}>{reviewData.reviewTitle}</h1>
+      <header className={styles.header}>
+        <div className={styles.userSection}>
+          <div className={styles.userInfo}>
+            <h3 className={styles.userId} onClick={handleUserClick}>
+              {reviewData.userId}
+            </h3>
+            <p className={styles.date}>{formatDate(reviewData.createdAt)}</p>
+          </div>
+        </div>
 
-          {reviewData.isOwner && (
-            <div className={styles.actions}>
-              <button onClick={onEdit} className={styles.editBtn}>
+        <div className={styles.actions}>
+          {reviewData.isOwner ? (
+            <>
+              <button onClick={onEdit} className={styles.editButton}>
                 수정
               </button>
-              <button onClick={onDelete} className={styles.deleteBtn}>
+              <button onClick={onDelete} className={styles.deleteButton}>
                 삭제
               </button>
-            </div>
+            </>
+          ) : (
+            <button
+              onClick={handleFollowToggle}
+              className={`${styles.followButton} ${isFollowing ? styles.following : ''}`}
+              disabled={followLoading}>
+              {isFollowing ? '언팔로우' : '팔로우'}
+            </button>
           )}
         </div>
+      </header>
 
-        <div className={styles.metadata}>
-          <div className={styles.authorSection}>
-            <span className={styles.author}>{reviewData.userId}</span>
-            {!reviewData.isOwner && (
-              <button
-                onClick={handleFollowToggle}
-                disabled={followLoading}
-                className={`${styles.followButton} ${isFollowing ? styles.following : ''}`}>
-                {followLoading ? '처리중...' : isFollowing ? '언팔로우' : '팔로우'}
-              </button>
-            )}
-          </div>
-          <span className={styles.date}>{formatDate(reviewData.createdAt)}</span>
-          {reviewData.updatedAt && reviewData.updatedAt !== reviewData.createdAt && (
-            <>
-              <span className={styles.separator}>•</span>
-              <span className={styles.updated}>수정됨</span>
-            </>
-          )}
-          {reviewData.secret && (
-            <>
-              <span className={styles.separator}>•</span>
-              <span className={styles.secret}>비밀글</span>
-            </>
-          )}
-        </div>
-      </div>
+      <article className={styles.content}>
+        <h1 className={styles.title}>{reviewData.reviewTitle}</h1>
+        <p className={styles.category}>{reviewData.category}</p>
+        <div className={styles.body} dangerouslySetInnerHTML={{ __html: reviewData.reviewContent }} />
+      </article>
 
-      <div className={styles.content}>
-        <div
-          className={styles.reviewText}
-          dangerouslySetInnerHTML={{
-            __html: reviewData.reviewContent.replace(/\n/g, '<br />')
-          }}
-        />
-      </div>
-
-      <div className={styles.footer}>
-        <button onClick={onLike} className={`${styles.likeBtn} ${isLiked ? styles.liked : ''}`}>
-          <span className={styles.likeIcon}>{isLiked ? '♥' : '♡'}</span>
-          <span className={styles.likeCount}>{likeCount}</span>
+      <footer className={styles.footer}>
+        <button onClick={onLike} className={`${styles.likeButton} ${isLiked ? styles.liked : ''}`}>
+          {isLiked ? '좋아요 취소' : '좋아요'} {likeCount}
         </button>
-      </div>
+      </footer>
     </div>
   );
 }

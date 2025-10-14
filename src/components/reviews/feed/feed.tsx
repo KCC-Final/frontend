@@ -6,70 +6,10 @@ import { useEffect, useState } from 'react';
 
 import styles from './review-feed.module.scss';
 
-import { fetchAladin } from '@/apis/aladin';
 import { fetchGroo } from '@/apis/groo';
+import ReviewCard from '@/components/reviews/commons/review-card';
 import { ReviewData } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
-
-interface BookCoverProps {
-  isbn: string;
-  title: string;
-}
-
-function BookCover({ isbn, title }: BookCoverProps) {
-  const [imageUrl, setImageUrl] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchBookCover = async () => {
-      if (!isbn) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setError(false);
-        const data = await fetchAladin.getBookDetails(isbn);
-
-        if (data.item && data.item[0] && data.item[0].cover) {
-          setImageUrl(data.item[0].cover);
-        }
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookCover();
-  }, [isbn]);
-
-  if (loading) {
-    return (
-      <div className={styles.bookCover}>
-        <div className={styles.noImage}>
-          <span>로딩 중...</span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.bookCover}>
-      {imageUrl && !error && (
-        <div className={styles.blurBackground} style={{ backgroundImage: `url(${imageUrl})` }} />
-      )}
-      {imageUrl && !error ? (
-        <img src={imageUrl} alt={title} className={styles.bookImage} />
-      ) : (
-        <div className={styles.noImage}>
-          <span>표지 없음</span>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function ReviewFeed() {
   const router = useRouter();
@@ -135,18 +75,6 @@ export default function ReviewFeed() {
     router.push(`/reviews/${reviewId}`);
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
   if (!mounted || loading) {
     return (
       <div className={styles.container}>
@@ -198,35 +126,12 @@ export default function ReviewFeed() {
         {reviews &&
           reviews.length > 0 &&
           reviews.map((review) => (
-            <article
+            <ReviewCard
               key={review.reviewId}
-              className={styles.reviewCard}
-              onClick={() => handleReviewClick(review.reviewId)}>
-              <BookCover isbn={review.isbn} title={review.reviewTitle} />
-
-              <div className={styles.reviewInfo}>
-                <div className={styles.userInfo}>
-                  <div className={styles.avatar}>{review.userId?.[0]?.toUpperCase() || 'U'}</div>
-                  <div className={styles.userDetails}>
-                    <span className={styles.nickname}>{review.userId}</span>
-                    <span className={styles.date}>{formatDate(review.createdAt)}</span>
-                  </div>
-                </div>
-
-                <h2 className={styles.reviewTitle}>{review.reviewTitle}</h2>
-
-                <p className={styles.category}>{review.category}</p>
-
-                <div className={styles.reviewContent}>
-                  {review.reviewContent?.replace(/<[^>]*>/g, '').substring(0, 100)}...
-                </div>
-
-                <div className={styles.stats}>
-                  <span className={styles.stat}>좋아요 {review.likeCount || 0}</span>
-                  <span className={styles.stat}>댓글 {review.commentCount || 0}</span>
-                </div>
-              </div>
-            </article>
+              review={review}
+              onClick={handleReviewClick}
+              showSecretBadge={false}
+            />
           ))}
       </div>
 
