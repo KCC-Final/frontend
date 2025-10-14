@@ -42,7 +42,7 @@ function TodaySentence() {
 
   return (
     <section className={styles.quote}>
-      <Link href="/">
+      <Link href={`/books/${quoteData.sentence.isbn}`}>
         <div className={styles.content}>
           <div className={styles.date}>{format(new Date(quoteData.sentence.selectedDate), 'yyyy-MM-dd')}</div>
           <div className={styles.sentence}>
