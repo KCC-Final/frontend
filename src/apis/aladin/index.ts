@@ -1,4 +1,5 @@
 import axiosAladin from '@/apis/aladin/config';
+import { AladinBestsellerResDTO } from '@/types';
 
 export const fetchAladin = {
   /**
@@ -41,7 +42,7 @@ export const fetchAladin = {
    * @param MaxResults 조회할 도서수
    * @returns
    */
-  getBestSellers: async (MaxResults: number = 10) => {
+  getBestSellers: async (MaxResults: number = 10): Promise<AladinBestsellerResDTO> => {
     const response = await axiosAladin.get('/ItemList.aspx', {
       params: {
         QueryType: 'Bestseller',

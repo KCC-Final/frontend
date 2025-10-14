@@ -1,4 +1,4 @@
-import BookList from '@/components/home/book-list';
+import BestsellerList from '@/components/home/bestseller';
 import TodaySentence from '@/components/home/today-sentence';
 import HeaderLayout from '@/components/layout/header';
 import MainLayout from '@/components/layout/main';
@@ -9,7 +9,7 @@ function BookRecommendationPage() {
       <HeaderLayout />
       <MainLayout>
         <TodaySentence />
-        <BookList />
+        <BestsellerList />
       </MainLayout>
     </>
   );
