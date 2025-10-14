@@ -141,7 +141,7 @@ export default function FollowListModal({ isOpen, onClose, type, targetUserId }:
                           followStates[user.userId] ? styles.following : ''
                         }`}
                         onClick={() => handleFollowToggle(user.userId)}>
-                        {followStates[user.userId] ? '언팔로우' : '팔로잉'}
+                        {followStates[user.userId] ? '언팔로우' : '팔로우'}
                       </button>
                     )}
                   </li>
