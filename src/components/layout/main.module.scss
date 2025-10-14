@@ -8,4 +8,5 @@
 .main {
   width: $main-width;
   min-height: calc(100vh - $header-height);
+  padding: 0 20px;
 }

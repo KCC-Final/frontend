@@ -8,9 +8,9 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
   return (
-    <section className={styles.container}>
+    <div className={styles.container}>
       <main className={styles.main}>{children}</main>
-    </section>
+    </div>
   );
 }
 
