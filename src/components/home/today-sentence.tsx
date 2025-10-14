@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { fetchGroo } from '@/apis/groo';
 import styles from '@/components/home/home.module.scss';
 import { DailyQuoteData } from '@/types';
+import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 import { setMidnightTimer } from '@/utils/time';
 
 function TodaySentence() {
@@ -48,8 +49,8 @@ function TodaySentence() {
             <p>{quoteData.sentence.sentenceContent}</p>
           </div>
           <div className={styles.description}>
-            <div>{quoteData.book.title}</div>
-            <div>{quoteData.book.author}</div>
+            <div>{formatBookTitle(quoteData.book.title)}</div>
+            <div>{formatBookAuthor(quoteData.book.author)}</div>
           </div>
         </div>
       </Link>

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { fetchAladin } from '@/apis/aladin';
 import styles from '@/components/home/home.module.scss';
 import { AladinBestsellerItem } from '@/types/aladin/dto';
+import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 
 function BestsellerList() {
   const [books, setBooks] = useState<AladinBestsellerItem[]>([]);
@@ -50,8 +51,8 @@ function BestsellerList() {
                 <span className={styles.rank}>{book.bestRank}</span>
               </div>
               <div className={styles.info}>
-                <div className={styles.title}>{book.title}</div>
-                <div className={styles.author}>{book.author}</div>
+                <div className={styles.title}>{formatBookTitle(book.title)}</div>
+                <div className={styles.author}>{formatBookAuthor(book.author)}</div>
               </div>
             </Link>
           </div>
