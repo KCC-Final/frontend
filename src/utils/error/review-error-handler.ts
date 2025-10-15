@@ -104,6 +104,8 @@ export const getReviewErrorMessage = (error: any): string => {
       return '댓글은 500자를 초과할 수 없습니다';
     case 'RVW-605':
       return '댓글은 최소 1자 이상이어야 합니다';
+    case 'RVW-606':
+      return '독후감 내용이 너무 깁니다. HTML 포함 30,000자를 초과할 수 없습니다'; //추가
 
     // === 900~999: 서버 오류 (500 Internal Server Error) ===
     case 'RVW-900':

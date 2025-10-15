@@ -237,10 +237,27 @@
 }
 
 .characterCount {
-  padding: 12px 20px;
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  position: absolute; /* 하단 고정 */
+  right: 16px;
+  bottom: 12px;
   font-size: 13px;
   color: #6b7280;
+  background: transparent;
+  border: none;
   text-align: right;
+  pointer-events: none;
+
+  &.exceeded {
+    color: #ef4444; /* 빨간색 */
+    font-weight: 600;
+  }
+}
+
+/* editorSection을 position: relative로 변경 */
+.editorSection {
+  position: relative;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
 }

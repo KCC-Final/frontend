@@ -195,11 +195,37 @@
   }
 }
 
+/* ✅ 에디터 박스를 absolute 기준으로 */
+.editorSection {
+  position: relative;
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden; /* 유지해도 됨 */
+
+  /* ✅ ProseMirror에 하단 여백을 줘서 카운터와 겹치지 않게 */
+  :global(.ProseMirror) {
+    min-height: 400px;
+    padding: 20px 20px 48px; /* ← 하단 여백 + */
+    outline: none;
+  }
+}
+
+/* ✅ 우측 하단 고정 + 초과 시 빨간색 */
 .characterCount {
-  padding: 12px 20px;
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
   font-size: 13px;
   color: #6b7280;
+  background: transparent;
+  border: none;
   text-align: right;
+  pointer-events: none;
+  z-index: 1; /* ← 에디터 내용 위로 */
+
+  &.exceeded {
+    color: #ef4444;
+    font-weight: 600;
+  }
 }

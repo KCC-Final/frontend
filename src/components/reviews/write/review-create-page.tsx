@@ -63,6 +63,8 @@ function ReviewCreatePage() {
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [charCount, setCharCount] = useState(0);
+  const MAX_TEXT_LENGTH = 10000; // 순수 텍스트 기준
+  const MAX_HTML_LENGTH = 30000; // HTML + 공백 포함 기준
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -85,7 +87,7 @@ function ReviewCreatePage() {
       TextStyle,
       Color,
       CharacterCount.configure({
-        limit: MAX_CONTENT_LENGTH
+        limit: MAX_HTML_LENGTH // HTML 포함 전체 길이 제한
       }),
       TaskList,
       TaskItem.configure({
@@ -108,13 +110,13 @@ function ReviewCreatePage() {
     },
     onUpdate: ({ editor }) => {
       const textContent = editor.getText();
-      const currentLength = textContent.length;
-      setCharCount(currentLength);
+      const currentTextLength = textContent.replace(/\s/g, '').length; // 순수 텍스트
+      setCharCount(currentTextLength);
 
-      if (currentLength > MAX_CONTENT_LENGTH) {
-        const truncatedText = textContent.substring(0, MAX_CONTENT_LENGTH);
-        editor.commands.setContent(truncatedText);
-        setCharCount(MAX_CONTENT_LENGTH);
+      const htmlLength = editor.getHTML().length;
+      if (htmlLength > MAX_HTML_LENGTH) {
+        alert(`HTML 포함 ${MAX_HTML_LENGTH}자를 초과했습니다. (현재: ${htmlLength}자)`);
+        editor.commands.setContent(editor.getHTML().slice(0, MAX_HTML_LENGTH));
       }
     }
   });
@@ -234,26 +236,36 @@ function ReviewCreatePage() {
   };
 
   const handleSubmit = async () => {
-    console.log('=== handleSubmit 시작 ===');
-    console.log('selectedBook:', selectedBook);
-    console.log('title:', title);
-    console.log('category:', category);
-    console.log('draftId:', draftId);
-
-    if (!selectedBook || !title || !editor) {
-      alert('모든 항목을 입력해주세요.');
+    // 1) 런타임 가드로 null 제거 (TS 오류 해결)
+    if (!editor) {
+      alert('에디터가 초기화되지 않았습니다. 새로고침 후 다시 시도해주세요.');
+      return;
+    }
+    if (!selectedBook) {
+      alert('도서를 먼저 선택해주세요.');
+      return;
+    }
+    if (!title.trim()) {
+      alert('제목을 입력해주세요.');
       return;
     }
 
-    if (!category) {
-      console.error('카테고리가 없습니다!');
-      alert('도서 카테고리 정보를 가져올 수 없습니다.');
-      return;
-    }
-
+    // 2) 이제부터 non-null 보장
     const content = editor.getHTML();
-    if (content.replace(/<[^>]*>/g, '').trim().length === 0) {
+    const textContent = editor.getText();
+    const textLength = textContent.replace(/\s/g, '').length;
+    const htmlLength = content.length;
+
+    if (textLength === 0) {
       alert('내용을 입력해주세요.');
+      return;
+    }
+    if (htmlLength > MAX_HTML_LENGTH) {
+      alert(`HTML 포함 ${MAX_HTML_LENGTH}자를 초과할 수 없습니다. (현재: ${htmlLength}자)`);
+      return;
+    }
+    if (textLength > MAX_TEXT_LENGTH) {
+      alert(`순수 텍스트는 ${MAX_TEXT_LENGTH}자를 초과할 수 없습니다. (현재: ${textLength}자)`);
       return;
     }
 
@@ -265,22 +277,21 @@ function ReviewCreatePage() {
           secret: isSecret,
           temporary: false
         };
-
         console.log('=== 임시저장 글 수정 요청 데이터 ===');
         console.log(JSON.stringify(updateData, null, 2));
 
         await fetchGroo.review.updateReview(Number(draftId), updateData);
         alert('독후감이 작성되었습니다.');
       } else {
+        // 3) category가 null이면 필드 자체를 제외 (optional이라 가능)
         const requestData: ReviewCreateReqBody = {
           isbn: selectedBook.isbn13,
           reviewTitle: title,
           reviewContent: content,
           secret: isSecret,
           temporary: false,
-          category: category
+          ...(category ? { category } : {}) // ★ 핵심: null -> undefined(미포함) 처리
         };
-
         console.log('=== 새 독후감 작성 요청 데이터 ===');
         console.log(JSON.stringify(requestData, null, 2));
 
@@ -333,8 +344,8 @@ function ReviewCreatePage() {
           <div className={editorStyles.editorContent}>
             <EditorContent editor={editor} />
           </div>
-          <div className={styles.characterCount}>
-            {charCount} / {MAX_CONTENT_LENGTH}자
+          <div className={`${styles.characterCount} ${charCount > MAX_TEXT_LENGTH ? styles.exceeded : ''}`}>
+            {charCount.toLocaleString()} / {MAX_TEXT_LENGTH.toLocaleString()}자
           </div>
         </section>
 
