@@ -63,7 +63,7 @@ function ReviewCreatePage() {
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [charCount, setCharCount] = useState(0);
-  const MAX_TEXT_LENGTH = 10000; // 순수 텍스트 기준
+  const MAX_TEXT_LENGTH = 10000; // 공백 제거 텍스트 기준
   const MAX_HTML_LENGTH = 30000; // HTML + 공백 포함 기준
 
   const editor = useEditor({

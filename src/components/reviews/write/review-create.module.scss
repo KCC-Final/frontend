@@ -119,12 +119,12 @@
 }
 
 .editorSection {
-  position: relative; /* ✅ 추가: 자식 absolute 배치 기준 */
+  position: relative;
   background: white;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
   overflow: hidden;
-  padding-bottom: 40px; /* ✅ charCount 영역 확보 */
+  padding-bottom: 40px;
 
   :global(.ProseMirror) {
     min-height: 400px;
@@ -144,7 +144,6 @@
     }
   }
 
-  /* ✅ 글자 수 카운트 스타일 */
   .characterCount {
     position: absolute;
     right: 16px;
