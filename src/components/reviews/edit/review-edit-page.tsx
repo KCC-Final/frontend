@@ -42,6 +42,8 @@ function ReviewEditPage() {
   const [loading, setLoading] = useState(true);
   const [reviewContent, setReviewContent] = useState('');
   const [charCount, setCharCount] = useState(0);
+  const MAX_TEXT_LENGTH = 10000; // 공백 제거 텍스트 기준
+  const MAX_HTML_LENGTH = 30000; // HTML 포함 기준
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -64,7 +66,7 @@ function ReviewEditPage() {
       TextStyle,
       Color,
       CharacterCount.configure({
-        limit: MAX_CONTENT_LENGTH
+        limit: MAX_HTML_LENGTH // HTML 포함 30,000자 기준으로 차단
       }),
       TaskList,
       TaskItem.configure({
@@ -87,13 +89,13 @@ function ReviewEditPage() {
     },
     onUpdate: ({ editor }) => {
       const textContent = editor.getText();
-      const currentLength = textContent.length;
-      setCharCount(currentLength);
+      const currentTextLength = textContent.replace(/\s/g, '').length;
+      setCharCount(currentTextLength);
 
-      if (currentLength > MAX_CONTENT_LENGTH) {
-        const truncatedText = textContent.substring(0, MAX_CONTENT_LENGTH);
-        editor.commands.setContent(truncatedText);
-        setCharCount(MAX_CONTENT_LENGTH);
+      const htmlLength = editor.getHTML().length;
+      if (htmlLength > MAX_HTML_LENGTH) {
+        alert(`HTML 포함 ${MAX_HTML_LENGTH}자를 초과했습니다. (현재: ${htmlLength}자)`);
+        editor.commands.setContent(editor.getHTML().slice(0, MAX_HTML_LENGTH));
       }
     }
   });
@@ -153,14 +155,30 @@ function ReviewEditPage() {
   };
 
   const handleSubmit = async () => {
-    if (!title || !editor) {
-      alert('제목과 내용을 입력해주세요.');
+    if (!editor) {
+      alert('에디터가 초기화되지 않았습니다.');
+      return;
+    }
+    if (!title.trim()) {
+      alert('제목을 입력해주세요.');
       return;
     }
 
     const content = editor.getHTML();
-    if (content.replace(/<[^>]*>/g, '').trim().length === 0) {
+    const textContent = editor.getText();
+    const textLength = textContent.replace(/\s/g, '').length;
+    const htmlLength = content.length;
+
+    if (textLength === 0) {
       alert('내용을 입력해주세요.');
+      return;
+    }
+    if (htmlLength > MAX_HTML_LENGTH) {
+      alert(`HTML 포함 ${MAX_HTML_LENGTH}자를 초과할 수 없습니다. (현재: ${htmlLength}자)`);
+      return;
+    }
+    if (textLength > MAX_TEXT_LENGTH) {
+      alert(`순수 텍스트는 ${MAX_TEXT_LENGTH}자를 초과할 수 없습니다. (현재: ${textLength}자)`);
       return;
     }
 
@@ -221,8 +239,9 @@ function ReviewEditPage() {
           <div className={editorStyles.editorContent}>
             <EditorContent editor={editor} />
           </div>
-          <div className={styles.characterCount}>
-            {charCount} / {MAX_CONTENT_LENGTH}자
+
+          <div className={`${styles.characterCount} ${charCount > MAX_TEXT_LENGTH ? styles.exceeded : ''}`}>
+            {charCount.toLocaleString()} / {MAX_TEXT_LENGTH.toLocaleString()}자
           </div>
         </section>
 
