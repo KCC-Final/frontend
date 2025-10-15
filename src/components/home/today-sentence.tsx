@@ -10,8 +10,12 @@ import { DailyQuoteData } from '@/types';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 import { setMidnightTimer } from '@/utils/time';
 
-function TodaySentence() {
-  const [quoteData, setQuoteData] = useState<DailyQuoteData | null>(null);
+interface TodaySentenceProps {
+  initialQuoteData: DailyQuoteData | null;
+}
+
+function TodaySentence({ initialQuoteData }: TodaySentenceProps) {
+  const [quoteData, setQuoteData] = useState<DailyQuoteData | null>(initialQuoteData);
 
   useEffect(() => {
     const fetchQuote = async () => {
@@ -26,13 +30,10 @@ function TodaySentence() {
       }
     };
 
-    // 1. 최초 데이터 호출
-    fetchQuote();
-
-    // 2. 유틸 함수로 타이머 설정하고, cleanup 함수를 받아옴
+    // 유틸 함수로 타이머 설정하고, cleanup 함수를 받아옴
     const cleanup = setMidnightTimer(fetchQuote);
 
-    // 3. 컴포넌트 언마운트 시 cleanup 실행
+    // 컴포넌트 언마운트 시 cleanup 실행
     return cleanup;
   }, []);
 
