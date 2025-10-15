@@ -59,16 +59,5 @@ export const user = {
   getMyInfo: async (): Promise<GetMyInfoResDTO> => {
     const response = await axiosGroo.get('/users');
     return response.data;
-  },
-
-  // 프론트서버에서 내 정보 조회
-  getMyInfoInServer: async (token: {
-    accessToken: string;
-    refreshToken: string;
-  }): Promise<GetMyInfoResDTO> => {
-    const response = await axiosGroo.get('/users', {
-      headers: { Cookie: `accessToken=${token.accessToken}; refreshToken=${token.refreshToken}` }
-    });
-    return response.data;
   }
 };
