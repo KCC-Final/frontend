@@ -27,9 +27,13 @@ function RightNavigation() {
 
   // TODO: 기능 구현이 되지 않은 버튼들 알림 모달 열림 상태
   const [isNicknameModalOpen, setNicknameModalOpen, openNicknameModal] = useModalState(false);
-  const [isMyFeedsModalOpen, setMyFeedsModalOpen, openMyFeedsModal] = useModalState(false);
   const [isMyLibraryModalOpen, setMyLibraryModalOpen, openMyLibraryModal] = useModalState(false);
   const [isMyActivitiesModalOpen, setMyActivitiesModalOpen, openMyActivitiesModal] = useModalState(false);
+
+  /** 버튼 클릭시 페이지 이동 */
+  const routePageHandler = (url: string) => () => {
+    router.push(url);
+  };
 
   /** 로그아웃 실행 함수 */
   const logoutHandler = async () => {
@@ -72,7 +76,9 @@ function RightNavigation() {
               닉네임
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" onClick={openMyFeedsModal}>
+            <DropdownMenuItem
+              className="text-[1.4rem] px-[1rem] py-[0.8rem]"
+              onClick={routePageHandler('/my-feeds')}>
               내 피드
             </DropdownMenuItem>
             <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" onClick={openMyLibraryModal}>
@@ -93,15 +99,6 @@ function RightNavigation() {
           title={<div className={styles.profile_title}>현재 구현되지 않은 기능입니다.</div>}
           description={
             <div className={styles.profile_description}>마이페이지(/my-info)로 이동하는 버튼입니다.</div>
-          }
-          button={<button className={styles.profile_confirm}>확인</button>}
-        />
-        <AlertModal
-          open={isMyFeedsModalOpen}
-          onOpenChange={setMyFeedsModalOpen}
-          title={<div className={styles.profile_title}>현재 구현되지 않은 기능입니다.</div>}
-          description={
-            <div className={styles.profile_description}>내 피드(/my-feeds)로 이동하는 버튼입니다.</div>
           }
           button={<button className={styles.profile_confirm}>확인</button>}
         />
