@@ -1,17 +1,10 @@
-import BookDetails from '@/components/books/details';
+import { fetchAladin } from '@/apis';
+import BookInformation from '@/components/books';
 
 import type { Metadata } from 'next';
 
 interface PageProps {
   params: Promise<{ id: string }>;
-}
-
-export async function generateStaticParams() {
-  // TODO: 백엔드에서 동적 라우팅될 목록의 id 범위 불러오기
-  const tempIdArray = Array.from({ length: 10 }, (_, index) => ({
-    id: String(index + 1)
-  }));
-  return tempIdArray;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -27,12 +20,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 async function BookDetailsPage({ params }: PageProps) {
   const { id } = await params;
 
-  return (
-    <>
-      <BookDetails />
-      {id}
-    </>
-  );
+  const bookDetailsResponse = await fetchAladin.getBookDetails(id);
+  const bookInfo = bookDetailsResponse.item[0];
+
+  return <BookInformation bookInfo={bookInfo} />;
 }
 
 export default BookDetailsPage;

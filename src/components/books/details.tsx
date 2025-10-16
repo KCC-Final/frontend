@@ -1,5 +1,16 @@
-function BookDetails() {
-  return <div>도서 상세정보 페이지입니다.</div>;
+import styles from '@/components/books/book.module.scss';
+import { AladinBookDetailsItem } from '@/types';
+
+interface BookDetailsProps {
+  bookInfo: AladinBookDetailsItem;
+}
+
+function BookDetails({ bookInfo }: BookDetailsProps) {
+  return (
+    <section>
+      <div>도서 상세정보 영역입니다.</div>
+    </section>
+  );
 }
 
 export default BookDetails;

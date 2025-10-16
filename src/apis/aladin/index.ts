@@ -1,5 +1,5 @@
 import axiosAladin from '@/apis/aladin/config';
-import { AladinBestsellerResDTO } from '@/types';
+import { AladinBestsellerResDTO, AladinBookDetailsResDTO } from '@/types';
 
 export const fetchAladin = {
   /**
@@ -26,7 +26,7 @@ export const fetchAladin = {
    * @param ISBN 책 ISBN값
    * @returns
    */
-  getBookDetails: async (ISBN: string) => {
+  getBookDetails: async (ISBN: string): Promise<AladinBookDetailsResDTO> => {
     const response = await axiosAladin.get('/ItemLookUp.aspx', {
       params: {
         itemIdType: 'ISBN13',
