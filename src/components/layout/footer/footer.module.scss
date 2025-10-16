@@ -3,7 +3,7 @@
 .container {
   display: flex;
   justify-content: center;
-  border-top: 1px solid rgba($color: #000000, $alpha: 0.2);
+  border-top: $devider-border;
   margin-top: 24px;
 
   .footer {

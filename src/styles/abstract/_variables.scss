@@ -34,6 +34,8 @@ $bg-green: #007664;
 $input-bg: #fafafa;
 $bg-gray: #777777;
 
+// border style
+$devider-border: 1px solid rgba(#000000, 0.2);
 // input border style
 $input-outline: none;
 $input-border: 1px solid #dddddd;
@@ -42,7 +44,6 @@ $input-error-border: 2px solid #ee0000;
 $input-selected-border: 2px solid #007664;
 $input-border-radius: 8px;
 $input-transition: border-color 0.15s ease-in-out;
-
 // button border style
 $large-button-radius: 8px;
 $small-button-radius: 6px;
