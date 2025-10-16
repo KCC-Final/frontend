@@ -72,7 +72,7 @@ function createAxiosInServer(): AxiosInstance {
         }
       }
 
-      devLogger('[Groo Server API]|[Response Error]: Occuered unknown Error', true);
+      devLogger('[Groo Server API]|[Response Error]: Occurred unknown Error', true);
       throw new ApiError({ message: '알 수 없는 오류가 발생했습니다.', original: error });
     }
   );

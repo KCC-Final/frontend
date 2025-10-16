@@ -68,7 +68,6 @@ export async function middleware(request: NextRequest) {
           headers: requestHeaders
         }
       });
-      // return NextResponse.next();
     } catch (error) {
       // 토큰이 유효하지 않음. 아래 리프레시 로직으로 넘어감.
       devLogger('[Front MiddleWare] 유효하지 않은 엑세스토큰 보유중. 재발급 시도');
