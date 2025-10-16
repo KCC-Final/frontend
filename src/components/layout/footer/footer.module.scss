@@ -1,0 +1,53 @@
+@use '@/styles/abstract/' as *;
+
+.container {
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid rgba($color: #000000, $alpha: 0.2);
+  margin-top: 24px;
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: $header-width;
+    padding: 28px 20px;
+
+    h1 {
+      @include font-SeoulAlrim();
+      font-size: $font-size-20;
+      font-weight: 900;
+      color: $font-green;
+      margin-bottom: 12px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+
+      h2 {
+        font-size: $font-size-16;
+        font-weight: 700;
+        width: 100px;
+      }
+
+      ul {
+        display: flex;
+        gap: 16px;
+
+        li {
+          font-weight: 600;
+          color: $font-black-7;
+        }
+      }
+
+      a {
+        padding: 6px 10px;
+      }
+    }
+
+    div {
+      color: $font-black-7;
+    }
+  }
+}

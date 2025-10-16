@@ -1,11 +1,11 @@
 import GlobalLayout from '@/components/layout/global';
 
-interface ReviewsPageLayoutProps {
+interface MyFeedPageLayoutProps {
   children: React.ReactNode;
 }
 
-function ReviewsPageLayout({ children }: ReviewsPageLayoutProps) {
+function MyFeedPageLayout({ children }: MyFeedPageLayoutProps) {
   return <GlobalLayout>{children}</GlobalLayout>;
 }
 
-export default ReviewsPageLayout;
+export default MyFeedPageLayout;

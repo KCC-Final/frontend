@@ -4,8 +4,7 @@ import { fetchAladin } from '@/apis/aladin';
 import { fetchGrooInServer } from '@/apis/groo/server';
 import BestsellerList from '@/components/home/bestseller';
 import TodaySentence from '@/components/home/today-sentence';
-import HeaderLayout from '@/components/layout/header';
-import MainLayout from '@/components/layout/main';
+import GlobalLayout from '@/components/layout/global';
 import { getTokenInCookie } from '@/utils/cookie';
 
 async function BookRecommendationPage() {
@@ -24,13 +23,10 @@ async function BookRecommendationPage() {
   const bestsellerBooks = bestsellerResponse.item || [];
 
   return (
-    <>
-      <HeaderLayout />
-      <MainLayout>
-        <TodaySentence initialQuoteData={initialQuoteData.data} />
-        <BestsellerList books={bestsellerBooks} />
-      </MainLayout>
-    </>
+    <GlobalLayout>
+      <TodaySentence initialQuoteData={initialQuoteData.data} />
+      <BestsellerList books={bestsellerBooks} />
+    </GlobalLayout>
   );
 }
 

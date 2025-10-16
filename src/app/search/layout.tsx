@@ -1,17 +1,11 @@
-import HeaderLayout from '@/components/layout/header';
-import MainLayout from '@/components/layout/main';
+import GlobalLayout from '@/components/layout/global';
 
 interface SearchPageLayoutProps {
   children: React.ReactNode;
 }
 
 function SearchPageLayout({ children }: SearchPageLayoutProps) {
-  return (
-    <>
-      <HeaderLayout />
-      <MainLayout>{children}</MainLayout>
-    </>
-  );
+  return <GlobalLayout>{children}</GlobalLayout>;
 }
 
 export default SearchPageLayout;

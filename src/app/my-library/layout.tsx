@@ -1,17 +1,11 @@
-import HeaderLayout from '@/components/layout/header';
-import MainLayout from '@/components/layout/main';
+import GlobalLayout from '@/components/layout/global';
 
 interface MyLibraryPageLayoutProps {
   children: React.ReactNode;
 }
 
 function MyLibraryPageLayout({ children }: MyLibraryPageLayoutProps) {
-  return (
-    <>
-      <HeaderLayout />
-      <MainLayout>{children}</MainLayout>
-    </>
-  );
+  return <GlobalLayout>{children}</GlobalLayout>;
 }
 
 export default MyLibraryPageLayout;
