@@ -16,10 +16,10 @@ function LeftNavigation() {
           <Link href="/reviews/feed">피드</Link>
         </li>
         <li>
-          <Link href="/my-library">내 서재</Link>
+          <Link href="/groups">독서 모임</Link>
         </li>
         <li>
-          <Link href="/groups">독서 모임</Link>
+          <Link href="/dashboard">대시보드</Link>
         </li>
       </ul>
     </nav>
