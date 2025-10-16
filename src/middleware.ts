@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
 
   // 접속한 페이지 url
   const { pathname } = request.nextUrl;
-  devLogger(`[Front MiddleWare] Path: ${pathname}`);
+  devLogger(`\n\n[Front MiddleWare] Path: ${pathname}`);
 
   // 리다이렉트할 페이지 url
   const loginUrl = new URL('/login', request.url);
@@ -40,12 +40,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(homeUrl);
       } catch (error) {
         // 유효하지 않다면 페이지 진입 허용
-        devLogger(`[Front MiddleWare] 비로그인 사용자의 접속 시도: ${pathname}`);
+        devLogger(`[Front MiddleWare] 비로그인 사용자의 접속 시도: ${pathname}\n`);
         return NextResponse.next();
       }
     }
     // 토큰이 없으면 페이지 진입 허용
-    devLogger(`[Front MiddleWare] 비로그인 사용자의 접속 시도: ${pathname}`);
+    devLogger(`[Front MiddleWare] 비로그인 사용자의 접속 시도: ${pathname}\n`);
     return NextResponse.next();
   }
 
@@ -60,7 +60,7 @@ export async function middleware(request: NextRequest) {
       devLogger(`[Front MiddleWare] 로그인된 사용자의 접속 시도: ${pathname}`);
       const requestHeaders = new Headers(request.headers);
 
-      devLogger(JSON.stringify(myInfo.data));
+      devLogger(`접속한 유저 아이디: ${myInfo.data.userId}, 닉네임: ${myInfo.data.nickname}\n`);
       const encodedUserInfo = Buffer.from(JSON.stringify(myInfo.data)).toString('base64');
       requestHeaders.set('x-user-info', encodedUserInfo);
       return NextResponse.next({
@@ -84,7 +84,7 @@ export async function middleware(request: NextRequest) {
         throw new Error("토큰 재발행 응답에 'Set-Cookie' 헤더가 없습니다.");
       }
 
-      devLogger('[Front MiddleWare] 토큰 재발행 성공');
+      devLogger('[Front MiddleWare] 토큰 재발행 성공. 기존 요청 재시도');
       const response = NextResponse.redirect(request.url);
 
       const cookieToSet = Array.isArray(setCookieHeader) ? setCookieHeader[0] : setCookieHeader;
@@ -92,7 +92,7 @@ export async function middleware(request: NextRequest) {
 
       return response;
     } catch (error) {
-      devLogger('[Front MiddleWare] 토큰 재발행 실패', true);
+      devLogger('[Front MiddleWare] 토큰 재발행 실패. 로그인 페이지로 리다이렉트', true);
       devLogger(error, true);
 
       // 기존에 있던 만료된 refreshToken 삭제 후 리다이렉트
