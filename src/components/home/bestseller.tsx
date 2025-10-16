@@ -1,44 +1,15 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
-import { fetchAladin } from '@/apis/aladin';
 import styles from '@/components/home/home.module.scss';
 import { AladinBestsellerItem } from '@/types/aladin/dto';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 
-function BestsellerList() {
-  const [books, setBooks] = useState<AladinBestsellerItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface BestsellerListProps {
+  books: AladinBestsellerItem[];
+}
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetchAladin.getBestSellers(16);
-        setBooks(response.item);
-      } catch (err) {
-        setError('베스트셀러 목록을 불러오는 데 실패했습니다.');
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchBooks();
-  }, []);
-
-  if (isLoading) {
-    return <div>로딩 중...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
+function BestsellerList({ books }: BestsellerListProps) {
   return (
     <section className={styles.bestseller}>
       <h1>베스트셀러</h1>

@@ -18,15 +18,5 @@ export const auth = {
   reissueToken: async (): Promise<ReissueTokenResDTO> => {
     const response = await axiosGroo.post('/token-refresh');
     return response.data;
-  },
-
-  // 프론트서버에서 엑세스토큰 재발행
-  reissueTokenInServer: async (refreshToken: string) => {
-    const response = await axiosGroo.post(
-      '/token-refresh',
-      {},
-      { headers: { Cookie: `refreshToken=${refreshToken}` } }
-    );
-    return response;
   }
 };
