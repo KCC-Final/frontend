@@ -50,11 +50,6 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
     }
   };
 
-  /**
-   * @author uyh
-   * @created 2025-10-13
-   * 팔로우/언팔로우 토글 핸들러
-   */
   const handleFollowToggle = async () => {
     if (followLoading) return;
 

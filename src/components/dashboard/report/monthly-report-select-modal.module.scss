@@ -1,0 +1,152 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px 20px;
+  width: 340px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #222; /*  제목 색상 명시 */
+  }
+
+  .closeButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #444;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 14px;
+    color: #333; /*  라벨 색상 */
+  }
+
+  select {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #fff; /*  흰 배경 명시 */
+    color: #222; /*  글자색 명시 */
+    cursor: pointer;
+    appearance: none; /* 브라우저 기본 화살표 제거 (디자인 일관성 유지) */
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &:focus {
+      border-color: #2d5a3d;
+      box-shadow: 0 0 0 2px rgba(45, 90, 61, 0.2);
+      outline: none;
+    }
+  }
+
+  /*  드롭다운 내부 옵션 색상 */
+  option {
+    background-color: #fff;
+    color: #222;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btnPrimary {
+  background: #2d5a3d;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+
+  &:hover {
+    background: #256033;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/*  다크모드 대비 (전역 다크모드가 있을 경우 대비용) */
+@media (prefers-color-scheme: dark) {
+  .modal {
+    background: #1e1e1e;
+    color: #f0f0f0;
+  }
+
+  .fieldGroup label {
+    color: #ddd;
+  }
+
+  .fieldGroup select {
+    background: #2a2a2a;
+    color: #f0f0f0;
+    border-color: #444;
+  }
+
+  .fieldGroup option {
+    background: #2a2a2a;
+    color: #f0f0f0;
+  }
+}

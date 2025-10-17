@@ -1,10 +1,3 @@
-/**
- * Review 도메인 에러 메시지 매핑
- * @author uyh
- * @created 2025-10-11
- * @modified 2025-10-12 - 백엔드 ReviewErrorCode.java와 100% 일치하도록 수정
- */
-
 export const getReviewErrorMessage = (error: any): string => {
   // 에러 코드 추출 (여러 위치에서 시도)
   const errorCode =

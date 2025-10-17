@@ -1,0 +1,282 @@
+.reportCard {
+  background: #ffffff;
+  color: #1f2937;
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin-bottom: 3rem;
+  border: 1px solid #e5e7eb;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.08),
+      0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
+}
+
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.reportTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2d5a3d;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.selectButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+  }
+
+  &:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #374151;
+
+    svg {
+      color: #374151;
+    }
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #2d5a3d;
+    box-shadow: 0 0 0 2px rgba(45, 90, 61, 0.1);
+  }
+}
+
+.reportContent {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2rem 0;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem 0;
+  }
+}
+
+.reportStat {
+  text-align: center;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: block;
+  color: #111827;
+  line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.vsText {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    padding: 0.5rem 0;
+  }
+}
+
+.reportDifference {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0 1.5rem;
+}
+
+.differenceIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &.positive {
+    color: #059669;
+    background: #d1fae5;
+    border: 1px solid #a7f3d0;
+
+    svg {
+      color: #10b981;
+    }
+  }
+
+  &.negative {
+    color: #dc2626;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+
+    svg {
+      color: #ef4444;
+    }
+  }
+
+  &.neutral {
+    color: #6b7280;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+
+    svg {
+      color: #9ca3af;
+    }
+  }
+}
+
+.reportFooter {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f3f4f6;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+  line-height: 1.6;
+
+  &.positive {
+    color: #059669;
+  }
+
+  &.negative {
+    color: #6b7280;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  .reportCard {
+    background: #1f2937;
+    color: #f3f4f6;
+    border-color: #374151;
+  }
+
+  .reportHeader {
+    border-bottom-color: #374151;
+  }
+
+  .reportTitle {
+    color: #10b981;
+  }
+
+  .selectButton {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+
+    svg {
+      color: #d1d5db;
+    }
+
+    &:hover {
+      background: #4b5563;
+      border-color: #6b7280;
+      color: #f3f4f6;
+
+      svg {
+        color: #f3f4f6;
+      }
+    }
+  }
+
+  .statLabel {
+    color: #9ca3af;
+  }
+
+  .statValue {
+    color: #f3f4f6;
+  }
+
+  .vsText {
+    color: #6b7280;
+  }
+
+  .reportFooter {
+    border-top-color: #374151;
+    color: #9ca3af;
+
+    &.positive {
+      color: #10b981;
+    }
+  }
+
+  .differenceIndicator {
+    &.positive {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+
+    &.negative {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    &.neutral {
+      background: #374151;
+      border-color: #4b5563;
+      color: #9ca3af;
+    }
+  }
+}

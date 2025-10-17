@@ -1,0 +1,116 @@
+.chartCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartWrapper {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+
+  /* 드롭다운 잘림 방지 */
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+}
+
+.chartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  /* 헤더 영역도 overflow 해제 */
+  overflow: visible;
+}
+
+.inlineYearSelect {
+  position: relative;
+  z-index: 30; /* 드롭다운이 위로 뜨게 */
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.25rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #007664;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #007664;
+    box-shadow: 0 0 0 3px rgba(0, 118, 100, 0.2);
+  }
+}
+
+/* 캔버스가 다른 요소보다 아래쪽에 위치 */
+.chartContainer {
+  position: relative;
+  z-index: 1;
+  height: 250px;
+  width: 100%;
+  flex: 1;
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.chartTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+/* 하단 버튼 영역 */
+.chartFooter {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.expandButton {
+  background: #2d5a3d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #1f4029;
+  }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .chartCard {
+    padding: 1.5rem;
+    overflow: visible; /* 모바일에서도 드롭다운 안짤림 */
+  }
+
+  .chartTitle {
+    font-size: 1.1rem;
+  }
+
+  .chartContainer {
+    height: 200px;
+  }
+}
