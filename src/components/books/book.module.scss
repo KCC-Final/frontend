@@ -1,16 +1,7 @@
 @use '@/styles/abstract/' as *;
+@use '@/styles/layout/' as *;
 
-.book_card,
-.navigation,
-.book_details,
-.book_reviews,
-.book_library {
-  display: flex;
-  gap: 40px;
-  width: 1080px;
-  padding: 24px 20px;
-  margin: 0 auto;
-}
+@include book-details-layout();
 
 .book_card {
   background-color: $input-bg;
