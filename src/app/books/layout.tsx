@@ -1,11 +1,11 @@
 import GlobalLayout from '@/components/layout/global';
 
-interface ReviewsPageLayoutProps {
+interface BookDataPageLayoutProps {
   children: React.ReactNode;
 }
 
-function ReviewsPageLayout({ children }: ReviewsPageLayoutProps) {
+function BookDataPageLayout({ children }: BookDataPageLayoutProps) {
   return <GlobalLayout>{children}</GlobalLayout>;
 }
 
-export default ReviewsPageLayout;
+export default BookDataPageLayout;

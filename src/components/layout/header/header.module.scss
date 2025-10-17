@@ -1,7 +1,6 @@
 @use '@/styles/abstract/' as *;
 
 .container {
-  box-sizing: border-box;
   display: flex;
   justify-content: center;
   border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
@@ -24,7 +23,7 @@
       @include font-SeoulAlrim();
       font-size: 2.4rem;
       font-weight: 900;
-      color: $groo-green;
+      color: $font-green;
       padding: 8px 10px;
     }
 

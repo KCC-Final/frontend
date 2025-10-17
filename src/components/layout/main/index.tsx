@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './main.module.scss';
+import styles from '@/components/layout/main/main.module.scss';
 
 interface MainLayoutProps {
   children: React.ReactNode;
