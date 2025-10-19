@@ -20,7 +20,7 @@ function BookInformation({ bookInfo }: BookInformationProps) {
         </ul>
       </nav>
       <BookDetails bookInfo={bookInfo} />
-      <ReviewListAboutBook isbn={bookInfo.isbn13} />
+      <ReviewListAboutBook isbn={bookInfo.isbn13} coverUrl={bookInfo.cover} />
       <LibraryInformation isbn={bookInfo.isbn13} />
     </>
   );
