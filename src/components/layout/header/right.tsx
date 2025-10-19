@@ -1,6 +1,7 @@
 'use client';
 
-import { Bell, CircleUserRound, Search } from 'lucide-react';
+import { Bell, Search, User } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
@@ -22,20 +23,16 @@ import { devLogger } from '@/utils/dev-logger';
 function RightNavigation() {
   const router = useRouter();
 
-  // 로그아웃 성공시 내 정보를 삭제하기 위한 액션
-  const { setMyInfo } = useBoundStore(useShallow((state) => ({ setMyInfo: state.setMyInfo })));
+  const { myInfo, setMyInfo } = useBoundStore(
+    useShallow((state) => ({ myInfo: state.myInfo, setMyInfo: state.setMyInfo }))
+  );
 
-  // TODO: 기능 구현이 되지 않은 버튼들 알림 모달 열림 상태
-  const [isNicknameModalOpen, setNicknameModalOpen, openNicknameModal] = useModalState(false);
-  const [isMyLibraryModalOpen, setMyLibraryModalOpen, openMyLibraryModal] = useModalState(false);
-  const [isMyActivitiesModalOpen, setMyActivitiesModalOpen, openMyActivitiesModal] = useModalState(false);
+  const [isNotificationModalOpen, setNotificationModalOpen, openNotificationModal] = useModalState(false);
 
-  /** 버튼 클릭시 페이지 이동 */
   const routePageHandler = (url: string) => () => {
     router.push(url);
   };
 
-  /** 로그아웃 실행 함수 */
   const logoutHandler = async () => {
     try {
       await fetchGroo.auth.logout();
@@ -60,32 +57,42 @@ function RightNavigation() {
       <div className={styles.user}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button>
-              <Bell />
+            <button onClick={openNotificationModal}>
+              <Bell size={26} color="#333333" />
             </button>
           </DropdownMenuTrigger>
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button>
-              <CircleUserRound />
+            <button className={styles.user_avatar_button}>
+              {myInfo?.profileImage ? (
+                <Image src={myInfo.profileImage} alt="user profile image" width={38} height={38} />
+              ) : (
+                <User size={26} color="#333333" />
+              )}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-[12rem]">
-            <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" onClick={openNicknameModal}>
-              닉네임
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-[1.4rem] px-[1rem] py-[0.8rem]"
               onClick={routePageHandler('/my-feeds')}>
               내 피드
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" onClick={openMyLibraryModal}>
+            <DropdownMenuItem
+              className="text-[1.4rem] px-[1rem] py-[0.8rem]"
+              onClick={routePageHandler('/my-library')}>
               내 책장
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" onClick={openMyActivitiesModal}>
+            <DropdownMenuItem
+              className="text-[1.4rem] px-[1rem] py-[0.8rem]"
+              onClick={routePageHandler('/my-activities')}>
               내 활동
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-[1.4rem] px-[1rem] py-[0.8rem]"
+              onClick={routePageHandler('/my-info')}>
+              계정 설정
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]">
@@ -94,29 +101,11 @@ function RightNavigation() {
           </DropdownMenuContent>
         </DropdownMenu>
         <AlertModal
-          open={isNicknameModalOpen}
-          onOpenChange={setNicknameModalOpen}
+          open={isNotificationModalOpen}
+          onOpenChange={setNotificationModalOpen}
           title={<div className={styles.profile_title}>현재 구현되지 않은 기능입니다.</div>}
           description={
-            <div className={styles.profile_description}>마이페이지(/my-info)로 이동하는 버튼입니다.</div>
-          }
-          button={<button className={styles.profile_confirm}>확인</button>}
-        />
-        <AlertModal
-          open={isMyLibraryModalOpen}
-          onOpenChange={setMyLibraryModalOpen}
-          title={<div className={styles.profile_title}>현재 구현되지 않은 기능입니다.</div>}
-          description={
-            <div className={styles.profile_description}>내 책장(/my-library)로 이동하는 버튼입니다.</div>
-          }
-          button={<button className={styles.profile_confirm}>확인</button>}
-        />
-        <AlertModal
-          open={isMyActivitiesModalOpen}
-          onOpenChange={setMyActivitiesModalOpen}
-          title={<div className={styles.profile_title}>현재 구현되지 않은 기능입니다.</div>}
-          description={
-            <div className={styles.profile_description}>내 활동(/my-activities)로 이동하는 버튼입니다.</div>
+            <div className={styles.profile_description}>사용자에게 온 알림 정보를 확인할 수 있습니다.</div>
           }
           button={<button className={styles.profile_confirm}>확인</button>}
         />
