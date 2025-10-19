@@ -5,12 +5,13 @@
   justify-content: center;
   border-top: $devider-border;
   margin-top: 24px;
+  height: $footer-height;
 
   .footer {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: $header-width;
+    width: $footer-width;
     padding: 28px 20px;
 
     h1 {

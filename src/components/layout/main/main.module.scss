@@ -3,10 +3,16 @@
 .container {
   display: flex;
   justify-content: center;
-}
 
-.main {
-  width: $main-width;
-  min-height: calc(100vh - $header-height);
-  padding: 0 20px;
+  > main {
+    min-height: calc(100vh - $header-height - $footer-height);
+  }
+
+  > main.wide {
+    width: $main-width-lg;
+  }
+
+  > main.basic {
+    width: $main-width-md;
+  }
 }
