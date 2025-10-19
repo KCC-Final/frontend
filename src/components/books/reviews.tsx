@@ -1,4 +1,4 @@
-import styles from '@/components/books/book.module.scss';
+import styles from '@/components/books/reviews.module.scss';
 
 interface ReviewListAboutBookProps {
   isbn: string;
@@ -6,7 +6,7 @@ interface ReviewListAboutBookProps {
 
 function ReviewListAboutBook({ isbn }: ReviewListAboutBookProps) {
   return (
-    <section className={styles.book_navigation}>
+    <section className={styles.book_reviews}>
       <div>이 도서에 대한 리뷰 리스트 영역입니다.</div>
     </section>
   );

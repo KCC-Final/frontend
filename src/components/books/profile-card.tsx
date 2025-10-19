@@ -1,7 +1,7 @@
 import { Bookmark, BookOpen } from 'lucide-react';
 import Image from 'next/image';
 
-import styles from '@/components/books/book.module.scss';
+import styles from '@/components/books/profile-card.module.scss';
 import { AladinBookDetailsItem } from '@/types';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 

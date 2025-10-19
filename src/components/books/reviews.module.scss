@@ -1,0 +1,4 @@
+@use '@/styles/abstract/' as *;
+@use '@/styles/layout/' as *;
+
+@include book-details-layout();

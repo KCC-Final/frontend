@@ -119,20 +119,6 @@ const LibraryInformation = ({ isbn }: LibraryInformationProps) => {
 
   return (
     <section className={styles.book_library}>
-      {popup && (
-        <div className={styles.text_popup_backdrop} onClick={() => setPopup(null)}>
-          <div className={styles.text_popup_content} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.popup_header}>
-              <h4>{popup.title}</h4>
-              <button onClick={() => setPopup(null)} className={styles.popup_close_button}>
-                &times;
-              </button>
-            </div>
-            <p className={styles.popup_body}>{popup.content}</p>
-          </div>
-        </div>
-      )}
-
       <h2 className={styles.title}>도서 소장 도서관 정보</h2>
       <div className={styles.region_selector}>
         <select value={region.code} onChange={regionHandler}>
@@ -150,7 +136,6 @@ const LibraryInformation = ({ isbn }: LibraryInformationProps) => {
           ))}
         </select>
       </div>
-
       {isLoading ? (
         <div className={styles.message_box}>
           <p>도서관 정보를 불러오는 중입니다...</p>
@@ -224,6 +209,19 @@ const LibraryInformation = ({ isbn }: LibraryInformationProps) => {
       ) : (
         <div className={styles.message_box}>
           <p>해당 지역에 도서를 소장한 도서관이 없습니다.</p>
+        </div>
+      )}
+      {popup && (
+        <div className={styles.text_popup_backdrop} onClick={() => setPopup(null)}>
+          <div className={styles.text_popup_content} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.popup_header}>
+              <h4>{popup.title}</h4>
+              <button onClick={() => setPopup(null)} className={styles.popup_close_button}>
+                &times;
+              </button>
+            </div>
+            <p className={styles.popup_body}>{popup.content}</p>
+          </div>
         </div>
       )}
     </section>
