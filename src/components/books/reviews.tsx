@@ -11,11 +11,13 @@ import { ReviewData } from '@/types';
 interface ReviewListAboutBookProps {
   isbn: string;
   coverUrl: string;
+  ref?: React.Ref<HTMLElement>;
+  id?: string;
 }
 
 const SCROLL_AMOUNT = 320 + 40; // Card width + gap
 
-function ReviewListAboutBook({ isbn, coverUrl }: ReviewListAboutBookProps) {
+function ReviewListAboutBook({ isbn, coverUrl, ref, id }: ReviewListAboutBookProps) {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -119,7 +121,7 @@ function ReviewListAboutBook({ isbn, coverUrl }: ReviewListAboutBookProps) {
   };
 
   return (
-    <section className={styles.book_reviews}>
+    <section className={styles.book_reviews} ref={ref} id={id}>
       <h2 className={styles.section_title}>이 도서에 대한 독후감</h2>
       {renderContent()}
     </section>

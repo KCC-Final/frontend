@@ -47,7 +47,9 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+    transition:
+      transform 0.1s ease-in-out,
+      box-shadow 0.1s ease-in-out;
 
     &:hover {
       transform: translateY(-50%) scale(1.05);
@@ -94,7 +96,9 @@
   border: 1px solid $black-e;
   border-radius: $large-button-radius;
   background-color: #fff;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
   overflow: hidden;
 
   &:hover {

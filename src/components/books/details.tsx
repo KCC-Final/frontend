@@ -3,13 +3,15 @@ import { AladinBookDetailsItem } from '@/types';
 
 interface BookDetailsProps {
   bookInfo: AladinBookDetailsItem;
+  ref?: React.Ref<HTMLElement>;
+  id?: string;
 }
 
-function BookDetails({ bookInfo }: BookDetailsProps) {
+function BookDetails({ bookInfo, ref, id }: BookDetailsProps) {
   const ratingPercentage = (bookInfo.customerReviewRank / 10) * 100;
 
   return (
-    <section className={styles.book_details}>
+    <section className={styles.book_details} ref={ref} id={id}>
       <h2 className={styles.title}>도서 상세정보</h2>
       <div className={styles.info_section}>
         <h3 className={styles.sub_title}>기본 정보</h3>

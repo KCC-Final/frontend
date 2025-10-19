@@ -10,9 +10,11 @@ import { devLogger } from '@/utils/dev-logger';
 
 interface LibraryInformationProps {
   isbn: string;
+  ref?: React.Ref<HTMLElement>;
+  id?: string;
 }
 
-const LibraryInformation = ({ isbn }: LibraryInformationProps) => {
+const LibraryInformation = ({ isbn, ref, id }: LibraryInformationProps) => {
   // 첫 렌더링 판별용 ref
   const isInitialMount = useRef(true);
 
@@ -118,7 +120,7 @@ const LibraryInformation = ({ isbn }: LibraryInformationProps) => {
   }, [dtlRegion.code]);
 
   return (
-    <section className={styles.book_library}>
+    <section className={styles.book_library} ref={ref} id={id}>
       <h2 className={styles.title}>도서 소장 도서관 정보</h2>
       <div className={styles.region_selector}>
         <select value={region.code} onChange={regionHandler}>
