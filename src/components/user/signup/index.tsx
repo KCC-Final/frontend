@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
+import BackButton from '@/components/layout/button/back-button';
 import BasicButton from '@/components/layout/button/basic';
-import LoginBackButton from '@/components/user/back-button';
 import styles from '@/components/user/signup/signup.module.scss';
 import SignupStep1 from '@/components/user/signup/step1';
 import SignupStep2 from '@/components/user/signup/step2';
@@ -86,7 +86,7 @@ function Signup() {
 
   return (
     <>
-      <LoginBackButton onClick={backButtonHandler} />
+      <BackButton onClick={backButtonHandler} />
       <section className={styles.signup}>
         <h1>회원가입</h1>
         <form>
