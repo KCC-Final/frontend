@@ -119,9 +119,7 @@ export default function MonthlyChart({ data, year }: MonthlyChartProps) {
 
   return (
     <div className={styles.chartCard}>
-      <div className={styles.chartHeader}>
-        <h3 className={styles.chartTitle}>월별 독서 통계 ({year}년)</h3>
-      </div>
+      <div className={styles.chartHeader}></div>
       <div className={styles.chartContainer}>
         {chartError ? <p className={styles.chartError}>{chartError}</p> : <canvas ref={chartRef}></canvas>}
       </div>
