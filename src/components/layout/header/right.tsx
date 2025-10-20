@@ -19,6 +19,7 @@ import {
 import { useModalState } from '@/hooks/useModal';
 import useBoundStore from '@/stores';
 import { devLogger } from '@/utils/dev-logger';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 function RightNavigation() {
   const router = useRouter();
@@ -65,8 +66,13 @@ function RightNavigation() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={styles.user_avatar_button}>
-              {myInfo?.profileImage ? (
-                <Image src={myInfo.profileImage} alt="user profile image" width={38} height={38} />
+              {changeImageUrlFromBase64(myInfo?.profileImage) ? (
+                <Image
+                  src={changeImageUrlFromBase64(myInfo?.profileImage)}
+                  alt="user profile image"
+                  width={38}
+                  height={38}
+                />
               ) : (
                 <User size={26} color="#333333" />
               )}

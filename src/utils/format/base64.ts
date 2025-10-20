@@ -1,5 +1,5 @@
 /** Base64 문자열을 이미지 Data URL로 변환 */
-export const changeImageUrlFromBase64 = (base64String: string | null): string => {
+export const changeImageUrlFromBase64 = (base64String: string | null | undefined): string => {
   if (!base64String) {
     return '';
   }

@@ -207,8 +207,7 @@ function MyInfo() {
     setEmail(myInfo?.email || '');
   }, []);
 
-  const viewImageUrl =
-    previewUrl || (myInfo?.profileImage ? changeImageUrlFromBase64(myInfo.profileImage) : '');
+  const viewImageUrl = previewUrl || changeImageUrlFromBase64(myInfo?.profileImage);
 
   return (
     <section className={styles.container}>
