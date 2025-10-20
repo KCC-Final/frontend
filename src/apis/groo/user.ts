@@ -1,5 +1,4 @@
-import axiosGroo from './config';
-
+import axiosGroo from '@/apis/groo/config';
 import {
   ChangePasswordReqBody,
   ChangePasswordResDTO,
@@ -15,7 +14,8 @@ import {
   VerifyEmailReqQuery,
   VerifyEmailResDTO,
   VerifyUserIdReqQuery,
-  VerifyUserIdResDTO
+  VerifyUserIdResDTO,
+  UserFeedResDTO
 } from '@/types';
 
 export const user = {
@@ -68,6 +68,12 @@ export const user = {
     const response = await axiosGroo.put('/users', data, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
+    return response.data;
+  },
+
+  // 사용자 피드 통합 조회 (새로 추가)
+  getUserFeed: async (userId: string): Promise<UserFeedResDTO> => {
+    const response = await axiosGroo.get(`/users/${userId}/feed`);
     return response.data;
   }
 };

@@ -1,4 +1,5 @@
 import { CommonResDTO } from '@/types';
+import { ReviewData } from '@/types/reviews';
 
 // 회원가입
 export type SignupReqBody = {
@@ -59,3 +60,21 @@ export type GetMyInfoResDTO = CommonResDTO<User>;
 // 내 정보 수정
 export type EditMyInfoReqBody = FormData;
 export type EditMyInfoResDTO = CommonResDTO<User>;
+
+// 사용자 피드 데이터
+export type UserFeedData = {
+  user: {
+    userId: string;
+    nickname: string;
+    profileImage: string | null;
+    introduction: string | null;
+  };
+  stats: {
+    reviewCount: number;
+    followerCount: number;
+    followingCount: number;
+  };
+  reviews: ReviewData[];
+  likedReviews: ReviewData[];
+};
+export type UserFeedResDTO = UserFeedData;
