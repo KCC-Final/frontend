@@ -11,17 +11,10 @@ import FollowListModal from '@/components/my-feeds/follow-list-modal';
 import UserProfileSection from '@/components/my-feeds/user-profile-section';
 import ReviewCard from '@/components/reviews/commons/review-card';
 import { ReviewData } from '@/types/reviews';
+import { UserFeedData } from '@/types/user';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 type TabType = 'myReviews' | 'likedReviews';
-
-interface UserInfoState {
-  nickname: string;
-  profileImage: any;
-  reviewCount: number;
-  followerCount: number;
-  followingCount: number;
-}
 
 export default function MyFeedsList() {
   const router = useRouter();
@@ -30,116 +23,110 @@ export default function MyFeedsList() {
 
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('myReviews');
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userInfo, setUserInfo] = useState<UserInfoState | null>(null);
+  const [feedData, setFeedData] = useState<UserFeedData | null>(null);
   const [followModalOpen, setFollowModalOpen] = useState(false);
   const [followModalType, setFollowModalType] = useState<'follower' | 'following'>('follower');
 
   useEffect(() => {
     setMounted(true);
-    loadUserInfo();
+    loadFeedData();
   }, [targetUserId]);
 
-  useEffect(() => {
-    if (mounted) {
-      loadReviews(activeTab);
-    }
-  }, [mounted, activeTab, targetUserId]);
+  // src/components/my-feeds/my-feeds-list.tsx
 
-  const loadUserInfo = async () => {
+  const loadFeedData = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
+      console.log('=== Feed Data Loading Start ===');
+      console.log('targetUserId:', targetUserId);
+
       if (!targetUserId) {
-        const [userResponse, followerCountResponse, followingCountResponse, myReviewsResponse] =
-          await Promise.all([
-            fetchGroo.user.getMyInfo(),
-            fetchGroo.follow.getFollowerCount(),
-            fetchGroo.follow.getFollowingCount(),
-            fetchGroo.review.getMyReviews()
-          ]);
+        console.log('내 피드 로드 - 여러 API 조합');
+
+        const [userResponse, myReviewsResponse, likedReviewsResponse] = await Promise.all([
+          fetchGroo.user.getMyInfo(),
+          fetchGroo.review.getMyReviews(),
+          fetchGroo.review.getLikedReviews()
+        ]);
+
+        console.log('userResponse:', userResponse);
+        console.log('myReviewsResponse:', myReviewsResponse);
+        console.log('likedReviewsResponse:', likedReviewsResponse);
 
         const myReviewsData = Array.isArray(myReviewsResponse)
           ? myReviewsResponse
           : myReviewsResponse?.data || [];
 
-        setUserInfo({
-          nickname: userResponse.data.nickname,
-          profileImage: userResponse.data.profileImage,
-          reviewCount: myReviewsData.length,
-          followerCount: followerCountResponse.data,
-          followingCount: followingCountResponse.data
+        const likedReviewsData = Array.isArray(likedReviewsResponse)
+          ? likedReviewsResponse
+          : likedReviewsResponse?.data || [];
+
+        const feedData = {
+          user: {
+            userId: userResponse.data.userId,
+            nickname: userResponse.data.nickname,
+            profileImage: userResponse.data.profileImage,
+            introduction: userResponse.data.introduction
+          },
+          stats: {
+            reviewCount: myReviewsData.length,
+            followerCount: 0,
+            followingCount: 0
+          },
+          reviews: myReviewsData,
+          likedReviews: likedReviewsData
+        };
+
+        console.log('내 피드 데이터 조합 완료:', feedData);
+        setFeedData(feedData);
+
+        // 팔로워/팔로잉 수 별도 조회
+        const [followerCountResponse, followingCountResponse] = await Promise.all([
+          fetchGroo.follow.getFollowerCount(),
+          fetchGroo.follow.getFollowingCount()
+        ]);
+
+        console.log('followerCount:', followerCountResponse.data);
+        console.log('followingCount:', followingCountResponse.data);
+
+        setFeedData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            stats: {
+              ...prev.stats,
+              followerCount: followerCountResponse.data,
+              followingCount: followingCountResponse.data
+            }
+          };
         });
       } else {
-        const [targetReviewsResponse, targetFollowerCountResponse, targetFollowingCountResponse] =
-          await Promise.all([
-            fetchGroo.review.getReviewsByUserId(targetUserId),
-            fetchGroo.follow.getUserFollowerCount(targetUserId),
-            fetchGroo.follow.getUserFollowingCount(targetUserId)
-          ]);
+        console.log('다른 유저 피드 로드 - 통합 API 1번 호출');
+        console.log('API URL:', `/users/${targetUserId}/feed`);
 
-        const targetReviewsData = Array.isArray(targetReviewsResponse)
-          ? targetReviewsResponse
-          : targetReviewsResponse?.data || [];
+        const feedResponse = await fetchGroo.user.getUserFeed(targetUserId);
 
-        setUserInfo({
-          nickname: targetUserId,
-          profileImage: null,
-          reviewCount: targetReviewsData.length,
-          followerCount: targetFollowerCountResponse.data,
-          followingCount: targetFollowingCountResponse.data
-        });
-      }
-    } catch (error) {
-      console.error('유저 정보 로드 실패:', error);
-      setUserInfo({
-        nickname: targetUserId || '사용자',
-        profileImage: null,
-        reviewCount: 0,
-        followerCount: 0,
-        followingCount: 0
-      });
-    }
-  };
-
-  const loadReviews = async (tab: TabType) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      let response;
-
-      if (targetUserId) {
-        if (tab === 'myReviews') {
-          response = await fetchGroo.review.getReviewsByUserId(targetUserId);
-        } else {
-          response = await fetchGroo.review.getLikedReviewsByUserId(targetUserId);
-        }
-      } else {
-        if (tab === 'myReviews') {
-          response = await fetchGroo.review.getMyReviews();
-        } else {
-          response = await fetchGroo.review.getLikedReviews();
-        }
+        setFeedData(feedResponse);
+        console.log('피드 데이터 설정 완료');
       }
 
-      let reviewsData: ReviewData[] = [];
-      if (Array.isArray(response)) {
-        reviewsData = response;
-      } else if (response?.data) {
-        reviewsData = response.data;
-      } else {
-        reviewsData = [];
-      }
-
-      setReviews(reviewsData);
+      console.log('=== Feed Data Loading Success ===');
     } catch (error: any) {
+      console.error('=== Feed Data Loading Error ===');
+      console.error('Error 객체:', error);
+      console.error('Error response:', error?.response);
+      console.error('Error data:', error?.response?.data);
+
       const errorMessage = getReviewErrorMessage(error);
+      console.error('처리된 에러 메시지:', errorMessage);
       setError(errorMessage);
-      setReviews([]);
-      console.error('독후감 목록 조회 실패:', error);
     } finally {
       setLoading(false);
+      console.log('=== Feed Data Loading End ===');
     }
   };
 
@@ -169,31 +156,27 @@ export default function MyFeedsList() {
     );
   }
 
-  if (error) {
+  if (error || !feedData) {
     return (
       <div className={styles.container}>
-        <div className={styles.error}>{error}</div>
-        <button onClick={() => loadReviews(activeTab)} className={styles.retryButton}>
+        <div className={styles.error}>{error || '데이터를 불러올 수 없습니다.'}</div>
+        <button onClick={loadFeedData} className={styles.retryButton}>
           다시 시도
         </button>
       </div>
     );
   }
 
-  const displayNickname = userInfo?.nickname || '사용자';
-  const reviewCount = userInfo?.reviewCount || 0;
-  const followerCount = userInfo?.followerCount || 0;
-  const followingCount = userInfo?.followingCount || 0;
   const isOwner = !targetUserId;
+  const displayReviews = activeTab === 'myReviews' ? feedData.reviews : feedData.likedReviews;
 
   return (
     <div className={styles.container}>
       <UserProfileSection
-        nickname={displayNickname}
-        profileImage={userInfo?.profileImage}
-        reviewCount={reviewCount}
-        followerCount={followerCount}
-        followingCount={followingCount}
+        user={feedData.user}
+        reviewCount={feedData.stats.reviewCount}
+        followerCount={feedData.stats.followerCount}
+        followingCount={feedData.stats.followingCount}
         targetUserId={targetUserId || undefined}
         isOwner={isOwner}
         onFollowerClick={handleFollowerClick}
@@ -214,31 +197,29 @@ export default function MyFeedsList() {
       </nav>
 
       <div className={styles.feedGrid}>
-        {reviews &&
-          reviews.length > 0 &&
-          reviews.map((review) => (
+        {displayReviews.length > 0 ? (
+          displayReviews.map((review) => (
             <ReviewCard
               key={review.reviewId}
               review={review}
               onClick={handleReviewClick}
-              showSecretBadge={activeTab === 'myReviews'}
+              showSecretBadge={activeTab === 'myReviews' && isOwner}
             />
-          ))}
+          ))
+        ) : (
+          <div className={styles.empty}>
+            <p>
+              {activeTab === 'myReviews'
+                ? isOwner
+                  ? '아직 작성된 독후감이 없습니다.'
+                  : '작성된 독후감이 없습니다.'
+                : isOwner
+                  ? '아직 좋아요한 독후감이 없습니다.'
+                  : '좋아요한 독후감이 없습니다.'}
+            </p>
+          </div>
+        )}
       </div>
-
-      {(!reviews || reviews.length === 0) && (
-        <div className={styles.empty}>
-          <p>
-            {activeTab === 'myReviews'
-              ? targetUserId
-                ? '작성된 독후감이 없습니다.'
-                : '아직 작성된 독후감이 없습니다.'
-              : targetUserId
-                ? '좋아요한 독후감이 없습니다.'
-                : '아직 좋아요한 독후감이 없습니다.'}
-          </p>
-        </div>
-      )}
 
       <FollowListModal
         isOpen={followModalOpen}

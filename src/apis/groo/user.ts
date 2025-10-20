@@ -1,3 +1,5 @@
+// src/apis/groo/user.ts
+
 import axiosGroo from './config';
 
 import {
@@ -13,7 +15,8 @@ import {
   VerifyEmailReqQuery,
   VerifyEmailResDTO,
   VerifyUserIdReqQuery,
-  VerifyUserIdResDTO
+  VerifyUserIdResDTO,
+  UserFeedResDTO
 } from '@/types';
 
 export const user = {
@@ -59,5 +62,13 @@ export const user = {
   getMyInfo: async (): Promise<GetMyInfoResDTO> => {
     const response = await axiosGroo.get('/users');
     return response.data;
+  },
+
+  // 사용자 피드 통합 조회 (새로 추가)
+  getUserFeed: async (userId: string): Promise<UserFeedResDTO> => {
+    const response = await axiosGroo.get(`/users/${userId}/feed`);
+    console.log('getUserFeed raw response:', response);
+    console.log('getUserFeed response.data:', response.data);
+    return response.data; // 또는 response.data.data
   }
 };
