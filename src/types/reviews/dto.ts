@@ -39,6 +39,8 @@ export type ReviewDetailResDTO = CommonResDTO<{
   liked: boolean;
   comments?: CommentData[];
   isOwner: boolean; // 추가
+  authorNickname?: string;
+  authorProfileImage?: string | null;
 }>;
 
 // 독후감 목록 조회
@@ -59,6 +61,8 @@ export type ReviewData = {
   likeCount: number;
   liked: boolean;
   commentCount: number;
+  authorNickname?: string;
+  authorProfileImage?: string | null;
 };
 
 // 임시저장 목록 조회
@@ -99,4 +103,6 @@ export type CommentData = {
   updatedAt: string;
   parentId: number | null;
   isOwner: boolean; // 추가
+  authorNickname?: string;
+  authorProfileImage?: string | null;
 };

@@ -18,7 +18,43 @@
 .userSection {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+}
+
+.profileImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #2d5a3d;
+    transform: scale(1.05);
+  }
+}
+
+.profilePlaceholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007664 0%, #00a389 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 118, 100, 0.3);
+  }
 }
 
 .userInfo {

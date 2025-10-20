@@ -81,13 +81,27 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
     router.push(`/my-feeds?userId=${reviewData.userId}`);
   };
 
+  const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.userSection}>
+          {reviewData.authorProfileImage ? (
+            <img
+              src={reviewData.authorProfileImage}
+              alt={reviewData.authorNickname || reviewData.userId}
+              className={styles.profileImage}
+              onClick={handleUserClick}
+            />
+          ) : (
+            <div className={styles.profilePlaceholder} onClick={handleUserClick}>
+              {getInitial(reviewData.authorNickname || reviewData.userId)}
+            </div>
+          )}
           <div className={styles.userInfo}>
             <h3 className={styles.userId} onClick={handleUserClick}>
-              {reviewData.userId}
+              {reviewData.authorNickname || reviewData.userId}
             </h3>
             <p className={styles.date}>{formatDate(reviewData.createdAt)}</p>
           </div>

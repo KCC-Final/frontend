@@ -31,6 +31,8 @@ export default function RelatedReviewCard({ review }: Props) {
     router.push(`/reviews/${review.reviewId}`);
   };
 
+  const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
+
   return (
     <article className={styles.card} onClick={handleClick}>
       <BookCover
@@ -44,15 +46,28 @@ export default function RelatedReviewCard({ review }: Props) {
         <h3 className={styles.title}>{review.reviewTitle}</h3>
 
         <div className={styles.author}>
-          <span className={styles.authorName}>{review.userId}</span>
+          <div className={styles.profileWrapper}>
+            {review.authorProfileImage ? (
+              <img
+                src={review.authorProfileImage}
+                alt={review.authorNickname || review.userId}
+                className={styles.profileImage}
+              />
+            ) : (
+              <span className={styles.profilePlaceholder}>
+                {getInitial(review.authorNickname || review.userId)}
+              </span>
+            )}
+            <span className={styles.authorName}>{review.authorNickname || review.userId}</span>
+          </div>
           <span className={styles.date}>{formatDate(review.createdAt)}</span>
         </div>
 
         <p className={styles.excerpt}>{review.reviewContent?.replace(/<[^>]*>/g, '').substring(0, 80)}...</p>
 
         <div className={styles.stats}>
-          <span className={styles.stat}>♥ {review.likeCount || 0}</span>
-          <span className={styles.stat}>💬 {review.commentCount || 0}</span>
+          <span className={styles.stat}>{review.likeCount || 0}</span>
+          <span className={styles.stat}>{review.commentCount || 0}</span>
         </div>
       </div>
     </article>
