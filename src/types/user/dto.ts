@@ -55,3 +55,7 @@ export type User = {
   emailVerified: boolean;
 };
 export type GetMyInfoResDTO = CommonResDTO<User>;
+
+// 내 정보 수정
+export type EditMyInfoReqBody = FormData;
+export type EditMyInfoResDTO = CommonResDTO<User>;

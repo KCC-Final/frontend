@@ -4,6 +4,8 @@ import {
   ChangePasswordReqBody,
   ChangePasswordResDTO,
   CommonResDTO,
+  EditMyInfoReqBody,
+  EditMyInfoResDTO,
   FindIdReqBody,
   FindIdResDTO,
   GetMyInfoResDTO,
@@ -58,6 +60,14 @@ export const user = {
   // 내 정보 조회
   getMyInfo: async (): Promise<GetMyInfoResDTO> => {
     const response = await axiosGroo.get('/users');
+    return response.data;
+  },
+
+  // 내 정보 수정
+  editMyInfo: async (data: EditMyInfoReqBody): Promise<EditMyInfoResDTO> => {
+    const response = await axiosGroo.put('/users', data, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
   }
 };
