@@ -2,25 +2,28 @@
 
 import { useEffect, useState } from 'react';
 
-import styles from './my-feeds-list.module.scss';
+import styles from './user-profile-section.module.scss';
 
 import { fetchGroo } from '@/apis/groo';
 
 interface UserProfileSectionProps {
-  nickname: string;
-  profileImage: any;
+  user: {
+    userId: string;
+    nickname: string;
+    profileImage: string | null;
+    introduction: string | null;
+  };
   reviewCount: number;
   followerCount: number;
   followingCount: number;
-  targetUserId?: string; // 다른 유저 프로필인 경우
-  isOwner: boolean; // 내 프로필인지 여부
+  targetUserId?: string;
+  isOwner: boolean;
   onFollowerClick: () => void;
   onFollowingClick: () => void;
 }
 
 export default function UserProfileSection({
-  nickname,
-  profileImage,
+  user,
   reviewCount,
   followerCount,
   followingCount,
@@ -71,10 +74,22 @@ export default function UserProfileSection({
     }
   };
 
+  const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
+
+  if (!user) return null;
+
   return (
     <section className={styles.profileSection}>
-      <div className={styles.profileImage}>{nickname[0]?.toUpperCase() || 'U'}</div>
-      <h2 className={styles.profileNickname}>{nickname}</h2>
+      {user.profileImage ? (
+        <img src={user.profileImage} alt={user.nickname} className={styles.profileImage} />
+      ) : (
+        <div className={styles.profilePlaceholder}>{getInitial(user.nickname)}</div>
+      )}
+
+      <div className={styles.profileInfo}>
+        <h2 className={styles.profileNickname}>{user.nickname}</h2>
+        <p className={styles.profileUserId}>@{user.userId}</p>
+      </div>
 
       {!isOwner && targetUserId && (
         <button

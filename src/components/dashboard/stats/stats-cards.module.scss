@@ -1,0 +1,86 @@
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.statLabel {
+  color: #777;
+  font-size: 1.5rem; /* 기존 0.9rem → 1.05rem */
+  font-weight: 600; /* 강조 살짝 */
+  letter-spacing: -0.2px;
+}
+
+.statValue {
+  font-size: 3rem; /* 기존 2.5rem → 3rem */
+  font-weight: 700;
+  color: #222;
+  line-height: 1.2;
+}
+
+.statIcon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem; /* 기존 1.5rem → 1.7rem (비례 조정) */
+}
+
+.iconReviews {
+  background: #e8f5e9;
+  color: #2d5a3d;
+}
+
+.iconScraps {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.iconLikes {
+  background: #fce4ec;
+  color: #e91e63;
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+  .statCard {
+    padding: 1.6rem;
+  }
+
+  .statLabel {
+    font-size: 1rem;
+  }
+
+  .statValue {
+    font-size: 2.2rem;
+  }
+}

@@ -24,6 +24,8 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
     }
   };
 
+  const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
+
   return (
     <article className={styles.reviewCard} onClick={() => onClick(review.reviewId)}>
       <BookCover
@@ -42,9 +44,19 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
 
       <div className={styles.reviewInfo}>
         <div className={styles.userInfo}>
-          <div className={styles.avatar}>{review.userId?.[0]?.toUpperCase() || 'U'}</div>
+          {review.authorProfileImage ? (
+            <img
+              src={review.authorProfileImage}
+              alt={review.authorNickname || review.userId}
+              className={styles.avatar}
+            />
+          ) : (
+            <div className={styles.avatarPlaceholder}>
+              {getInitial(review.authorNickname || review.userId)}
+            </div>
+          )}
           <div className={styles.userDetails}>
-            <span className={styles.nickname}>{review.userId}</span>
+            <span className={styles.nickname}>{review.authorNickname || review.userId}</span>
             <span className={styles.date}>{formatDate(review.createdAt)}</span>
           </div>
         </div>

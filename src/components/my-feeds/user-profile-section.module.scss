@@ -1,0 +1,112 @@
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4rem;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profileImage {
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e5e7eb;
+  margin-bottom: 1.6rem;
+}
+
+.profilePlaceholder {
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007664 0%, #00a389 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 4rem;
+  margin-bottom: 1.6rem;
+  text-transform: uppercase;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.6rem;
+}
+
+.profileNickname {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.profileUserId {
+  font-size: 1.4rem;
+  color: #666;
+  margin: 0;
+}
+
+.followActionButton {
+  padding: 0.8rem 2.4rem;
+  border: 2px solid #007664;
+  background: #007664;
+  color: white;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 2.4rem;
+
+  &:hover:not(:disabled) {
+    background: #006655;
+    border-color: #006655;
+  }
+
+  &.following {
+    background: white;
+    color: #007664;
+
+    &:hover:not(:disabled) {
+      background: #f0f9ff;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.statsContainer {
+  display: flex;
+  gap: 4rem;
+  justify-content: center;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.statValue {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #2d5a3d;
+}
+
+.statLabel {
+  font-size: 1.4rem;
+  color: #666;
+  font-weight: 500;
+}

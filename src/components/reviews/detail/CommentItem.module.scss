@@ -3,9 +3,9 @@
   background: #f9fafb;
   border-radius: 8px;
   transition: all 0.2s;
+  margin-bottom: 12px;
 
   &.reply {
-    margin-left: 40px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
 
@@ -15,11 +15,53 @@
   }
 }
 
+.errorMessage {
+  padding: 8px 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
 .header {
+  margin-bottom: 12px;
+}
+
+.authorInfo {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+}
+
+.profileImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.profilePlaceholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007664 0%, #00a389 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.authorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .author {
@@ -29,7 +71,7 @@
 }
 
 .date {
-  font-size: 13px;
+  font-size: 12px;
   color: #9ca3af;
 }
 
@@ -60,7 +102,6 @@
   }
 }
 
-// 수정 폼 스타일 개선
 .editForm {
   margin-top: 12px;
   padding: 16px;
@@ -98,7 +139,6 @@
   justify-content: flex-end;
 }
 
-// 답글 폼 스타일 개선
 .replyForm {
   margin-top: 16px;
   padding: 16px;
