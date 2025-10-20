@@ -1,7 +1,10 @@
 // layout
 $header-width: 1320px;
 $header-height: 64px;
-$main-width: 1320px;
+$main-width-lg: 1320px;
+$main-width-md: 1080px;
+$footer-width: 1320px;
+$footer-height: 200px;
 $input-container-gap: 8px;
 
 // theme color
@@ -17,6 +20,10 @@ $font-white: #eeeeee;
 $font-red-1: #ee0000;
 $font-blue-1: #0000ee;
 $font-green: #007664;
+
+// star color
+$star-bgcolor: #e0e0e0;
+$star-fill-color: #fbbf24;
 
 // font size
 $font-size-28: 2.8rem;
@@ -34,6 +41,8 @@ $bg-green: #007664;
 $input-bg: #fafafa;
 $bg-gray: #777777;
 
+// border style
+$devider-border: 1px solid rgba(#000000, 0.2);
 // input border style
 $input-outline: none;
 $input-border: 1px solid #dddddd;
@@ -42,7 +51,6 @@ $input-error-border: 2px solid #ee0000;
 $input-selected-border: 2px solid #007664;
 $input-border-radius: 8px;
 $input-transition: border-color 0.15s ease-in-out;
-
 // button border style
 $large-button-radius: 8px;
 $small-button-radius: 6px;

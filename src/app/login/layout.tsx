@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 import treeImage from '@/assets/login-tree.jpg';
-import styles from '@/components/user/login.module.scss';
+import styles from '@/components/user/login/login.module.scss';
 
 interface LoginLayoutProps {
   children: React.ReactNode;
