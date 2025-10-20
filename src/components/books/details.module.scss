@@ -1,0 +1,122 @@
+@use '@/styles/abstract/' as *;
+@use '@/styles/layout/' as *;
+
+@include book-details-layout();
+
+.book_details {
+  flex-direction: column;
+  gap: 24px;
+
+  .title {
+    font-size: $font-size-24;
+    font-weight: 700;
+  }
+
+  .info_section {
+    display: flex;
+    flex-direction: column;
+
+    .sub_title {
+      font-size: $font-size-20;
+      font-weight: 600;
+      margin: 16px 0;
+      padding-left: $large-button-radius;
+    }
+
+    .info_table {
+      border: 1px solid $black-d;
+      border-radius: $large-button-radius;
+      overflow: hidden;
+    }
+
+    .info_item,
+    .info_items {
+      display: flex;
+      align-items: stretch;
+      border-top: 1px solid $black-d;
+
+      > span:nth-child(3) {
+        border-left: 1px solid $black-d;
+      }
+    }
+
+    .info_table > div:first-child {
+      border-top: none;
+    }
+
+    .label {
+      flex-basis: 140px;
+      flex-shrink: 0;
+      font-weight: 600;
+      color: $font-black-7;
+      background-color: $input-bg;
+      padding: 14px;
+      border-right: 1px solid $black-d;
+      display: flex;
+      align-items: center;
+    }
+
+    .value {
+      flex-basis: 380px;
+      flex-grow: 1;
+      flex-shrink: 1;
+      font-weight: 500;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      line-height: 1.6;
+    }
+  }
+
+  .rating_display {
+    gap: 8px;
+    .stars {
+      position: relative;
+      font-size: 18px;
+      line-height: 1;
+
+      .background {
+        color: $star-bgcolor;
+      }
+
+      .fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        color: $star-fill-color;
+      }
+    }
+
+    .score_text {
+      font-size: $font-size-14;
+      font-weight: 500;
+    }
+  }
+
+  .price {
+    gap: 12px;
+
+    .standard_price {
+      color: $font-black-7;
+      text-decoration: line-through;
+    }
+
+    .sales_price {
+      font-weight: 700;
+      font-size: 1.1em;
+      color: $font-red-1;
+    }
+  }
+
+  .aladin_link {
+    color: $font-green;
+    text-decoration: underline;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}

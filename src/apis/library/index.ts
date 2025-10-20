@@ -1,4 +1,5 @@
 import axiosLibrary from '@/apis/library/config';
+import { CheckBookAvailabilityResDTO, GetLibrariesByISBNResDTO } from '@/types';
 
 export const fetchLibrary = {
   // 책 검색 API
@@ -100,11 +101,18 @@ export const fetchLibrary = {
   },
 
   // 도서 소장 도서관 조회 API
-  getLibrariesByBook: async (isbn: string, region: string, pageNo: number = 1, pageSize: number = 10) => {
+  getLibrariesByISBN: async (
+    isbn: string,
+    region: string,
+    dtl_region?: string,
+    pageNo: number = 1,
+    pageSize: number = 10
+  ): Promise<GetLibrariesByISBNResDTO> => {
     const response = await axiosLibrary.get('/libSrchByBook', {
       params: {
         isbn,
         region,
+        dtl_region,
         pageNo,
         pageSize
       }
@@ -113,7 +121,7 @@ export const fetchLibrary = {
   },
 
   // 도서관별 도서 소장여부 및 대출 가능여부 조회 API
-  checkBookAvailability: async (libCode: string, isbn13: string) => {
+  checkBookAvailability: async (libCode: string, isbn13: string): Promise<CheckBookAvailabilityResDTO> => {
     const response = await axiosLibrary.get('/bookExist', {
       params: {
         libCode,

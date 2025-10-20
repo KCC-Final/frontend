@@ -23,7 +23,7 @@ async function BookRecommendationPage() {
   const bestsellerBooks = bestsellerResponse.item || [];
 
   return (
-    <GlobalLayout>
+    <GlobalLayout wide={true}>
       <TodaySentence initialQuoteData={initialQuoteData.data} />
       <BestsellerList books={bestsellerBooks} />
     </GlobalLayout>

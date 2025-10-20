@@ -1,0 +1,167 @@
+@use '@/styles/abstract/' as *;
+@use '@/styles/layout/' as *;
+
+@include book-details-layout();
+
+.book_card {
+  background-color: $input-bg;
+  border-radius: 8px;
+
+  .cover {
+    position: relative;
+    flex-shrink: 0;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: var(--background-image);
+      background-size: cover;
+      background-position: center;
+      filter: blur(16px);
+      z-index: 0;
+    }
+
+    .img {
+      width: 160px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      display: block;
+    }
+  }
+
+  .info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      padding-top: 12px;
+      padding-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .category {
+        color: $font-green;
+        font-size: $font-size-13;
+        font-weight: 500;
+      }
+
+      .title {
+        font-size: $font-size-24;
+        font-weight: 700;
+        line-height: normal;
+      }
+    }
+
+    .content {
+      display: flex;
+      padding: 12px 0;
+
+      .book,
+      .groo {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .author,
+      .date,
+      .rank,
+      .review,
+      .scrap {
+        display: flex;
+        align-items: center;
+
+        > span:nth-child(1) {
+          color: $font-black-7;
+          font-weight: 500;
+          width: 70px;
+        }
+
+        > span:nth-child(2) {
+          font-weight: 500;
+        }
+      }
+
+      .review,
+      .scrap {
+        > span:nth-child(2) {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+      }
+
+      .rank {
+        .rating_display {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .stars {
+          position: relative;
+          display: inline-block;
+          font-size: 18px;
+          line-height: 1;
+
+          .background {
+            color: $star-bgcolor;
+          }
+
+          .fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            color: $star-fill-color;
+          }
+        }
+
+        .score_text {
+          font-size: $font-size-14;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .divider {
+      width: 100%;
+      border-bottom: $devider-border;
+    }
+
+    .description {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px 0;
+
+      span {
+        color: $font-black-7;
+        font-weight: 500;
+        width: 70px;
+      }
+
+      p {
+        color: $font-black-4;
+        font-weight: 500;
+      }
+    }
+  }
+}

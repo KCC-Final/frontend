@@ -5,7 +5,7 @@ interface ReviewsPageLayoutProps {
 }
 
 function ReviewsPageLayout({ children }: ReviewsPageLayoutProps) {
-  return <GlobalLayout>{children}</GlobalLayout>;
+  return <GlobalLayout wide={true}>{children}</GlobalLayout>;
 }
 
 export default ReviewsPageLayout;

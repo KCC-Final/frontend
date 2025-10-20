@@ -2,11 +2,16 @@ import Footer from '@/components/layout/footer';
 import HeaderLayout from '@/components/layout/header';
 import MainLayout from '@/components/layout/main';
 
-function GlobalLayout({ children }: { children: React.ReactNode }) {
+interface GlobalLayoutProps {
+  children: React.ReactNode;
+  wide?: boolean;
+}
+
+function GlobalLayout({ children, wide = false }: GlobalLayoutProps) {
   return (
     <>
       <HeaderLayout />
-      <MainLayout>{children}</MainLayout>
+      <MainLayout wide={wide}>{children}</MainLayout>
       <Footer />
     </>
   );

@@ -1,10 +1,10 @@
 import { ArrowLeft } from 'lucide-react';
 
-interface LoginBackButtonProps {
+interface BackButtonProps {
   onClick?: () => void;
 }
 
-function LoginBackButton({ onClick }: LoginBackButtonProps) {
+function BackButton({ onClick }: BackButtonProps) {
   return (
     <div>
       <button onClick={onClick}>
@@ -14,4 +14,4 @@ function LoginBackButton({ onClick }: LoginBackButtonProps) {
   );
 }
 
-export default LoginBackButton;
+export default BackButton;

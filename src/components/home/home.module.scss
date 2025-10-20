@@ -1,7 +1,7 @@
 @use '@/styles/abstract/' as *;
 
 .quote {
-  padding: 24px 0;
+  padding: 24px 20px;
 
   a {
     display: flex;
@@ -71,7 +71,7 @@
 }
 
 .bestseller {
-  padding: 24px 0;
+  padding: 24px 20px;
 
   h1 {
     font-size: $font-size-18;

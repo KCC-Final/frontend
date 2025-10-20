@@ -137,7 +137,7 @@ export default function Data4LibraryTestPage() {
 
         <button
           type="button"
-          onClick={async () => setResult(await fetchLibrary.getLibrariesByBook(isbn, region, 1, 5))}>
+          onClick={async () => setResult(await fetchLibrary.getLibrariesByISBN(isbn, region))}>
           (신규) 소장 도서관
         </button>
 
