@@ -1,11 +1,10 @@
-// src/apis/groo/user.ts
-
-import axiosGroo from './config';
-
+import axiosGroo from '@/apis/groo/config';
 import {
   ChangePasswordReqBody,
   ChangePasswordResDTO,
   CommonResDTO,
+  EditMyInfoReqBody,
+  EditMyInfoResDTO,
   FindIdReqBody,
   FindIdResDTO,
   GetMyInfoResDTO,
@@ -64,11 +63,17 @@ export const user = {
     return response.data;
   },
 
+  // 내 정보 수정
+  editMyInfo: async (data: EditMyInfoReqBody): Promise<EditMyInfoResDTO> => {
+    const response = await axiosGroo.put('/users', data, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+
   // 사용자 피드 통합 조회 (새로 추가)
   getUserFeed: async (userId: string): Promise<UserFeedResDTO> => {
     const response = await axiosGroo.get(`/users/${userId}/feed`);
-    console.log('getUserFeed raw response:', response);
-    console.log('getUserFeed response.data:', response.data);
-    return response.data; // 또는 response.data.data
+    return response.data;
   }
 };

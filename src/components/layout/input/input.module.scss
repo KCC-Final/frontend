@@ -7,16 +7,16 @@
   .name {
     @include input-style-name();
   }
+}
 
-  .input_field {
-    @include input-style-field();
-  }
+.input_field {
+  @include input-style-field();
 
   input {
     @include input-style-input();
   }
+}
 
-  .message {
-    @include input-style-message();
-  }
+.message {
+  @include input-style-message();
 }
