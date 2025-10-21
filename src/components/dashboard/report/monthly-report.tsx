@@ -6,7 +6,7 @@ import { useState } from 'react';
 import MonthlyReportSelectModal from './monthly-report-select-modal';
 import styles from './monthly-report.module.scss';
 
-import { getMonthlyReport } from '@/apis/groo/dashboard';
+import { fetchGroo } from '@/apis/groo';
 import { MonthlyReportProps } from '@/types/dashboard/dashboard';
 
 export default function MonthlyReport({ myCount, averageCount, year, month }: MonthlyReportProps) {
@@ -21,7 +21,7 @@ export default function MonthlyReport({ myCount, averageCount, year, month }: Mo
 
   const handleSelect = async (selectedYear: number, selectedMonth: number) => {
     try {
-      const res = await getMonthlyReport(selectedYear, selectedMonth);
+      const res = await fetchGroo.dashboard.getMonthlyReport(selectedYear, selectedMonth);
       setReport(res);
     } catch (err) {
       alert('리포트 조회 중 오류가 발생했습니다.');

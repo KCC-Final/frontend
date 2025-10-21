@@ -13,7 +13,7 @@ import ProfileSection from './profile/profile-section';
 import MonthlyReport from './report/monthly-report';
 import StatsCards from './stats/stats-cards';
 
-import { getSummaryStats, getMonthlyStats, getYearlyStats, getMonthlyReport } from '@/apis/groo/dashboard';
+import { fetchGroo } from '@/apis';
 import useBoundStore from '@/stores';
 import {
   DashboardSummaryResponse,
@@ -55,13 +55,17 @@ export default function DashboardContainer() {
       setLoading(true);
 
       const [summary, monthly, yearly, report] = await Promise.all([
-        getSummaryStats(),
-        getMonthlyStats(selectedYear),
-        getYearlyStats(),
-        getMonthlyReport()
+        fetchGroo.dashboard.getSummaryStats(),
+        fetchGroo.dashboard.getMonthlyStats(selectedYear),
+        fetchGroo.dashboard.getYearlyStats(),
+        fetchGroo.dashboard.getMonthlyReport()
       ]);
 
-      setSummaryData(summary);
+      // categoryStats가 없을 경우 안전하게 빈 배열로 보정
+      setSummaryData({
+        ...summary,
+        categoryStats: summary.categoryStats ?? []
+      });
       setMonthlyData(monthly);
       setYearlyData(yearly);
       setReportData(report);
@@ -82,7 +86,7 @@ export default function DashboardContainer() {
   const handleYearChange = async (year: number) => {
     setSelectedYear(year);
     try {
-      const newMonthly = await getMonthlyStats(year);
+      const newMonthly = await fetchGroo.dashboard.getMonthlyStats(year);
       setMonthlyData(newMonthly);
     } catch (e) {
       console.error('❌ 월별 데이터 갱신 실패:', e);
@@ -171,10 +175,8 @@ export default function DashboardContainer() {
           {viewMode === 'yearly' && yearlyData && <YearlyChart data={yearlyData.yearlyStats} />}
         </div>
 
-        {/* 분야별 통계 */}
-        {summaryData && summaryData.categoryStats.length > 0 && (
-          <CategoryChart data={summaryData.categoryStats} />
-        )}
+        {/* ✅ 분야별 통계 (TS 에러 및 런타임 오류 모두 방지) */}
+        {summaryData?.categoryStats?.length ? <CategoryChart data={summaryData.categoryStats} /> : null}
       </div>
 
       {/* 월간 리포트 */}
@@ -187,7 +189,7 @@ export default function DashboardContainer() {
         />
       )}
 
-      {/* 뱃지 섹션: myInfo.userId 기준으로 */}
+      {/* 뱃지 섹션 */}
       {myInfo && <BadgeSection userId={myInfo.userId} />}
     </div>
   );
