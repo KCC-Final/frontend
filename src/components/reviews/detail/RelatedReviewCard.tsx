@@ -6,6 +6,7 @@ import styles from './RelatedReviewCard.module.scss';
 
 import BookCover from '@/components/reviews/commons/book-cover';
 import { ReviewData } from '@/types/reviews';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 type Props = {
   review: ReviewData;
@@ -33,6 +34,8 @@ export default function RelatedReviewCard({ review }: Props) {
 
   const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
 
+  const convertedProfileImage = changeImageUrlFromBase64(review.authorProfileImage);
+
   return (
     <article className={styles.card} onClick={handleClick}>
       <BookCover
@@ -47,9 +50,9 @@ export default function RelatedReviewCard({ review }: Props) {
 
         <div className={styles.author}>
           <div className={styles.profileWrapper}>
-            {review.authorProfileImage ? (
+            {convertedProfileImage ? (
               <img
-                src={review.authorProfileImage}
+                src={convertedProfileImage}
                 alt={review.authorNickname || review.userId}
                 className={styles.profileImage}
               />

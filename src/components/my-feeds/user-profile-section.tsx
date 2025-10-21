@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from './user-profile-section.module.scss';
 
 import { fetchGroo } from '@/apis/groo';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 interface UserProfileSectionProps {
   user: {
@@ -67,7 +68,6 @@ export default function UserProfileSection({
         alert('팔로우 했습니다.');
       }
     } catch (error: any) {
-      console.error('팔로우 처리 실패:', error);
       alert(error?.response?.data?.message || '팔로우 처리 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
@@ -76,12 +76,16 @@ export default function UserProfileSection({
 
   const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
+
+  const convertedProfileImage = changeImageUrlFromBase64(user.profileImage);
 
   return (
     <section className={styles.profileSection}>
-      {user.profileImage ? (
-        <img src={user.profileImage} alt={user.nickname} className={styles.profileImage} />
+      {convertedProfileImage ? (
+        <img src={convertedProfileImage} alt={user.nickname} className={styles.profileImage} />
       ) : (
         <div className={styles.profilePlaceholder}>{getInitial(user.nickname)}</div>
       )}

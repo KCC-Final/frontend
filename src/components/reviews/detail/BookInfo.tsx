@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import styles from './BookInfo.module.scss';
 
 import { AladinBook } from '@/types/reviews/book-search';
@@ -10,6 +12,8 @@ type Props = {
 };
 
 export default function BookInfo({ bookInfo, loading }: Props) {
+  const router = useRouter();
+
   if (loading) {
     return (
       <div className={styles.container}>
@@ -28,10 +32,14 @@ export default function BookInfo({ bookInfo, loading }: Props) {
 
   const rating = bookInfo.customerReviewRank ? bookInfo.customerReviewRank / 2 : 0;
 
+  const handleBookClick = () => {
+    router.push(`/books/${bookInfo.isbn13}`);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.bookCard}>
-        <div className={styles.coverSection}>
+        <div className={styles.coverSection} onClick={handleBookClick} style={{ cursor: 'pointer' }}>
           <img
             src={bookInfo.cover}
             alt={bookInfo.title}
@@ -46,7 +54,9 @@ export default function BookInfo({ bookInfo, loading }: Props) {
         <div className={styles.infoSection}>
           <div className={styles.header}>
             <h2 className={styles.category}>{bookInfo.categoryName}</h2>
-            <h1 className={styles.title}>{bookInfo.title}</h1>
+            <h1 className={styles.title} onClick={handleBookClick} style={{ cursor: 'pointer' }}>
+              {bookInfo.title}
+            </h1>
           </div>
 
           <div className={styles.metadata}>

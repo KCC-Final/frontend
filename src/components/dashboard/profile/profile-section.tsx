@@ -8,6 +8,7 @@ import styles from './profile-section.module.scss';
 
 import { fetchGroo } from '@/apis/groo';
 import FollowListModal from '@/components/my-feeds/follow-list-modal';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 interface ProfileSectionProps {
   nickname: string;
@@ -22,7 +23,7 @@ export default function ProfileSection({ nickname, profileImage }: ProfileSectio
   const [isFollowerModalOpen, setIsFollowerModalOpen] = useState(false);
   const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
 
-  //  팔로워/팔로잉 수 로드
+  // 팔로워/팔로잉 수 로드
   useEffect(() => {
     loadFollowCounts();
   }, []);
@@ -37,7 +38,7 @@ export default function ProfileSection({ nickname, profileImage }: ProfileSectio
       setFollowerCount(followerRes.data || 0);
       setFollowingCount(followingRes.data || 0);
     } catch (error) {
-      console.error('❌ 팔로워/팔로잉 수 로드 실패:', error);
+      console.error('팔로워/팔로잉 수 로드 실패:', error);
       setFollowerCount(0);
       setFollowingCount(0);
     }
@@ -53,11 +54,17 @@ export default function ProfileSection({ nickname, profileImage }: ProfileSectio
 
   const getInitial = () => (nickname ? nickname.charAt(0).toUpperCase() : 'U');
 
+  const convertedProfileImage = changeImageUrlFromBase64(profileImage);
+
   return (
     <div className={styles.profileSection}>
       <div className={styles.profileLeft}>
         <div className={styles.profileImage}>
-          {profileImage ? <img src={profileImage} alt={nickname} /> : <span>{getInitial()}</span>}
+          {convertedProfileImage ? (
+            <img src={convertedProfileImage} alt={nickname} />
+          ) : (
+            <span>{getInitial()}</span>
+          )}
         </div>
 
         <div className={styles.profileInfo}>
@@ -81,7 +88,7 @@ export default function ProfileSection({ nickname, profileImage }: ProfileSectio
         </button>
       </div>
 
-      {/*  팔로워 / 팔로잉 모달 */}
+      {/* 팔로워 / 팔로잉 모달 */}
       <FollowListModal
         isOpen={isFollowerModalOpen}
         onClose={() => setIsFollowerModalOpen(false)}

@@ -34,14 +34,12 @@ export default function ReviewFeed() {
         try {
           response = await fetchGroo.review.getAllReviewsOrderByLikes();
         } catch (popularError: any) {
-          console.error('인기순 조회 실패, 전체 조회로 전환:', popularError);
           response = await fetchGroo.review.getAllReviews();
         }
       } else if (filterType === 'following') {
         try {
           response = await fetchGroo.review.getReviewsByFollowing();
         } catch (followingError: any) {
-          console.error('팔로잉 조회 실패, 전체 조회로 전환:', followingError);
           response = await fetchGroo.review.getAllReviews();
         }
       } else {
@@ -56,7 +54,6 @@ export default function ReviewFeed() {
       const errorMessage = getReviewErrorMessage(error);
       setError(errorMessage);
       setReviews([]);
-      console.error('독후감 목록 조회 실패:', error);
     } finally {
       setLoading(false);
     }
