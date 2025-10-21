@@ -1,5 +1,3 @@
-// src/components/reviews/detail/BookInfo.module.scss
-
 .container {
   background: #ffffff;
   border-radius: 12px 12px 0 0;
@@ -29,7 +27,13 @@
 .coverSection {
   flex-shrink: 0;
   width: 180px;
-  background: transparent; /* 배경 투명 */
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
 
   @media (max-width: 768px) {
     width: 150px;
@@ -42,8 +46,8 @@
   height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background: transparent; /* 이미지 배경 투명 */
-  display: block; /* 하단 여백 제거 */
+  background: transparent;
+  display: block;
 }
 
 .infoSection {
@@ -66,6 +70,13 @@
     font-weight: 700;
     color: #111827;
     line-height: 1.4;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #2d5a3d;
+      text-decoration: underline;
+    }
   }
 }
 
