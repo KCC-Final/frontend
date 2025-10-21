@@ -6,13 +6,14 @@ import styles from './CommentItem.module.scss';
 
 import { CommentData } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 type Props = {
   comment: CommentData;
   onUpdate: (commentId: number, content: string) => Promise<void>;
   onDelete: (commentId: number) => Promise<void>;
   onReply: (content: string, parentId: number) => Promise<void>;
-  depth?: number; // 댓글 깊이 추가
+  depth?: number;
 };
 
 export default function CommentItem({ comment, onUpdate, onDelete, onReply, depth = 0 }: Props) {
@@ -21,7 +22,7 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [error, setError] = useState<string>('');
-  const MAX_DEPTH = 5; // 최대 뎁스 설정
+  const MAX_DEPTH = 5;
 
   const formatDate = (dateString: string) => {
     try {
@@ -47,7 +48,6 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
     }
   };
 
-  // handleUpdateSubmit 함수 수정
   const handleUpdateSubmit = async () => {
     if (!editContent.trim()) {
       alert('댓글 내용을 입력해주세요.');
@@ -65,7 +65,6 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
     }
   };
 
-  // handleReplySubmit 함수 수정
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) {
       alert('답글 내용을 입력해주세요.');
@@ -84,7 +83,6 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
     }
   };
 
-  // handleDelete 함수 수정
   const handleDelete = async () => {
     try {
       setError('');
@@ -98,9 +96,16 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
 
   const isEdited = comment.updatedAt && comment.updatedAt !== comment.createdAt;
   const displayDate = isEdited ? comment.updatedAt : comment.createdAt;
-
-  // 깊이에 따른 왼쪽 여백 계산 (최대 5단계까지)
   const marginLeft = Math.min(depth, 5) * 40;
+
+  // 프로필 이미지 변환
+  const convertedProfileImage = changeImageUrlFromBase64(comment.authorProfileImage);
+
+  // 이니셜 생성
+  const getInitial = () => {
+    const name = comment.authorNickname || comment.userId;
+    return name ? name.charAt(0).toUpperCase() : 'U';
+  };
 
   return (
     <div
@@ -109,11 +114,27 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
       {error && <div className={styles.errorMessage}>{error}</div>}
 
       <div className={styles.header}>
-        <span className={styles.author}>{comment.userId}</span>
-        <span className={styles.date}>
-          {formatDate(displayDate)}
-          {isEdited && ' (수정됨)'}
-        </span>
+        <div className={styles.authorInfo}>
+          {/* 프로필 이미지 */}
+          {convertedProfileImage ? (
+            <img
+              src={convertedProfileImage}
+              alt={comment.authorNickname || comment.userId}
+              className={styles.profileImage}
+            />
+          ) : (
+            <div className={styles.profilePlaceholder}>{getInitial()}</div>
+          )}
+
+          {/* 작성자 정보 */}
+          <div className={styles.authorDetails}>
+            <span className={styles.author}>{comment.authorNickname || comment.userId}</span>
+            <span className={styles.date}>
+              {formatDate(displayDate)}
+              {isEdited && ' (수정됨)'}
+            </span>
+          </div>
+        </div>
       </div>
 
       {isEditing ? (

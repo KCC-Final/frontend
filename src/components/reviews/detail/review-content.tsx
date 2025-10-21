@@ -7,6 +7,7 @@ import styles from './review-content.module.scss';
 
 import { follow as followApi } from '@/apis/groo/follow';
 import { ReviewDetailResDTO } from '@/types/reviews';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 type Props = {
   reviewData: ReviewDetailResDTO['data'];
@@ -83,13 +84,15 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
 
   const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
 
+  const convertedProfileImage = changeImageUrlFromBase64(reviewData.authorProfileImage);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.userSection}>
-          {reviewData.authorProfileImage ? (
+          {convertedProfileImage ? (
             <img
-              src={reviewData.authorProfileImage}
+              src={convertedProfileImage}
               alt={reviewData.authorNickname || reviewData.userId}
               className={styles.profileImage}
               onClick={handleUserClick}

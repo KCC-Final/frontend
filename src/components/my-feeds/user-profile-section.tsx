@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from './user-profile-section.module.scss';
 
 import { fetchGroo } from '@/apis/groo';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 interface UserProfileSectionProps {
   user: {
@@ -34,6 +35,16 @@ export default function UserProfileSection({
 }: UserProfileSectionProps) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Props 전체 로그
+  console.log('[UserProfileSection] Props 전체:', {
+    user,
+    reviewCount,
+    followerCount,
+    followingCount,
+    targetUserId,
+    isOwner
+  });
 
   useEffect(() => {
     if (!isOwner && targetUserId) {
@@ -76,12 +87,43 @@ export default function UserProfileSection({
 
   const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
 
-  if (!user) return null;
+  if (!user) {
+    console.log('[UserProfileSection] user가 없음!');
+    return null;
+  }
+
+  // user.profileImage 상세 로그
+  console.log('[UserProfileSection] user.profileImage 원본:', user.profileImage);
+  console.log('[UserProfileSection] user.profileImage 타입:', typeof user.profileImage);
+  console.log('[UserProfileSection] user.profileImage 길이:', user.profileImage?.length);
+
+  if (user.profileImage) {
+    console.log('[UserProfileSection] user.profileImage 시작 20자:', user.profileImage.substring(0, 20));
+  }
+
+  const convertedProfileImage = changeImageUrlFromBase64(user.profileImage);
+
+  console.log('[UserProfileSection] 변환 결과:', {
+    원본존재: !!user.profileImage,
+    변환존재: !!convertedProfileImage,
+    변환값길이: convertedProfileImage?.length
+  });
+
+  if (convertedProfileImage) {
+    console.log('[UserProfileSection] 변환된 이미지 시작 50자:', convertedProfileImage.substring(0, 50));
+  }
+
+  console.log('[UserProfileSection] 최종 렌더링 상태:', {
+    userId: user.userId,
+    nickname: user.nickname,
+    profileImage원본: user.profileImage ? `존재 (${user.profileImage.length}자)` : 'null',
+    convertedProfileImage: convertedProfileImage ? `변환됨 (${convertedProfileImage.length}자)` : '변환실패'
+  });
 
   return (
     <section className={styles.profileSection}>
-      {user.profileImage ? (
-        <img src={user.profileImage} alt={user.nickname} className={styles.profileImage} />
+      {convertedProfileImage ? (
+        <img src={convertedProfileImage} alt={user.nickname} className={styles.profileImage} />
       ) : (
         <div className={styles.profilePlaceholder}>{getInitial(user.nickname)}</div>
       )}

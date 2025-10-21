@@ -4,6 +4,7 @@ import styles from './review-card.module.scss';
 
 import BookCover from '@/components/reviews/commons/book-cover';
 import { ReviewData } from '@/types/reviews';
+import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 interface ReviewCardProps {
   review: ReviewData;
@@ -26,6 +27,8 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
 
   const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');
 
+  const convertedProfileImage = changeImageUrlFromBase64(review.authorProfileImage);
+
   return (
     <article className={styles.reviewCard} onClick={() => onClick(review.reviewId)}>
       <BookCover
@@ -44,9 +47,9 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
 
       <div className={styles.reviewInfo}>
         <div className={styles.userInfo}>
-          {review.authorProfileImage ? (
+          {convertedProfileImage ? (
             <img
-              src={review.authorProfileImage}
+              src={convertedProfileImage}
               alt={review.authorNickname || review.userId}
               className={styles.avatar}
             />

@@ -34,28 +34,17 @@ export default function MyFeedsList() {
     loadFeedData();
   }, [targetUserId]);
 
-  // src/components/my-feeds/my-feeds-list.tsx
-
   const loadFeedData = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      console.log('=== Feed Data Loading Start ===');
-      console.log('targetUserId:', targetUserId);
-
       if (!targetUserId) {
-        console.log('내 피드 로드 - 여러 API 조합');
-
         const [userResponse, myReviewsResponse, likedReviewsResponse] = await Promise.all([
           fetchGroo.user.getMyInfo(),
           fetchGroo.review.getMyReviews(),
           fetchGroo.review.getLikedReviews()
         ]);
-
-        console.log('userResponse:', userResponse);
-        console.log('myReviewsResponse:', myReviewsResponse);
-        console.log('likedReviewsResponse:', likedReviewsResponse);
 
         const myReviewsData = Array.isArray(myReviewsResponse)
           ? myReviewsResponse
@@ -81,17 +70,12 @@ export default function MyFeedsList() {
           likedReviews: likedReviewsData
         };
 
-        console.log('내 피드 데이터 조합 완료:', feedData);
         setFeedData(feedData);
 
-        // 팔로워/팔로잉 수 별도 조회
         const [followerCountResponse, followingCountResponse] = await Promise.all([
           fetchGroo.follow.getFollowerCount(),
           fetchGroo.follow.getFollowingCount()
         ]);
-
-        console.log('followerCount:', followerCountResponse.data);
-        console.log('followingCount:', followingCountResponse.data);
 
         setFeedData((prev) => {
           if (!prev) return prev;
@@ -105,28 +89,14 @@ export default function MyFeedsList() {
           };
         });
       } else {
-        console.log('다른 유저 피드 로드 - 통합 API 1번 호출');
-        console.log('API URL:', `/users/${targetUserId}/feed`);
-
         const feedResponse = await fetchGroo.user.getUserFeed(targetUserId);
-
         setFeedData(feedResponse);
-        console.log('피드 데이터 설정 완료');
       }
-
-      console.log('=== Feed Data Loading Success ===');
     } catch (error: any) {
-      console.error('=== Feed Data Loading Error ===');
-      console.error('Error 객체:', error);
-      console.error('Error response:', error?.response);
-      console.error('Error data:', error?.response?.data);
-
       const errorMessage = getReviewErrorMessage(error);
-      console.error('처리된 에러 메시지:', errorMessage);
       setError(errorMessage);
     } finally {
       setLoading(false);
-      console.log('=== Feed Data Loading End ===');
     }
   };
 

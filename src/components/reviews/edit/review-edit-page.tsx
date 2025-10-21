@@ -27,6 +27,7 @@ import BookInfoCard from '@/components/reviews/write/book-info-card';
 import editorStyles from '@/components/reviews/write/editor-content.module.scss';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import { ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
+import { devLogger } from '@/utils/dev-logger';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 const MAX_CONTENT_LENGTH = 10000;
@@ -113,21 +114,14 @@ function ReviewEditPage() {
   }, [reviewId]);
 
   const loadBookInfo = async (isbn: string) => {
-    console.log('=== loadBookInfo 시작 ===');
-    console.log('ISBN:', isbn);
-
     try {
       const aladinResponse = await fetchAladin.getBookDetails(isbn);
-      console.log('알라딘 API 응답:', aladinResponse);
-
       if (aladinResponse.item && aladinResponse.item.length > 0) {
         const book = aladinResponse.item[0];
-        console.log('선택된 도서:', book);
         setSelectedBook(book);
       }
     } catch (error) {
-      console.error('도서 정보 조회 실패:', error);
-      // 도서 정보는 필수가 아니므로 에러 알림 없이 진행
+      devLogger(error, true);
     }
   };
 
@@ -135,18 +129,15 @@ function ReviewEditPage() {
     try {
       setLoading(true);
       const review = await fetchGroo.review.getReview(reviewId);
-
       if (review) {
         setTitle(review.reviewTitle);
         setIsSecret(review.secret);
         setReviewContent(review.reviewContent);
-
         if (review.isbn) {
           await loadBookInfo(review.isbn);
         }
       }
     } catch (error: any) {
-      console.error('독후감 불러오기 실패:', error);
       alert(getReviewErrorMessage(error));
       router.back();
     } finally {
@@ -194,7 +185,6 @@ function ReviewEditPage() {
       alert('독후감이 수정되었습니다.');
       router.push(`/reviews/${reviewId}`);
     } catch (error: any) {
-      console.error('독후감 수정 실패:', error);
       alert(getReviewErrorMessage(error));
     }
   };
