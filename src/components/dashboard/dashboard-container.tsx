@@ -175,7 +175,7 @@ export default function DashboardContainer() {
           {viewMode === 'yearly' && yearlyData && <YearlyChart data={yearlyData.yearlyStats} />}
         </div>
 
-        {/* ✅ 분야별 통계 (TS 에러 및 런타임 오류 모두 방지) */}
+        {/*  분야별 통계 (TS 에러 및 런타임 오류 모두 방지) */}
         {summaryData?.categoryStats?.length ? <CategoryChart data={summaryData.categoryStats} /> : null}
       </div>
 
