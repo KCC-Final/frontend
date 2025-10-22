@@ -45,6 +45,7 @@ function ReviewCreatePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draftId');
+  const fromPath = searchParams.get('from'); // 이전 페이지 경로
 
   const [selectedBook, setSelectedBook] = useState<AladinBook | null>(null);
   const [category, setCategory] = useState<string | null>(null);
@@ -112,10 +113,53 @@ function ReviewCreatePage() {
   });
 
   useEffect(() => {
-    if (draftId) {
+    const isbn = searchParams.get('isbn');
+
+    if (isbn && !draftId) {
+      loadBookByIsbn(isbn);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (draftId && editor) {
       loadDraft(Number(draftId));
     }
-  }, [draftId]);
+  }, [draftId, editor]);
+
+  const loadBookByIsbn = async (isbn: string) => {
+    try {
+      const response = await fetchAladin.getBookDetails(isbn);
+      if (response.item && response.item.length > 0) {
+        const bookData = response.item[0];
+        const aladinBook: AladinBook = {
+          title: bookData.title,
+          author: bookData.author,
+          pubDate: bookData.pubDate,
+          description: bookData.description,
+          isbn: bookData.isbn,
+          isbn13: bookData.isbn13,
+          itemId: bookData.itemId,
+          priceSales: bookData.priceSales,
+          priceStandard: bookData.priceStandard,
+          mallType: bookData.mallType,
+          stockStatus: bookData.stockStatus,
+          mileage: bookData.mileage,
+          cover: bookData.cover,
+          categoryId: bookData.categoryId,
+          categoryName: bookData.categoryName,
+          publisher: bookData.publisher,
+          customerReviewRank: bookData.customerReviewRank,
+          link: bookData.link
+        };
+
+        setSelectedBook(aladinBook);
+        const extractedCategory = extractSecondCategory(bookData.categoryName);
+        setCategory(extractedCategory);
+      }
+    } catch (error) {
+      console.error('ISBN으로 도서 정보 불러오기 실패:', error);
+    }
+  };
 
   const loadDraft = async (id: number) => {
     try {
@@ -242,10 +286,33 @@ function ReviewCreatePage() {
     }
   };
 
+  // 뒤로가기 핸들러
+  const handleBack = () => {
+    if (fromPath) {
+      // from 파라미터가 있으면 해당 경로로 이동
+      router.push(fromPath);
+    } else {
+      // 없으면 기본 뒤로가기
+      router.back();
+    }
+  };
+
+  // 임시저장 목록에서 선택 시 핸들러 (replace 사용)
+  const handleDraftSelect = (selectedDraftId: number) => {
+    setIsDraftModalOpen(false);
+    // from 파라미터를 유지하면서 draftId만 변경
+    const params = new URLSearchParams();
+    params.set('draftId', selectedDraftId.toString());
+    if (fromPath) {
+      params.set('from', fromPath);
+    }
+    router.replace(`/reviews/write?${params.toString()}`);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <button onClick={() => router.back()} className={styles.backButton}>
+        <button onClick={handleBack} className={styles.backButton}>
           뒤로가기
         </button>
         <h1>독후감 작성</h1>
@@ -303,13 +370,7 @@ function ReviewCreatePage() {
         <BookSearchModal onSelect={handleBookSelect} onClose={() => setIsBookModalOpen(false)} />
       )}
       {isDraftModalOpen && (
-        <DraftListModal
-          onClose={() => setIsDraftModalOpen(false)}
-          onSelect={(draftId) => {
-            setIsDraftModalOpen(false);
-            router.push(`/reviews/write?draftId=${draftId}`);
-          }}
-        />
+        <DraftListModal onClose={() => setIsDraftModalOpen(false)} onSelect={handleDraftSelect} />
       )}
     </div>
   );

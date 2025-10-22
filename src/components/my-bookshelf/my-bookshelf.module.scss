@@ -1,0 +1,371 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+// 페이지 헤더
+.page_header {
+  margin-bottom: 32px;
+
+  .page_title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #444444;
+  }
+}
+
+/* =====================================
+   섹션 탭 (책장 / 모든 책)
+   → 반반 나누기, 가운데 정렬, 강조효과
+===================================== */
+.section_tabs {
+  display: flex;
+  width: 100%;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .section_tab {
+    flex: 1;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    background: #f8f8f8;
+    color: #666666;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:first-child {
+      border-right: 1px solid #e5e5e5;
+    }
+
+    &:hover {
+      background: #f2ece3;
+      color: #333333;
+    }
+
+    &.active {
+      background: #007664;
+      color: #ffffff;
+      transform: scale(1.03);
+      z-index: 1;
+      font-weight: 700;
+    }
+  }
+}
+
+// 컨텐츠 영역
+.content {
+  display: flex;
+  gap: 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 왼쪽: 카테고리 영역
+.category_area {
+  width: 250px;
+  min-width: 250px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  padding: 20px;
+
+  .category_header {
+    margin-bottom: 16px;
+
+    h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #444444;
+    }
+  }
+
+  .category_list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .category_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: white;
+    transition: all 0.2s;
+
+    &.active {
+      background-color: #007664;
+
+      .category_name {
+        color: white;
+        font-weight: 600;
+      }
+
+      .icon_button {
+        color: white;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+
+    &:hover:not(.active) {
+      background-color: #eeeeee;
+    }
+  }
+
+  .category_name {
+    flex: 1;
+    text-align: left;
+    font-size: 1.4rem;
+    color: #444444;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .category_actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  .icon_button {
+    padding: 4px;
+    border: none;
+    cursor: pointer;
+    color: #777777;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #dddddd;
+    }
+  }
+
+  .add_category_button {
+    width: 100%;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #dddddd;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #777777;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #007664;
+      color: #007664;
+      background-color: rgba(0, 118, 100, 0.05);
+    }
+  }
+}
+
+// 오른쪽: 도서 영역
+.books_area {
+  flex: 1;
+}
+
+.books_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.empty_message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  font-size: 1.6rem;
+  color: #777777;
+  background-color: #fafafa;
+  border-radius: 8px;
+}
+
+// 도서 카드
+.book_card {
+  background-color: white;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .book_cover {
+    width: 100%;
+    aspect-ratio: 2/3;
+    background-color: #eeeeee;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .cover_image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .no_cover {
+      font-size: 1.2rem;
+      color: #777777;
+    }
+  }
+
+  .book_info {
+    .book_title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #444444;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .book_author {
+      font-size: 1.2rem;
+      color: #777777;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+// 모달
+.modal_backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal_content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+}
+
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #444444;
+  }
+
+  .close_button {
+    padding: 4px;
+    border: none;
+    cursor: pointer;
+    color: #777777;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #eeeeee;
+    }
+  }
+}
+
+.modal_body {
+  margin-bottom: 20px;
+
+  .input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.4rem;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.2s;
+
+    &:focus {
+      border-color: #007664;
+    }
+
+    &::placeholder {
+      color: #777777;
+    }
+  }
+}
+
+.modal_footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+
+  button {
+    padding: 10px 20px;
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cancel_button {
+    background-color: #eeeeee;
+    color: #444444;
+
+    &:hover {
+      background-color: #dddddd;
+    }
+  }
+
+  .save_button {
+    background-color: #007664;
+    color: white;
+
+    &:hover {
+      background-color: #005a4d;
+    }
+
+    &:disabled {
+      background-color: #dddddd;
+      color: #777777;
+      cursor: not-allowed;
+    }
+  }
+}

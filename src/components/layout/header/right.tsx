@@ -79,14 +79,20 @@ function RightNavigation() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-[12rem]">
+            {myInfo?.userId ? (
+              <DropdownMenuItem
+                className="text-[1.4rem] px-[1rem] py-[0.8rem]"
+                onClick={routePageHandler(`/my-feeds?userId=${myInfo?.userId}`)}>
+                내 피드
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" disabled>
+                내 피드
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               className="text-[1.4rem] px-[1rem] py-[0.8rem]"
-              onClick={routePageHandler('/my-feeds')}>
-              내 피드
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-[1.4rem] px-[1rem] py-[0.8rem]"
-              onClick={routePageHandler('/my-library')}>
+              onClick={routePageHandler('/my-bookshelf')}>
               내 책장
             </DropdownMenuItem>
             <DropdownMenuItem

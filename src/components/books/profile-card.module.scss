@@ -163,5 +163,528 @@
         font-weight: 500;
       }
     }
+
+    .action_buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+
+      .action_button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: #f3f4f6;
+        color: #374151;
+
+        &:hover {
+          background-color: #e5e7eb;
+        }
+
+        &:first-child {
+          background-color: rgba(0, 118, 100, 0.1); // 그루 메인 컬러의 10% 투명도
+          color: #007664;
+
+          &:hover {
+            background-color: rgba(0, 118, 100, 0.15);
+          }
+
+          &.scraped {
+            background-color: #007664;
+            color: white;
+
+            &:hover {
+              background-color: #006054; // 조금 더 어두운 그루 컬러
+            }
+          }
+        }
+
+        &:last-child {
+          background-color: #ebeceddc; // 회색 배경
+          color: #007664; // 그루 메인 컬러 텍스트
+
+          &:hover {
+            background-color: #e5e7eb;
+          }
+        }
+      }
+    }
+    /*  책장 생성 입력창 스타일 개선 */
+    .create_input_group {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 16px;
+      background-color: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      align-items: stretch;
+
+      .create_input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        outline: none;
+        transition: all 0.2s ease;
+        background-color: white;
+
+        &::placeholder {
+          color: #9ca3af;
+          font-weight: 400;
+        }
+
+        &:focus {
+          border-color: #007664;
+          box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        &:disabled {
+          background-color: #f3f4f6;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+
+      .create_button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 20px;
+        background-color: #007664;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        min-width: 80px;
+
+        &:hover:not(:disabled) {
+          background-color: #007664;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        &:disabled {
+          background-color: #d1d5db;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+}
+
+.scrap_management {
+  margin-top: 24px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .scrap_info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .scrap_status {
+      color: #007664;
+      font-weight: 600;
+    }
+
+    .scrap_category {
+      color: #6b7280;
+    }
+  }
+
+  .scrap_actions {
+    display: flex;
+    gap: 8px;
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .category_button {
+      background-color: #f3f4f6;
+      color: #374151;
+
+      &:hover {
+        background-color: #e5e7eb;
+      }
+    }
+
+    .remove_button {
+      background-color: #fee2e2;
+      color: #dc2626;
+
+      &:hover {
+        background-color: #fecaca;
+      }
+    }
+    /*  책장 생성 입력창 스타일 개선 */
+    .create_input_group {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 16px;
+      background-color: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      align-items: stretch;
+
+      .create_input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        outline: none;
+        transition: all 0.2s ease;
+        background-color: white;
+
+        &::placeholder {
+          color: #9ca3af;
+          font-weight: 400;
+        }
+
+        &:focus {
+          border-color: #007664;
+          box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        &:disabled {
+          background-color: #f3f4f6;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+
+      .create_button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 20px;
+        background-color: #007664;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        min-width: 80px;
+
+        &:hover:not(:disabled) {
+          background-color: #007664;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        &:disabled {
+          background-color: #d1d5db;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+}
+
+/* ================================
+   모달 영역
+================================ */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .modal_content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    .modal_title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #111827;
+    }
+
+    .modal_body {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+
+      .create_section,
+      .select_section {
+        flex: 1;
+      }
+
+      .section_title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
+      }
+
+      .create_input_group {
+        display: flex;
+        gap: 8px;
+
+        .create_input {
+          flex: 1;
+          padding: 12px;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 14px;
+          outline: none;
+          transition: all 0.2s ease;
+
+          &:focus {
+            border-color: #007664;
+          }
+
+          &:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+          }
+        }
+
+        .create_button {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 12px 16px;
+          background-color: #007664;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+
+          &:hover:not(:disabled) {
+            background-color: #007664;
+          }
+
+          &:disabled {
+            background-color: #d1d5db;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .category_list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        padding-right: 4px;
+
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: #d1d5db;
+          border-radius: 3px;
+        }
+
+        .empty_message {
+          text-align: center;
+          color: #9ca3af;
+          padding: 20px;
+          font-size: 14px;
+        }
+
+        .category_item {
+          width: 100%;
+          text-align: left;
+          padding: 12px 16px;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          background-color: white;
+          color: #374151;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background-color: #f9fafb;
+            border-color: #007664;
+          }
+
+          &.active {
+            border-color: #007664;
+            background-color: #f5f3ff;
+          }
+        }
+      }
+    }
+
+    /*  새 책장 만들기 + 취소 버튼을 같은 줄에 배치 */
+    .modal_actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 16px;
+
+      button {
+        flex: 1;
+        height: 44px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+      }
+
+      .create_shelf_button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background-color: #007664;
+        color: white;
+
+        &:hover {
+          background-color: #007664;
+        }
+      }
+
+      .cancel_button {
+        background-color: #f3f4f6;
+        color: #374151;
+
+        &:hover {
+          background-color: #e5e7eb;
+        }
+      }
+    }
+    /*  책장 생성 입력창 스타일 개선 */
+    .create_input_group {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 16px;
+      background-color: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      align-items: stretch;
+
+      .create_input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        outline: none;
+        transition: all 0.2s ease;
+        background-color: white;
+
+        &::placeholder {
+          color: #9ca3af;
+          font-weight: 400;
+        }
+
+        &:focus {
+          border-color: #007664;
+          box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        &:disabled {
+          background-color: #f3f4f6;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+
+      .create_button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 20px;
+        background-color: #007664;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        min-width: 80px;
+
+        &:hover:not(:disabled) {
+          background-color: #007664;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        &:disabled {
+          background-color: #d1d5db;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+    }
   }
 }
