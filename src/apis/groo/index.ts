@@ -1,5 +1,6 @@
 import { auth } from '@/apis/groo/auth';
 import { book } from '@/apis/groo/book';
+import { bookshelf } from '@/apis/groo/bookshelf';
 import { comment } from '@/apis/groo/comment';
 import { dashboard } from '@/apis/groo/dashboard';
 import { follow } from '@/apis/groo/follow';
@@ -11,6 +12,7 @@ export const fetchGroo = {
   book: book,
   comment: comment,
   dashboard: dashboard,
+  bookshelf: bookshelf,
   follow: follow,
   review: review,
   user: user

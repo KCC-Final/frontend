@@ -7,6 +7,7 @@ import CategoryList from './category-list';
 import CategoryModal from './category-modal';
 import styles from './my-bookshelf.module.scss';
 
+import { fetchGroo } from '@/apis';
 import type { AladinBookDetailsItem } from '@/types';
 import type { Bookshelf, BookScrap } from '@/types/bookshelf/bookshelf';
 
@@ -53,8 +54,7 @@ function MyBookshelf() {
   // 책장 목록 조회
   const fetchBookshelves = async () => {
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-      const data = await bookshelf.getBookshelfList();
+      const data = await fetchGroo.bookshelf.getBookshelfList();
       setBookshelves(data);
       if (data.length > 0) {
         setSelectedBookshelf(data[0].bookshelfId);
@@ -68,8 +68,7 @@ function MyBookshelf() {
   const fetchBooks = async (bookshelfId: number) => {
     setIsLoading(true);
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-      const scraps = await bookshelf.getBookScrapList(bookshelfId);
+      const scraps = await fetchGroo.bookshelf.getBookScrapList(bookshelfId);
 
       // 알라딘 API로 도서 상세 정보 가져오기
       const { fetchAladin } = await import('@/apis/aladin');
@@ -103,12 +102,10 @@ function MyBookshelf() {
 
     setIsLoading(true);
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-
       // 모든 책장의 스크랩 가져오기
       const allScraps: BookScrap[] = [];
       for (const shelf of bookshelves) {
-        const scraps = await bookshelf.getBookScrapList(shelf.bookshelfId);
+        const scraps = await fetchGroo.bookshelf.getBookScrapList(shelf.bookshelfId);
         allScraps.push(...scraps);
       }
 
@@ -157,8 +154,7 @@ function MyBookshelf() {
   const handleDeleteBookshelf = async (bookshelfId: number) => {
     if (confirm('정말 삭제하시겠습니까?')) {
       try {
-        const { bookshelf } = await import('@/apis/groo/bookshelf');
-        await bookshelf.deleteBookshelf(bookshelfId);
+        await fetchGroo.bookshelf.deleteBookshelf(bookshelfId);
         await fetchBookshelves();
       } catch (error) {
         console.error('책장 삭제 실패:', error);
@@ -170,12 +166,10 @@ function MyBookshelf() {
   // 책장 저장 (추가/수정)
   const handleSaveBookshelf = async (name: string) => {
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-
       if (editingBookshelf) {
-        await bookshelf.updateBookshelf(editingBookshelf.bookshelfId, { name });
+        await fetchGroo.bookshelf.updateBookshelf(editingBookshelf.bookshelfId, { name });
       } else {
-        await bookshelf.createBookshelf({ name });
+        await fetchGroo.bookshelf.createBookshelf({ name });
       }
 
       setIsModalOpen(false);

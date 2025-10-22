@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
+import { fetchGroo } from '@/apis';
 import styles from '@/components/books/profile-card.module.scss';
 import { AladinBookDetailsItem } from '@/types';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
@@ -41,8 +42,7 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
   const fetchBookshelves = async () => {
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-      const data = await bookshelf.getBookshelfList();
+      const data = await fetchGroo.bookshelf.getBookshelfList();
       setBookshelves(data);
     } catch (error) {
       console.error('책장 목록 조회 실패:', error);
@@ -52,12 +52,11 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
   const checkIfScraped = async () => {
     setIsCheckingScrap(true);
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-      const shelves = await bookshelf.getBookshelfList();
+      const shelves = await fetchGroo.bookshelf.getBookshelfList();
 
       for (const shelf of shelves) {
         try {
-          const scrap = await bookshelf.getBookScrap(shelf.bookshelfId, bookInfo.isbn13);
+          const scrap = await fetchGroo.bookshelf.getBookScrap(shelf.bookshelfId, bookInfo.isbn13);
 
           if (scrap) {
             setIsScraped(true);
@@ -89,7 +88,7 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
         try {
           const { bookshelf } = await import('@/apis/groo/bookshelf');
 
-          await bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, bookInfo.isbn13);
+          await fetchGroo.bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, bookInfo.isbn13);
 
           setIsScraped(false);
           setShowScrapManagement(false);
@@ -108,8 +107,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
   const handleCategorySelect = async (bookshelfId: number, name: string) => {
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-
       // 수정: 백엔드 DTO 형식에 맞게 대문자 ISBN 사용
       const requestData = {
         bookshelfId: bookshelfId,
@@ -118,7 +115,7 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
       console.log('스크랩 생성 요청 데이터:', requestData);
 
-      await bookshelf.createBookScrap(requestData);
+      await fetchGroo.bookshelf.createBookScrap(requestData);
 
       setShowCategoryModal(false);
       await checkIfScraped();
@@ -153,8 +150,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     }
 
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-
       console.log('카테고리 변경 시작:', {
         from: selectedBookshelf,
         to: { bookshelfId, name },
@@ -162,10 +157,10 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
       });
 
       // 1단계: 기존 책장에서 삭제
-      await bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, bookInfo.isbn13);
+      await fetchGroo.bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, bookInfo.isbn13);
 
       // 2단계: 새 책장에 추가
-      const newScrap = await bookshelf.createBookScrap({
+      const newScrap = await fetchGroo.bookshelf.createBookScrap({
         bookshelfId: bookshelfId,
         ISBN: bookInfo.isbn13
       });
@@ -197,8 +192,7 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
     setIsCreatingBookshelf(true);
     try {
-      const { bookshelf } = await import('@/apis/groo/bookshelf');
-      const newShelf = await bookshelf.createBookshelf({ name: newBookshelfName.trim() });
+      const newShelf = await fetchGroo.bookshelf.createBookshelf({ name: newBookshelfName.trim() });
 
       // 새로 만든 책장에 바로 스크랩
       if (isScraped && selectedBookshelf) {
