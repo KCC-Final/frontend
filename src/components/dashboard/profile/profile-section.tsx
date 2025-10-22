@@ -45,7 +45,7 @@ export default function ProfileSection({ nickname, profileImage }: ProfileSectio
   };
 
   const handleWriteReview = () => {
-    router.push('/reviews/write');
+    router.push('/reviews/write?from=/mypage/reviews');
   };
 
   const handleNotificationSettings = () => {

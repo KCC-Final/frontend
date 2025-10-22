@@ -10,7 +10,6 @@ import { fetchGroo } from '@/apis/groo';
 import FollowListModal from '@/components/my-feeds/follow-list-modal';
 import UserProfileSection from '@/components/my-feeds/user-profile-section';
 import ReviewCard from '@/components/reviews/commons/review-card';
-import { ReviewData } from '@/types/reviews';
 import { UserFeedData } from '@/types/user';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
