@@ -2,7 +2,7 @@
 
 import { PenSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import styles from './review-feed.module.scss';
 
@@ -14,10 +14,15 @@ import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 export default function ReviewFeed() {
   const router = useRouter();
   const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [visibleReviews, setVisibleReviews] = useState<ReviewData[]>([]);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [filter, setFilter] = useState<'latest' | 'popular' | 'following'>('latest');
   const [mounted, setMounted] = useState(false);
+
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+  const ITEMS_PER_PAGE = 15; // 3개씩 5줄
 
   useEffect(() => {
     setMounted(true);
@@ -31,17 +36,9 @@ export default function ReviewFeed() {
       let response;
 
       if (filterType === 'popular') {
-        try {
-          response = await fetchGroo.review.getAllReviewsOrderByLikes();
-        } catch {
-          response = await fetchGroo.review.getAllReviews();
-        }
+        response = await fetchGroo.review.getAllReviewsOrderByLikes();
       } else if (filterType === 'following') {
-        try {
-          response = await fetchGroo.review.getReviewsByFollowing();
-        } catch {
-          response = await fetchGroo.review.getAllReviews();
-        }
+        response = await fetchGroo.review.getReviewsByFollowing();
       } else {
         response = await fetchGroo.review.getAllReviews();
       }
@@ -50,6 +47,8 @@ export default function ReviewFeed() {
       reviewsData = reviewsData.filter((review: ReviewData) => !review.secret);
 
       setReviews(reviewsData);
+      setVisibleReviews(reviewsData.slice(0, ITEMS_PER_PAGE));
+      setPage(1);
     } catch (error: any) {
       const errorMessage = getReviewErrorMessage(error);
       setError(errorMessage);
@@ -71,6 +70,35 @@ export default function ReviewFeed() {
   const handleReviewClick = (reviewId: number) => {
     router.push(`/reviews/${reviewId}`);
   };
+
+  // IntersectionObserver로 무한 스크롤 구현
+  useEffect(() => {
+    if (!loaderRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && !loading) {
+          const nextPage = page + 1;
+          const start = nextPage * ITEMS_PER_PAGE;
+          const end = start + ITEMS_PER_PAGE;
+          const nextItems = reviews.slice(start, end);
+
+          if (nextItems.length > 0) {
+            setVisibleReviews((prev) => [...prev, ...nextItems]);
+            setPage(nextPage);
+          }
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(loaderRef.current);
+
+    return () => {
+      if (loaderRef.current) observer.unobserve(loaderRef.current);
+    };
+  }, [reviews, page, loading]);
 
   if (!mounted || loading) {
     return (
@@ -101,7 +129,6 @@ export default function ReviewFeed() {
         </button>
       </header>
 
-      {/*  탭은 항상 표시 */}
       <nav className={styles.filterNav}>
         <button
           className={`${styles.filterButton} ${filter === 'latest' ? styles.active : ''}`}
@@ -120,22 +147,21 @@ export default function ReviewFeed() {
         </button>
       </nav>
 
-      {/*  피드 목록 */}
       <div className={styles.feedGrid}>
-        {reviews && reviews.length > 0
-          ? reviews.map((review) => (
-              <ReviewCard
-                key={review.reviewId}
-                review={review}
-                onClick={handleReviewClick}
-                showSecretBadge={false}
-              />
-            ))
-          : null}
+        {visibleReviews.map((review) => (
+          <ReviewCard
+            key={review.reviewId}
+            review={review}
+            onClick={handleReviewClick}
+            showSecretBadge={false}
+          />
+        ))}
       </div>
 
-      {/*  빈 상태 표시 (탭 아래로 이동) */}
-      {(!reviews || reviews.length === 0) && (
+      {/* 로딩 트리거용 div */}
+      <div ref={loaderRef} style={{ height: '60px' }} />
+
+      {visibleReviews.length === 0 && (
         <div className={styles.empty}>
           {filter === 'following' ? (
             <>
