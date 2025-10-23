@@ -1,4 +1,4 @@
-import { CommonResDTO } from '@/types/common';
+import { CommonResDTO } from '@/types';
 
 // 오늘의 한 문장 타입
 // 문장 정보

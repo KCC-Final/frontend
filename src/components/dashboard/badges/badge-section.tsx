@@ -6,12 +6,7 @@ import { useEffect, useState } from 'react';
 import styles from './badge-section.module.scss';
 
 import { challenge } from '@/apis/groo/challenge';
-import {
-  UserBadgeStatusResponse,
-  BadgeCategory,
-  BADGE_CATEGORY_MAP,
-  BADGE_ICONS
-} from '@/types/challenge/challenge';
+import { UserBadgeStatusResponse, BadgeCategory, BADGE_CATEGORY_MAP, BADGE_ICONS } from '@/types';
 import { getChallengeErrorMessage } from '@/utils/error/challenge-error-handler';
 
 export default function BadgeSection({ userId }: { userId: string }) {

@@ -1,6 +1,6 @@
 import axiosGroo from './config';
 
-import { UserBadgeResponse, UserBadgeStatusResponse } from '@/types/challenge/challenge';
+import { UserBadgeResponse, UserBadgeStatusResponse } from '@/types';
 
 /**
  * Challenge 관련 API
