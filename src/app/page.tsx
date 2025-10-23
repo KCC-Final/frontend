@@ -2,9 +2,9 @@ import { cookies } from 'next/headers';
 
 import { fetchAladin } from '@/apis/aladin';
 import { fetchGrooInServer } from '@/apis/groo/server';
+import GlobalLayout from '@/components/common/layout';
 import BestsellerList from '@/components/home/bestseller';
 import TodaySentence from '@/components/home/today-sentence';
-import GlobalLayout from '@/components/layout/global';
 import { getTokenInCookie } from '@/utils/cookie';
 
 async function BookRecommendationPage() {

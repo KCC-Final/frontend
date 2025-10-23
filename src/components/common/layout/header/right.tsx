@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import styles from '@/components/layout/header/header.module.scss';
-import AlertModal from '@/components/layout/modal/alert';
+import styles from '@/components/common/layout/header/header.module.scss';
+import AlertModal from '@/components/common/modal/alert';
 import {
   DropdownMenu,
   DropdownMenuContent,

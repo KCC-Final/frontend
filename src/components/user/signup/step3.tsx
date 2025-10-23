@@ -4,8 +4,8 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
-import BasicInputContainer from '@/components/layout/input/basic/container';
-import BasicInputField from '@/components/layout/input/basic/field';
+import BasicInputContainer from '@/components/common/input/basic/container';
+import BasicInputField from '@/components/common/input/basic/field';
 import styles from '@/components/user/signup/signup.module.scss';
 import useBoundStore from '@/stores';
 import { SignupInputFieldKey } from '@/types';

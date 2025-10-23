@@ -7,10 +7,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import BasicButton from '@/components/layout/button/basic';
-import BasicInputContainer from '@/components/layout/input/basic/container';
-import BasicInputField from '@/components/layout/input/basic/field';
-import BasicInputMessage from '@/components/layout/input/basic/message';
+import BasicButton from '@/components/common/button/basic';
+import BasicInputContainer from '@/components/common/input/basic/container';
+import BasicInputField from '@/components/common/input/basic/field';
+import BasicInputMessage from '@/components/common/input/basic/message';
 import styles from '@/components/user/my-info/my-info.module.scss';
 import { useInputText } from '@/hooks/useInput';
 import useBoundStore from '@/stores';

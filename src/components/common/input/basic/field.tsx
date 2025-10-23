@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
-import styles from '@/components/layout/input/input.module.scss';
+import styles from '@/components/common/input/input.module.scss';
 
 interface BasicInputFieldProps {
   classname?: string;

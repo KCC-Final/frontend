@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
-import BasicButton from '@/components/layout/button/basic';
+import BasicButton from '@/components/common/button/basic';
 import styles from '@/components/user/find-login-data/find-login-data.module.scss';
 import useBoundStore from '@/stores';
 

@@ -3,9 +3,9 @@
 import { ChevronDown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
-import { dtlRegionList, fetchLibrary, regionList } from '@/apis';
+import { fetchLibrary } from '@/apis';
 import styles from '@/components/books/library.module.scss';
-import { DtlRegion, LibraryWithAvailability, Region } from '@/types';
+import { DtlRegion, dtlRegionList, LibraryWithAvailability, Region, regionList } from '@/types';
 import { devLogger } from '@/utils/dev-logger';
 
 interface LibraryInformationProps {

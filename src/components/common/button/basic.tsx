@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import styles from '@/components/layout/button/button.module.scss';
+import styles from '@/components/common/button/button.module.scss';
 
 interface BasicButtonProps {
   name: string;
