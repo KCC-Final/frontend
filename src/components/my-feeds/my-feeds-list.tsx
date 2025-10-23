@@ -3,6 +3,7 @@
 import { Heart, Grid3x3 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 
 import styles from './my-feeds-list.module.scss';
 
@@ -10,6 +11,7 @@ import { fetchGroo } from '@/apis/groo';
 import FollowListModal from '@/components/my-feeds/follow-list-modal';
 import UserProfileSection from '@/components/my-feeds/user-profile-section';
 import ReviewCard from '@/components/reviews/commons/review-card';
+import useBoundStore from '@/stores';
 import { UserFeedData } from '@/types/user';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
@@ -17,6 +19,7 @@ type TabType = 'myReviews' | 'likedReviews';
 
 export default function MyFeedsList() {
   const router = useRouter();
+  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo })));
   const searchParams = useSearchParams();
   const targetUserId = searchParams.get('userId');
 
@@ -136,7 +139,7 @@ export default function MyFeedsList() {
     );
   }
 
-  const isOwner = !targetUserId;
+  const isOwner = !!(myInfo?.userId && myInfo.userId === targetUserId);
   const displayReviews = activeTab === 'myReviews' ? feedData.reviews : feedData.likedReviews;
 
   return (

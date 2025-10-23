@@ -37,23 +37,6 @@
   font-size: 1.4rem;
 }
 
-.secretBadge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(239, 68, 68, 0.95);
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 0.6rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  backdrop-filter: blur(8px);
-  z-index: 1;
-}
-
 .reviewInfo {
   padding: 1.6rem;
 }
@@ -100,9 +83,11 @@
   font-size: 1.3rem;
   font-weight: 600;
   color: #111827;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.secretBadge {
+  margin-left: 0.5rem;
+  color: #9ca3af;
 }
 
 .date {
