@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import styles from '@/components/layout/input/input.module.scss';
+import styles from '@/components/common/input/input.module.scss';
 
 interface BasicInputMessageProps {
   message: string;

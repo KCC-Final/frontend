@@ -1,4 +1,4 @@
-import GlobalLayout from '@/components/layout/global';
+import GlobalLayout from '@/components/common/layout';
 
 interface MyFeedPageLayoutProps {
   children: React.ReactNode;

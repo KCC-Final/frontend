@@ -1,6 +1,6 @@
-import styles from '@/components/layout/header/header.module.scss';
-import LeftNavigation from '@/components/layout/header/left';
-import RightNavigation from '@/components/layout/header/right';
+import styles from '@/components/common/layout/header/header.module.scss';
+import LeftNavigation from '@/components/common/layout/header/left';
+import RightNavigation from '@/components/common/layout/header/right';
 
 function HeaderLayout() {
   return (

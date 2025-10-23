@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
-import BackButton from '@/components/layout/button/back-button';
+import BackButton from '@/components/common/button/back-button';
 import FindUserId from '@/components/user/find-login-data/find-id';
 import FindPassword from '@/components/user/find-login-data/find-pw';
 import FindIdSuccess from '@/components/user/find-login-data/success';
