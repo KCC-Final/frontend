@@ -1,6 +1,6 @@
-import Footer from '@/components/layout/footer';
-import HeaderLayout from '@/components/layout/header';
-import MainLayout from '@/components/layout/main';
+import Footer from '@/components/common/layout/footer';
+import HeaderLayout from '@/components/common/layout/header';
+import MainLayout from '@/components/common/layout/main';
 
 interface GlobalLayoutProps {
   children: React.ReactNode;

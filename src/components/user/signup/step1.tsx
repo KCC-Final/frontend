@@ -3,10 +3,10 @@
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import BasicButton from '@/components/layout/button/basic';
-import BasicInputContainer from '@/components/layout/input/basic/container';
-import BasicInputField from '@/components/layout/input/basic/field';
-import BasicInputMessage from '@/components/layout/input/basic/message';
+import BasicButton from '@/components/common/button/basic';
+import BasicInputContainer from '@/components/common/input/basic/container';
+import BasicInputField from '@/components/common/input/basic/field';
+import BasicInputMessage from '@/components/common/input/basic/message';
 import useBoundStore from '@/stores';
 import { SignupInputFieldKey } from '@/types';
 import { ApiError } from '@/utils/error/api';

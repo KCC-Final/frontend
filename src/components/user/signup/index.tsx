@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import BackButton from '@/components/layout/button/back-button';
-import BasicButton from '@/components/layout/button/basic';
+import BackButton from '@/components/common/button/back-button';
+import BasicButton from '@/components/common/button/basic';
 import styles from '@/components/user/signup/signup.module.scss';
 import SignupStep1 from '@/components/user/signup/step1';
 import SignupStep2 from '@/components/user/signup/step2';

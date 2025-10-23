@@ -3,9 +3,9 @@
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
-import BasicButton from '@/components/layout/button/basic';
-import BasicInputContainer from '@/components/layout/input/basic/container';
-import BasicInputField from '@/components/layout/input/basic/field';
+import BasicButton from '@/components/common/button/basic';
+import BasicInputContainer from '@/components/common/input/basic/container';
+import BasicInputField from '@/components/common/input/basic/field';
 import useBoundStore from '@/stores';
 import { SignupInputFieldKey } from '@/types';
 import { devLogger } from '@/utils/dev-logger';

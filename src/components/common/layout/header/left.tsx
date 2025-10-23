@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import styles from '@/components/layout/header/header.module.scss';
+import styles from '@/components/common/layout/header/header.module.scss';
 
 function LeftNavigation() {
   return (
