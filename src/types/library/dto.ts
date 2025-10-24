@@ -207,33 +207,96 @@ export interface GetRegionalReadingStatsResDTO {
   };
 }
 
-/* ============================
-    국립중앙도서관 (NL Library)
-   - /NL/search/openApi/saseoApi.do
-============================ */
-
-/** 사서추천도서 개별 아이템 */
-export interface LibrarianRecommendBook {
-  recomNo: string; // 추천 도서 고유번호
-  recomtitle: string; // 제목
-  recomauthor: string; // 저자
-  recompublisher: string; // 출판사
-  recomisbn: string; // ISBN
-  recomYear: string; // 추천연도
-  recomMonth: string; // 추천월
-  drCodeName: string; // 분류명 (예: 문학)
-  recomfilepath?: string; // 표지 이미지 URL
-  publishYear?: string; // 출판년도
-}
-
-/** 국립중앙도서관 사서추천도서 API 응답 */
-export interface GetLibrarianRecommendBooksResDTO {
-  channel: {
-    result: string;
+/**
+ * 도서별 이용 분석 API 응답 타입
+ * @author uyh
+ */
+export type BookUsageAnalysisResDTO = {
+  response: {
+    request: {
+      isbn13: string;
+    };
     resultNum: number;
-    totalCount: number;
-    list: {
-      item: LibrarianRecommendBook[];
+    docs: {
+      doc: {
+        bookname: string;
+        authors: string;
+        publisher: string;
+        publication_year: string;
+        isbn13: string;
+        vol: string;
+        class_no: string;
+        class_nm: string;
+        loan_count: string;
+        bookImageURL: string;
+        bookDtlUrl: string;
+        loanGrps: {
+          loanGrp: LoanGroup[];
+        };
+      };
+    };
+    // 대출 추이 데이터 추가
+    loanHistory?: Array<{
+      loan: {
+        month: string; // '2024년 10월' 형식
+        loanCnt: number;
+        ranking: number;
+      };
+    }>;
+  };
+};
+
+export type LoanGroup = {
+  age: string;
+  gender: string;
+  loanCnt: number;
+  ranking: number;
+};
+
+/**
+ * 차트 표시용 가공 데이터 타입
+ */
+export type AgeGenderChartData = {
+  age: string;
+  male: number;
+  female: number;
+};
+
+/**
+ * 최다 회원 정보 (1위, 2위)
+ */
+export type TopReaderInfo = {
+  rank: number;
+  gender: '남성' | '여성';
+  ageGroup: string;
+  percentage: number;
+};
+
+/**
+ * 도서관별 대출반납추이 API 응답 타입
+ * @author uyh
+ */
+export interface GetLibraryUsageTrendResDTO {
+  response: {
+    request: {
+      libCode: string;
+      type: string;
+    };
+    result: {
+      loanhistory: Array<{
+        loanDate: string;
+        loanCnt: number;
+      }>;
     };
   };
 }
+
+/**
+ * 대출추이 차트용 데이터 타입
+ * @author uyh
+ */
+export type LoanTrendChartData = {
+  month: string; // 원본 월 데이터
+  count: number;
+  formattedMonth: string; // 표시용
+};

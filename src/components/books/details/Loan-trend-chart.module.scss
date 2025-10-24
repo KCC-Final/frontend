@@ -1,0 +1,118 @@
+.loan_trend_section {
+  // 공통 섹션 제목 스타일
+  .section_title {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #111827;
+    margin: 16px 0;
+    padding-left: 12px;
+  }
+
+  // 차트
+  .chart_container {
+    width: 100%;
+  }
+
+  .chart_wrapper {
+    width: 100%;
+    height: 300px;
+  }
+
+  .chart_info {
+    text-align: center;
+    color: #888;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  // 데이터 섹션
+  .data_section {
+    margin-top: 2.5rem;
+  }
+
+  // 단일 테이블
+  .data_table {
+    width: 100%;
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 1rem; // 기존 0.95 → 약 +2px
+    }
+
+    th {
+      background: #f5f5f5;
+      color: #333;
+      padding: 1.3rem;
+      border-bottom: 2px solid #ddd;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #eee;
+      font-size: 1.5rem;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+  }
+
+  // 두 개의 표를 나란히 배치
+  .data_table_two_column {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+
+    table {
+      flex: 1 1 45%;
+      border-collapse: collapse;
+      min-width: 300px;
+      text-align: center;
+      font-size: 1.5rem; // 기존보다 +2~3px
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    th {
+      background: #f9fafb;
+      color: #333;
+      padding: 1.6rem;
+      border-bottom: 2px solid #ddd;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 0.8rem;
+      font-size: 1.4rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      table {
+        width: 100%;
+      }
+    }
+  }
+}
