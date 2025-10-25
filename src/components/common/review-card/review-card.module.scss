@@ -1,0 +1,152 @@
+@use '@/styles/abstract/' as *;
+
+.container {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $black-e;
+  border-radius: $large-button-radius;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.cover_bg {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #f0f0f0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--background-image);
+    background-size: cover;
+    background-position: center;
+    filter: blur(25px);
+    z-index: 0;
+  }
+
+  .cover_img {
+    height: 100%;
+    width: auto;
+    z-index: 1;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  flex-grow: 1;
+
+  .title {
+    font-size: $font-size-16;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 12px;
+  }
+
+  .description {
+    color: $font-black-4;
+    line-height: 1.6;
+    height: calc(1.4rem * 1.6 * 3);
+    margin-bottom: 16px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $font-black-7;
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  height: 50px;
+  align-items: center;
+  padding: 0 16px;
+  border-top: 1px solid $black-e;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: inherit;
+    text-decoration: none;
+
+    .img {
+      width: 27px;
+      height: 27px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: $input-bg;
+      border: 1px solid $black-e;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      span:nth-child(1) {
+        color: $font-black-7;
+      }
+
+      span:nth-child(2) {
+        font-weight: 500;
+      }
+    }
+
+    &:hover {
+      .author {
+        span:nth-child(2) {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
