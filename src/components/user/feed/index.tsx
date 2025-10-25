@@ -7,6 +7,7 @@ import FollowListModal from './follow-list-modal';
 import UserProfile from './profile';
 
 import { fetchGroo } from '@/apis/groo';
+import UserProfileCard from '@/components/common/profile';
 import ReviewCard from '@/components/common/review-card';
 import styles from '@/components/user/feed/user-feed.module.scss';
 import { UserFeedData } from '@/types/user';
@@ -136,6 +137,8 @@ function UserFeed({ userId }: UserFeedProps) {
 
   return (
     <>
+      <UserProfileCard />
+
       <UserProfile
         user={feedData.user}
         reviewCount={feedData.stats.reviewCount}

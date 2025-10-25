@@ -1,0 +1,83 @@
+@use '@/styles/abstract/' as *;
+
+.container {
+  display: flex;
+  margin: 24px 20px;
+  padding: 32px 64px;
+  border-radius: 1.2rem;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  gap: 64px;
+
+  .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #e5e7eb;
+  }
+
+  .info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+
+    .header {
+      display: flex;
+      gap: 20px;
+
+      .name {
+        display: flex;
+        gap: 8px;
+        line-height: normal;
+        align-items: baseline;
+
+        .nickname {
+          font-size: $font-size-24;
+          font-weight: 600;
+        }
+
+        .userId {
+          color: $font-black-7;
+          font-size: $font-size-20;
+          font-weight: 500;
+        }
+      }
+
+      button {
+        padding: 6px 12px;
+      }
+    }
+
+    .follow {
+      display: flex;
+      text-align: center;
+      gap: 24px;
+      margin-bottom: 12px;
+
+      > button {
+        display: flex;
+        flex-direction: column;
+        padding: 4px 8px;
+        gap: 6px;
+      }
+
+      .count {
+        font-size: $font-size-24;
+        font-weight: 500;
+      }
+
+      .label {
+        color: $font-black-7;
+      }
+    }
+
+    .introduction {
+      font-size: $font-size-18;
+    }
+  }
+}
