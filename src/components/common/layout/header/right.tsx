@@ -82,7 +82,7 @@ function RightNavigation() {
             {myInfo?.userId ? (
               <DropdownMenuItem
                 className="text-[1.4rem] px-[1rem] py-[0.8rem]"
-                onClick={routePageHandler(`/my-feeds?userId=${myInfo?.userId}`)}>
+                onClick={routePageHandler(`/users/${myInfo?.userId}`)}>
                 내 피드
               </DropdownMenuItem>
             ) : (

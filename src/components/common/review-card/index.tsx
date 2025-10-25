@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { BookIcon, Heart, MessageSquareMore, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,9 +14,10 @@ import { formatRelativeTime } from '@/utils/format/date';
 
 interface ReviewCardProps {
   review: ReviewData;
+  size?: 3 | 4;
 }
 
-function ReviewCard({ review }: ReviewCardProps) {
+function ReviewCard({ review, size = 4 }: ReviewCardProps) {
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [isImgLoading, setImgLoading] = useState(true);
   const [imgFetchingError, setImgFetchingError] = useState(false);
@@ -62,7 +64,7 @@ function ReviewCard({ review }: ReviewCardProps) {
   const authorProfileImageUrl = changeImageUrlFromBase64(review.authorProfileImage);
 
   return (
-    <li className={styles.container}>
+    <li className={clsx(styles.container, size === 3 ? styles.size3 : styles.size4)}>
       {/* 커버 이미지 섹션 (클릭 가능) */}
       <Link href={`/reviews/${review.reviewId}`}>
         <div
@@ -119,7 +121,7 @@ function ReviewCard({ review }: ReviewCardProps) {
       </div>
 
       <footer className={styles.footer}>
-        <Link href={`/my-feeds?userId=${review.userId}`}>
+        <Link href={`/users/${review.userId}`}>
           <span className={styles.img}>
             {review.authorProfileImage ? (
               <Image src={authorProfileImageUrl} alt="프로필 이미지" width={27} height={27} />

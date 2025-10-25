@@ -1,25 +1,24 @@
 'use client';
 
 import { Heart, Grid3x3 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import styles from './my-feeds-list.module.scss';
+import FollowListModal from './follow-list-modal';
+import UserProfile from './profile';
 
 import { fetchGroo } from '@/apis/groo';
-import FollowListModal from '@/components/my-feeds/follow-list-modal';
-import UserProfileSection from '@/components/my-feeds/user-profile-section';
-import ReviewCard from '@/components/reviews/commons/review-card';
+import ReviewCard from '@/components/common/review-card';
+import styles from '@/components/user/feed/user-feed.module.scss';
 import { UserFeedData } from '@/types/user';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 type TabType = 'myReviews' | 'likedReviews';
 
-export default function MyFeedsList() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const targetUserId = searchParams.get('userId');
+interface UserFeedProps {
+  userId: string;
+}
 
+function UserFeed({ userId }: UserFeedProps) {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('myReviews');
   const [loading, setLoading] = useState(true);
@@ -28,17 +27,12 @@ export default function MyFeedsList() {
   const [followModalOpen, setFollowModalOpen] = useState(false);
   const [followModalType, setFollowModalType] = useState<'follower' | 'following'>('follower');
 
-  useEffect(() => {
-    setMounted(true);
-    loadFeedData();
-  }, [targetUserId]);
-
   const loadFeedData = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      if (!targetUserId) {
+      if (!userId) {
         const [userResponse, myReviewsResponse, likedReviewsResponse] = await Promise.all([
           fetchGroo.user.getMyInfo(),
           fetchGroo.review.getMyReviews(),
@@ -88,7 +82,7 @@ export default function MyFeedsList() {
           };
         });
       } else {
-        const feedResponse = await fetchGroo.user.getUserFeed(targetUserId);
+        const feedResponse = await fetchGroo.user.getUserFeed(userId);
         setFeedData(feedResponse);
       }
     } catch (error: any) {
@@ -99,12 +93,13 @@ export default function MyFeedsList() {
     }
   };
 
-  const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab);
-  };
+  useEffect(() => {
+    setMounted(true);
+    loadFeedData();
+  }, [userId]);
 
-  const handleReviewClick = (reviewId: number) => {
-    router.push(`/reviews/${reviewId}`);
+  const navBarHandler = (tab: TabType) => () => {
+    setActiveTab(tab);
   };
 
   const handleFollowerClick = () => {
@@ -136,45 +131,38 @@ export default function MyFeedsList() {
     );
   }
 
-  const isOwner = !targetUserId;
+  const isOwner = !userId;
   const displayReviews = activeTab === 'myReviews' ? feedData.reviews : feedData.likedReviews;
 
   return (
-    <div className={styles.container}>
-      <UserProfileSection
+    <>
+      <UserProfile
         user={feedData.user}
         reviewCount={feedData.stats.reviewCount}
         followerCount={feedData.stats.followerCount}
         followingCount={feedData.stats.followingCount}
-        targetUserId={targetUserId || undefined}
+        targetUserId={userId || undefined}
         isOwner={isOwner}
         onFollowerClick={handleFollowerClick}
         onFollowingClick={handleFollowingClick}
       />
 
-      <nav className={styles.tabNav}>
+      <nav className={styles.navbar}>
         <button
           className={`${styles.tabButton} ${activeTab === 'myReviews' ? styles.active : ''}`}
-          onClick={() => handleTabChange('myReviews')}>
+          onClick={navBarHandler('myReviews')}>
           <Grid3x3 size={20} />
         </button>
         <button
           className={`${styles.tabButton} ${activeTab === 'likedReviews' ? styles.active : ''}`}
-          onClick={() => handleTabChange('likedReviews')}>
+          onClick={navBarHandler('likedReviews')}>
           <Heart size={20} />
         </button>
       </nav>
 
-      <div className={styles.feedGrid}>
+      <ul className={styles.list}>
         {displayReviews.length > 0 ? (
-          displayReviews.map((review) => (
-            <ReviewCard
-              key={review.reviewId}
-              review={review}
-              onClick={handleReviewClick}
-              showSecretBadge={activeTab === 'myReviews' && isOwner}
-            />
-          ))
+          displayReviews.map((review) => <ReviewCard key={review.reviewId} review={review} size={3} />)
         ) : (
           <div className={styles.empty}>
             <p>
@@ -188,14 +176,16 @@ export default function MyFeedsList() {
             </p>
           </div>
         )}
-      </div>
+      </ul>
 
       <FollowListModal
         isOpen={followModalOpen}
         onClose={() => setFollowModalOpen(false)}
         type={followModalType}
-        targetUserId={targetUserId || undefined}
+        targetUserId={userId || undefined}
       />
-    </div>
+    </>
   );
 }
+
+export default UserFeed;

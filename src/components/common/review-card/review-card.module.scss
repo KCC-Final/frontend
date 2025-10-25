@@ -1,7 +1,6 @@
 @use '@/styles/abstract/' as *;
 
 .container {
-  flex: 0 0 300px;
   display: flex;
   flex-direction: column;
   border: 1px solid $black-e;
@@ -10,6 +9,14 @@
     transform 0.2s ease-in-out,
     box-shadow 0.2s ease-in-out;
   overflow: hidden;
+
+  &.size3 {
+    flex: 0 0 320px;
+  }
+
+  &.size4 {
+    flex: 0 0 300px;
+  }
 
   &:hover {
     transform: translateY(-5px);

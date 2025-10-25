@@ -4,9 +4,8 @@ import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import styles from './follow-list-modal.module.scss';
-
 import { fetchGroo } from '@/apis/groo';
+import styles from '@/components/user/feed/follow-list-modal.module.scss';
 import useBoundStore from '@/stores';
 
 interface FollowUser {
@@ -97,7 +96,7 @@ export default function FollowListModal({ isOpen, onClose, type, targetUserId }:
   };
 
   const handleUserClick = (userId: string) => {
-    router.push(`/my-feeds?userId=${userId}`);
+    router.push(`/users/${userId}`);
     onClose();
   };
 

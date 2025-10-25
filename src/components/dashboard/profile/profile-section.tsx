@@ -1,13 +1,12 @@
 'use client';
 
-import { Bell, PenSquare } from 'lucide-react';
+import { PenSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import styles from './profile-section.module.scss';
-
 import { fetchGroo } from '@/apis/groo';
-import FollowListModal from '@/components/my-feeds/follow-list-modal';
+import FollowListModal from '@/components/user/feed/follow-list-modal';
+import styles from '@/components/user/feed/profile.module.scss';
 import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 interface ProfileSectionProps {
