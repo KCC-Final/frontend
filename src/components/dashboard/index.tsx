@@ -35,7 +35,7 @@ export default function DashboardContainer() {
 
   return (
     <>
-      {myInfo && <UserProfileCard />}
+      {myInfo && <UserProfileCard userId={myInfo.userId} />}
       <StatsCards />
       <DashboardCharts />
       <MonthlyReport />

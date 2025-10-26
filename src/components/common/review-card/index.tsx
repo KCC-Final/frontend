@@ -90,8 +90,8 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
               className={styles.cover_img}
               src={finalImgSrc}
               alt={review.reviewTitle}
-              width={120}
-              height={180}
+              fill={true}
+              sizes="120px"
               priority={false}
               onError={() => setImgFetchingError(true)}
             />

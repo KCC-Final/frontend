@@ -2,14 +2,13 @@
 
 import { Heart, Grid3x3 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-import FollowListModal from './follow-list-modal';
-import UserProfile from './profile';
+import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis/groo';
 import UserProfileCard from '@/components/common/profile';
 import ReviewCard from '@/components/common/review-card';
 import styles from '@/components/user/feed/user-feed.module.scss';
+import useBoundStore from '@/stores';
 import { UserFeedData } from '@/types/user';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
@@ -20,13 +19,13 @@ interface UserFeedProps {
 }
 
 function UserFeed({ userId }: UserFeedProps) {
+  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo! })));
+
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('myReviews');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [feedData, setFeedData] = useState<UserFeedData | null>(null);
-  const [followModalOpen, setFollowModalOpen] = useState(false);
-  const [followModalType, setFollowModalType] = useState<'follower' | 'following'>('follower');
 
   const loadFeedData = async () => {
     setLoading(true);
@@ -34,11 +33,13 @@ function UserFeed({ userId }: UserFeedProps) {
 
     try {
       if (!userId) {
-        const [userResponse, myReviewsResponse, likedReviewsResponse] = await Promise.all([
-          fetchGroo.user.getMyInfo(),
-          fetchGroo.review.getMyReviews(),
-          fetchGroo.review.getLikedReviews()
-        ]);
+        const [myReviewsResponse, likedReviewsResponse, followerCountResponse, followingCountResponse] =
+          await Promise.all([
+            fetchGroo.review.getMyReviews(),
+            fetchGroo.review.getLikedReviews(),
+            fetchGroo.follow.getFollowerCount(),
+            fetchGroo.follow.getFollowingCount()
+          ]);
 
         const myReviewsData = Array.isArray(myReviewsResponse)
           ? myReviewsResponse
@@ -50,38 +51,21 @@ function UserFeed({ userId }: UserFeedProps) {
 
         const feedData = {
           user: {
-            userId: userResponse.data.userId,
-            nickname: userResponse.data.nickname,
-            profileImage: userResponse.data.profileImage,
-            introduction: userResponse.data.introduction
+            userId: myInfo.userId,
+            nickname: myInfo.nickname,
+            profileImage: myInfo.profileImage,
+            introduction: myInfo.introduction
           },
           stats: {
             reviewCount: myReviewsData.length,
-            followerCount: 0,
-            followingCount: 0
+            followerCount: followerCountResponse.data,
+            followingCount: followingCountResponse.data
           },
           reviews: myReviewsData,
           likedReviews: likedReviewsData
         };
 
         setFeedData(feedData);
-
-        const [followerCountResponse, followingCountResponse] = await Promise.all([
-          fetchGroo.follow.getFollowerCount(),
-          fetchGroo.follow.getFollowingCount()
-        ]);
-
-        setFeedData((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            stats: {
-              ...prev.stats,
-              followerCount: followerCountResponse.data,
-              followingCount: followingCountResponse.data
-            }
-          };
-        });
       } else {
         const feedResponse = await fetchGroo.user.getUserFeed(userId);
         setFeedData(feedResponse);
@@ -101,16 +85,6 @@ function UserFeed({ userId }: UserFeedProps) {
 
   const navBarHandler = (tab: TabType) => () => {
     setActiveTab(tab);
-  };
-
-  const handleFollowerClick = () => {
-    setFollowModalType('follower');
-    setFollowModalOpen(true);
-  };
-
-  const handleFollowingClick = () => {
-    setFollowModalType('following');
-    setFollowModalOpen(true);
   };
 
   if (!mounted || loading) {
@@ -137,18 +111,7 @@ function UserFeed({ userId }: UserFeedProps) {
 
   return (
     <>
-      <UserProfileCard />
-
-      <UserProfile
-        user={feedData.user}
-        reviewCount={feedData.stats.reviewCount}
-        followerCount={feedData.stats.followerCount}
-        followingCount={feedData.stats.followingCount}
-        targetUserId={userId || undefined}
-        isOwner={isOwner}
-        onFollowerClick={handleFollowerClick}
-        onFollowingClick={handleFollowingClick}
-      />
+      <UserProfileCard userId={userId} user={feedData.user} stats={feedData.stats} />
 
       <nav className={styles.navbar}>
         <button
@@ -180,13 +143,6 @@ function UserFeed({ userId }: UserFeedProps) {
           </div>
         )}
       </ul>
-
-      <FollowListModal
-        isOpen={followModalOpen}
-        onClose={() => setFollowModalOpen(false)}
-        type={followModalType}
-        targetUserId={userId || undefined}
-      />
     </>
   );
 }
