@@ -1,43 +1,40 @@
 'use client';
 
+import clsx from 'clsx';
 import { Trophy, Award, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-import styles from './badge-section.module.scss';
+import { useShallow } from 'zustand/shallow';
 
 import { challenge } from '@/apis/groo/challenge';
+import styles from '@/components/dashboard/badges/badge-section.module.scss';
+import useBoundStore from '@/stores';
 import { UserBadgeStatusResponse, BadgeCategory, BADGE_CATEGORY_MAP, BADGE_ICONS } from '@/types';
-import { getChallengeErrorMessage } from '@/utils/error/challenge-error-handler';
 
-export default function BadgeSection({ userId }: { userId: string }) {
+function BadgeSection() {
+  const { userId } = useBoundStore(useShallow((state) => ({ userId: state.myInfo!.userId })));
+
   const [badges, setBadges] = useState<UserBadgeStatusResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<BadgeCategory | 'all'>('all');
   const [expandedBadge, setExpandedBadge] = useState<number | null>(null);
 
   useEffect(() => {
+    const loadUserAndBadges = async () => {
+      try {
+        setLoading(true);
+
+        // 해당 유저의 전체 뱃지 상태 조회
+        const badgeList = await challenge.getAllBadgesWithStatus(userId);
+        setBadges(badgeList);
+      } catch (err: any) {
+        console.error('뱃지 조회 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadUserAndBadges();
   }, []);
-
-  /**
-   * 로그인한 사용자 정보 → userId → 뱃지 목록 로드
-   */
-  const loadUserAndBadges = async () => {
-    try {
-      setLoading(true);
-
-      // 해당 유저의 전체 뱃지 상태 조회
-      const badgeList = await challenge.getAllBadgesWithStatus(userId);
-      setBadges(badgeList);
-      setError(null);
-    } catch (err: any) {
-      console.error('뱃지 조회 실패:', err);
-      setError(getChallengeErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getFilteredBadges = () => {
     if (selectedCategory === 'all') return badges;
@@ -68,30 +65,7 @@ export default function BadgeSection({ userId }: { userId: string }) {
   };
 
   // 로딩
-  if (loading) {
-    return (
-      <div className={styles.badgeSection}>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
-          <p>뱃지 정보를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // 에러
-  if (error) {
-    return (
-      <div className={styles.badgeSection}>
-        <div className={styles.error}>
-          <p>{error}</p>
-          <button onClick={loadUserAndBadges} className={styles.retryButton}>
-            다시 시도
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return null;
 
   const totalStats = getTotalStats();
   const filteredBadges = getFilteredBadges();
@@ -159,7 +133,12 @@ export default function BadgeSection({ userId }: { userId: string }) {
 
             <div className={styles.badgeInfo}>
               <h4 className={styles.badgeName}>{badge.badgeName}</h4>
-              <p className={styles.badgeDescription}>{badge.badgeDescription}</p>
+              <p
+                className={clsx(styles.badgeDescription, {
+                  [styles.small]: badge.badgeDescription.length > 24
+                })}>
+                {badge.badgeDescription}
+              </p>
             </div>
           </div>
         ))}
@@ -175,3 +154,5 @@ export default function BadgeSection({ userId }: { userId: string }) {
     </div>
   );
 }
+
+export default BadgeSection;

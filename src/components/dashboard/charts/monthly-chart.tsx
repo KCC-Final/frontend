@@ -1,13 +1,17 @@
 'use client';
 
 import Chart from 'chart.js/auto';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
-import styles from './charts.module.scss';
+import styles from '@/components/dashboard/charts/charts.module.scss';
+import { useDashboardStore } from '@/stores/dashboard';
 
-import { MonthlyChartProps } from '@/types/dashboard/dashboard';
+export default function MonthlyChart() {
+  const { dashboardData, periodChartType, periodChartYear, changePeriodChartType, changePeriodChartYear } =
+    useDashboardStore();
+  const { monthlyStats } = dashboardData;
 
-export default function MonthlyChart({ data, year }: MonthlyChartProps) {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
   const [chartError, setChartError] = useState<string | null>(null);
@@ -25,7 +29,7 @@ export default function MonthlyChart({ data, year }: MonthlyChartProps) {
         return;
       }
 
-      if (!data || !Array.isArray(data)) {
+      if (!monthlyStats || !Array.isArray(monthlyStats)) {
         setChartError('유효하지 않은 데이터입니다.');
         return;
       }
@@ -46,7 +50,7 @@ export default function MonthlyChart({ data, year }: MonthlyChartProps) {
       ];
 
       const monthlyData = new Array(12).fill(0);
-      data.forEach((item) => {
+      monthlyStats.forEach((item) => {
         const month = parseInt(item.month.split('-')[1]) - 1;
         if (month >= 0 && month < 12) {
           monthlyData[month] = item.count;
@@ -54,7 +58,7 @@ export default function MonthlyChart({ data, year }: MonthlyChartProps) {
       });
 
       const maxValue = Math.max(...monthlyData);
-      const suggestedMax = Math.max(50, Math.ceil((maxValue * 1.1) / 10) * 10);
+      const suggestedMax = Math.max(Math.ceil((maxValue * 1.1) / 10) * 10, 10);
 
       // 데이터 없어도 무조건 차트 표시
       chartInstance.current = new Chart(ctx, {
@@ -67,7 +71,7 @@ export default function MonthlyChart({ data, year }: MonthlyChartProps) {
               data: monthlyData,
               backgroundColor: 'rgba(45, 90, 61, 0.7)',
               borderColor: 'rgba(45, 90, 61, 1)',
-              borderWidth: 2,
+              borderWidth: 1,
               borderRadius: 5,
               hoverBackgroundColor: 'rgba(45, 90, 61, 0.9)',
               barThickness: 25, // 막대 두께 약간 줄임
@@ -91,16 +95,16 @@ export default function MonthlyChart({ data, year }: MonthlyChartProps) {
             y: {
               beginAtZero: true,
               ticks: {
-                stepSize: 10,
-                color: '#666',
-                font: { size: 11 }
+                stepSize: suggestedMax / 5,
+                color: '#777777',
+                font: { size: 12 }
               },
               grid: { color: 'rgba(0, 0, 0, 0.05)' },
               border: { display: false },
               suggestedMax
             },
             x: {
-              ticks: { color: '#666', font: { size: 11 } },
+              ticks: { color: '#777777', font: { size: 12 } },
               grid: { display: false },
               border: { display: false }
             }
@@ -115,11 +119,36 @@ export default function MonthlyChart({ data, year }: MonthlyChartProps) {
     return () => {
       if (chartInstance.current) chartInstance.current.destroy();
     };
-  }, [data, year]);
+  }, [monthlyStats]);
+
+  const yearOptions = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).reverse();
 
   return (
     <div className={styles.chartCard}>
-      <div className={styles.chartHeader}></div>
+      <div className={styles.chartHeader}>
+        <div className={styles.chartTitleContainer}>
+          <h3 className={styles.chartTitle}>월별 독서 통계</h3>
+          <select value={periodChartYear} onChange={changePeriodChartYear}>
+            {yearOptions.map((year) => (
+              <option key={year} value={year}>
+                {year}년
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className={styles.chartTypeButtons}>
+          <button
+            className={clsx({ [styles.active]: periodChartType === 'monthly' })}
+            onClick={changePeriodChartType('monthly')}>
+            월별
+          </button>
+          <button
+            className={clsx({ [styles.active]: periodChartType === 'yearly' })}
+            onClick={changePeriodChartType('yearly')}>
+            연별
+          </button>
+        </div>
+      </div>
       <div className={styles.chartContainer}>
         {chartError ? <p className={styles.chartError}>{chartError}</p> : <canvas ref={chartRef}></canvas>}
       </div>

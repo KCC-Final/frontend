@@ -3,9 +3,8 @@
 import Chart from 'chart.js/auto';
 import { useEffect, useRef, useState } from 'react';
 
-import styles from './charts.module.scss';
-
-import { CategoryChartProps } from '@/types/dashboard/dashboard';
+import styles from '@/components/dashboard/charts/charts.module.scss';
+import { useDashboardStore } from '@/stores/dashboard';
 
 const CATEGORY_COLORS = {
   backgroundColor: [
@@ -30,7 +29,10 @@ const CATEGORY_COLORS = {
   ]
 };
 
-export default function CategoryChart({ data }: CategoryChartProps) {
+export default function CategoryChart() {
+  const { dashboardData } = useDashboardStore();
+  const { categoryStats } = dashboardData;
+
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
   const [expanded, setExpanded] = useState(false); // 전체보기 상태
@@ -47,10 +49,10 @@ export default function CategoryChart({ data }: CategoryChartProps) {
     if (!ctx) return;
 
     // 데이터가 없을 경우 처리
-    if (!data || data.length === 0) return;
+    if (!categoryStats || categoryStats.length === 0) return;
 
     // 상위 5개 + etc 그룹화
-    const sortedData = [...data].sort((a, b) => b.count - a.count);
+    const sortedData = [...categoryStats].sort((a, b) => b.count - a.count);
     const topFive = sortedData.slice(0, 5);
     const others = sortedData.slice(5);
 
@@ -154,7 +156,7 @@ export default function CategoryChart({ data }: CategoryChartProps) {
         chartInstance.current.destroy();
       }
     };
-  }, [data, expanded]);
+  }, [categoryStats, expanded]);
 
   return (
     <div className={styles.chartCard}>
@@ -164,15 +166,6 @@ export default function CategoryChart({ data }: CategoryChartProps) {
       <div className={styles.chartContainer}>
         <canvas ref={chartRef}></canvas>
       </div>
-
-      {/* 전체보기 버튼 */}
-      {data.length > 5 && (
-        <div className={styles.chartFooter}>
-          <button className={styles.expandButton} onClick={() => setExpanded((prev) => !prev)}>
-            {expanded ? '간략히 보기' : '전체 보기'}
-          </button>
-        </div>
-      )}
     </div>
   );
 }

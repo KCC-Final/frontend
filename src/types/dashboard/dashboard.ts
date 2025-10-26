@@ -1,17 +1,4 @@
-export interface CategoryStat {
-  category: string;
-  count: number;
-}
-
-export interface MonthlyStat {
-  month: string; // YYYY-MM format
-  count: number;
-}
-
-export interface YearlyStat {
-  year: number; // 연도
-  count: number; // 해당 연도의 독후감 수
-}
+import { CategoryStat, MonthlyStat, YearlyStat } from '@/types';
 
 export interface DashboardSummaryResponse {
   totalReviews: number;

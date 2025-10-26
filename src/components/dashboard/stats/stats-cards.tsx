@@ -2,50 +2,47 @@
 
 import { BookOpen, Bookmark, Heart } from 'lucide-react';
 
-import styles from './stats-cards.module.scss';
+import styles from '@/components/dashboard/stats/stats-cards.module.scss';
+import { useDashboardStore } from '@/stores/dashboard';
 
-import { StatsCardsProps } from '@/types/dashboard/dashboard';
-
-interface StatCard {
-  label: string;
-  value: number;
-  icon: React.ReactNode;
-  colorClass: string;
-}
-
-export default function StatsCards({ totalReviews, totalScrappedBooks, totalLikedReviews }: StatsCardsProps) {
-  const statCards: StatCard[] = [
-    {
-      label: '작성한 독후감',
-      value: totalReviews,
-      icon: <BookOpen size={24} />,
-      colorClass: styles.iconReviews
-    },
-    {
-      label: '읽고 싶은 책',
-      value: totalScrappedBooks,
-      icon: <Bookmark size={24} />,
-      colorClass: styles.iconScraps
-    },
-    {
-      label: '좋아하는 독후감',
-      value: totalLikedReviews,
-      icon: <Heart size={24} />,
-      colorClass: styles.iconLikes
-    }
-  ];
+function StatsCards() {
+  const { totalReviews, totalScrappedBooks, totalLikedReviews } = useDashboardStore(
+    (state) => state.dashboardData
+  );
 
   return (
-    <div className={styles.statsGrid}>
-      {statCards.map((stat, index) => (
-        <div key={index} className={styles.statCard}>
-          <div className={styles.statContent}>
-            <span className={styles.statLabel}>{stat.label}</span>
-            <span className={styles.statValue}>{stat.value.toLocaleString()}</span>
-          </div>
-          <div className={`${styles.statIcon} ${stat.colorClass}`}>{stat.icon}</div>
+    <section className={styles.statsGrid}>
+      <div className={styles.statCard}>
+        <div className={styles.statContent}>
+          <span className={styles.title}>작성한 독후감</span>
+          <span className={styles.statValue}>{totalReviews}</span>
         </div>
-      ))}
-    </div>
+        <div className={`${styles.statIcon} ${styles.iconReviews}`}>
+          <Bookmark size={24} />
+        </div>
+      </div>
+
+      <div className={styles.statCard}>
+        <div className={styles.statContent}>
+          <span className={styles.title}>읽고 싶은 책</span>
+          <span className={styles.statValue}>{totalScrappedBooks}</span>
+        </div>
+        <div className={`${styles.statIcon} ${styles.iconLikes}`}>
+          <BookOpen size={24} />
+        </div>
+      </div>
+
+      <div className={styles.statCard}>
+        <div className={styles.statContent}>
+          <span className={styles.title}>좋아하는 독후감</span>
+          <span className={styles.statValue}>{totalLikedReviews}</span>
+        </div>
+        <div className={`${styles.statIcon} ${styles.iconReviews}`}>
+          <Heart size={24} />
+        </div>
+      </div>
+    </section>
   );
 }
+
+export default StatsCards;
