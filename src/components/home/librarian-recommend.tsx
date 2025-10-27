@@ -5,19 +5,13 @@ import Link from 'next/link';
 import { useRef } from 'react';
 
 import styles from '@/components/home/home.module.scss';
-import { AladinBestsellerItem } from '@/types/aladin/dto';
-import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
+import { LibrarianRecommendBook } from '@/types/nl-library';
 
-interface BestsellerListProps {
-  books: AladinBestsellerItem[];
+interface LibrarianRecommendListProps {
+  books: LibrarianRecommendBook[];
 }
 
-/**
- * 베스트셀러 리스트 컴포넌트
- * @author uyh
- * @param {AladinBestsellerItem[]} books - 베스트셀러 도서 목록
- */
-function BestsellerList({ books }: BestsellerListProps) {
+function LibrarianRecommendList({ books }: LibrarianRecommendListProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -36,8 +30,8 @@ function BestsellerList({ books }: BestsellerListProps) {
   };
 
   return (
-    <section className={styles.bestseller}>
-      <h1>베스트셀러</h1>
+    <section className={styles.librarianRecommend}>
+      <h1>사서 추천 도서</h1>
       <div className={styles.container}>
         <button
           className={`${styles.navButton} ${styles.left}`}
@@ -47,15 +41,31 @@ function BestsellerList({ books }: BestsellerListProps) {
         </button>
         <div className={styles.items} ref={scrollContainerRef}>
           {books.map((book) => (
-            <div key={book.itemId} className={styles.item}>
-              <Link href={`/books/${book.isbn13}`}>
+            <div key={book.recomNo} className={styles.item}>
+              <Link href={`/books/${book.recomisbn}`}>
                 <div className={styles.cover}>
-                  <Image src={book.cover} alt={book.title} fill sizes="180px" />
-                  <span className={styles.rank}>{book.bestRank}</span>
+                  {book.recomfilepath ? (
+                    <Image
+                      src={book.recomfilepath}
+                      alt={book.recomtitle}
+                      fill
+                      sizes="180px"
+                      onError={(e) => {
+                        e.currentTarget.src = '/images/no-image.png';
+                      }}
+                    />
+                  ) : (
+                    <div className={styles.noImage}>이미지 없음</div>
+                  )}
+                  <span className={styles.badge}>사서추천</span>
                 </div>
                 <div className={styles.info}>
-                  <div className={styles.title}>{formatBookTitle(book.title)}</div>
-                  <div className={styles.author}>{formatBookAuthor(book.author)}</div>
+                  <div className={styles.category}>{book.drCodeName}</div>
+                  <div className={styles.title}>{book.recomtitle}</div>
+                  <div className={styles.author}>{book.recomauthor}</div>
+                  <div className={styles.date}>
+                    {book.recomYear}년 {book.recomMonth}월
+                  </div>
                 </div>
               </Link>
             </div>
@@ -72,4 +82,4 @@ function BestsellerList({ books }: BestsellerListProps) {
   );
 }
 
-export default BestsellerList;
+export default LibrarianRecommendList;

@@ -1,17 +1,13 @@
-// ===============================================
-//  국립중앙도서관 API (사서추천도서) - 완성본
-// ===============================================
+// 1. 외부 라이브러리 (npm)
 import { XMLParser } from 'fast-xml-parser';
 
+// 2. 내부 설정 및 타입
 import axiosNLLibrary from './config';
 
-// 1️⃣ 외부 라이브러리 (npm)
-
-// 2️⃣ 내부 유틸 / 타입
 import { GetLibrarianRecommendBooksResDTO, CategoryCode } from '@/types/nl-library';
 import { devLogger } from '@/utils/dev-logger';
 
-// 3️⃣ XML Parser 인스턴스 (fast-xml-parser 5.x 기준)
+// 3. XML Parser 인스턴스 (fast-xml-parser 5.x 기준)
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '',
@@ -19,14 +15,6 @@ const parser = new XMLParser({
 });
 
 export const fetchNLLibrary = {
-  /**
-   * 국립중앙도서관 사서 추천도서 조회 API
-   * @param startRowNumApi 시작번호 (1부터 시작)
-   * @param endRowNumApi 종료번호
-   * @param start_date 검색 시작일 (YYYYMMDD)
-   * @param end_date 검색 종료일 (YYYYMMDD)
-   * @param drCode 분류번호 (11:문학, 6:인문과학, 5:사회과학, 4:자연과학)
-   */
   async getLibrarianRecommendBooks(
     startRowNumApi: number = 1,
     endRowNumApi: number = 10,
@@ -35,8 +23,6 @@ export const fetchNLLibrary = {
     drCode?: CategoryCode
   ): Promise<GetLibrarianRecommendBooksResDTO> {
     try {
-      //  요청 로깅
-
       const response = await axiosNLLibrary.get<string>('/NL/search/openApi/saseoApi.do', {
         params: {
           startRowNumApi,
@@ -47,7 +33,7 @@ export const fetchNLLibrary = {
         }
       });
 
-      //  XML → JSON 변환
+      // XML → JSON 변환
       const parsed = parser.parse(response.data) as GetLibrarianRecommendBooksResDTO;
 
       return parsed;

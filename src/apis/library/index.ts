@@ -11,6 +11,19 @@ import {
   GetRegionalReadingStatsResDTO
 } from '@/types';
 
+function ensurePeriod(startDt?: string, endDt?: string) {
+  if (startDt && endDt) return { startDt, endDt };
+
+  const end = new Date();
+  const start = new Date();
+  start.setMonth(end.getMonth() - 3);
+
+  return {
+    startDt: startDt ?? start.toISOString().slice(0, 10),
+    endDt: endDt ?? end.toISOString().slice(0, 10)
+  };
+}
+
 export const fetchLibrary = {
   // 책 검색 API
   searchBooks: async (keyword: string, pageNo: number = 1, pageSize: number = 10) => {
@@ -24,14 +37,25 @@ export const fetchLibrary = {
     return response;
   },
 
-  // 인기대출도서 조회 API
-  getPopularBooks: async (startDt: string, endDt: string, pageNo: number = 1, pageSize: number = 10) => {
+  // 인기대출도서 조회 API (기존 방식 유지)
+  getPopularBooks: async (
+    startDt: string,
+    endDt: string,
+    pageNo: number = 1,
+    pageSize: number = 10,
+    gender?: string,
+    age?: string,
+    region?: string
+  ) => {
     const response = await axiosLibrary.get('/loanItemSrch', {
       params: {
         startDt,
         endDt,
         pageNo,
-        pageSize
+        pageSize,
+        gender,
+        age,
+        region
       }
     });
     return response.data;
@@ -214,7 +238,6 @@ export const fetchLibrary = {
     return response.data;
   },
 
-  // 도서관/지역별 인기대출 도서 조회 API
   getLoanItemsByLibOrRegion: async (
     libCode?: string,
     region?: string,
@@ -224,21 +247,29 @@ export const fetchLibrary = {
     gender?: string,
     age?: string,
     pageNo: number = 1,
-    pageSize: number = 10
-  ): Promise<GetLoanItemsByLibOrRegionResDTO> => {
-    const response = await axiosLibrary.get('/loanItemSrchByLib', {
-      params: {
-        libCode,
-        region,
-        dtl_region,
-        startDt,
-        endDt,
-        gender,
-        age,
-        pageNo,
-        pageSize
-      }
-    });
+    pageSize: number = 100
+  ) => {
+    const { startDt: start, endDt: end } = ensurePeriod(startDt, endDt);
+
+    const params: any = {
+      authKey: process.env.NEXT_PUBLIC_DATA4LIBRARY_KEY, // ✅ 명시적 추가
+      startDt: start,
+      endDt: end,
+      pageNo,
+      pageSize,
+      format: 'json' // ✅ 명시적으로 json 요청
+    };
+
+    if (gender && gender !== 'all') params.gender = gender;
+    if (age && age !== 'all') params.age = age;
+    if (region && region !== 'all') params.region = region;
+    if (dtl_region) params.dtl_region = dtl_region;
+    if (libCode) params.libCode = libCode;
+
+    console.log('[Library API 호출 파라미터]', params);
+
+    const endpoint = libCode ? '/loanItemSrchByLib' : '/loanItemSrch';
+    const response = await axiosLibrary.get(endpoint, { params });
     return response.data;
   },
 
@@ -252,5 +283,54 @@ export const fetchLibrary = {
       }
     });
     return response.data;
+  },
+
+  getLoanItemsAll: async (params: {
+    startDt?: string;
+    endDt?: string;
+    gender?: string;
+    age?: string;
+    pageNo?: number;
+    pageSize?: number;
+  }): Promise<GetLoanItemsByLibOrRegionResDTO> => {
+    return await fetchLibrary.getLoanItemsByLibOrRegion(
+      undefined, // libCode
+      undefined, // region
+      undefined, // dtl_region
+      params.startDt,
+      params.endDt,
+      params.gender,
+      params.age,
+      params.pageNo ?? 1,
+      params.pageSize ?? 200
+    );
+  },
+
+  getLoanItemsByRegion: async (params: {
+    region: string | string[];
+    dtl_region?: string | string[];
+    startDt?: string;
+    endDt?: string;
+    gender?: string;
+    age?: string;
+    pageNo?: number;
+    pageSize?: number;
+  }): Promise<GetLoanItemsByLibOrRegionResDTO> => {
+    // 다중 지역 처리 (세미콜론으로 구분)
+    const region = Array.isArray(params.region) ? params.region.join(';') : params.region;
+
+    const dtl_region = Array.isArray(params.dtl_region) ? params.dtl_region.join(';') : params.dtl_region;
+
+    return await fetchLibrary.getLoanItemsByLibOrRegion(
+      undefined, // libCode
+      region,
+      dtl_region,
+      params.startDt,
+      params.endDt,
+      params.gender,
+      params.age,
+      params.pageNo ?? 1,
+      params.pageSize ?? 200
+    );
   }
 };
