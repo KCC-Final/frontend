@@ -247,31 +247,28 @@ export const fetchLibrary = {
     gender?: string,
     age?: string,
     pageNo: number = 1,
-    pageSize: number = 200
-  ): Promise<GetLoanItemsByLibOrRegionResDTO> => {
+    pageSize: number = 100
+  ) => {
     const { startDt: start, endDt: end } = ensurePeriod(startDt, endDt);
 
-    // 파라미터 구성
     const params: any = {
+      authKey: process.env.NEXT_PUBLIC_DATA4LIBRARY_KEY, // ✅ 명시적 추가
       startDt: start,
       endDt: end,
       pageNo,
-      pageSize
+      pageSize,
+      format: 'json' // ✅ 명시적으로 json 요청
     };
 
-    // 선택적 파라미터 추가 (값이 있을 때만)
-    if (gender) params.gender = gender;
-    if (age) params.age = age;
-    if (region) params.region = region;
+    if (gender && gender !== 'all') params.gender = gender;
+    if (age && age !== 'all') params.age = age;
+    if (region && region !== 'all') params.region = region;
     if (dtl_region) params.dtl_region = dtl_region;
     if (libCode) params.libCode = libCode;
 
-    // API 엔드포인트 결정
-    // libCode가 있으면 도서관별 조회, 없으면 지역/전국 조회
+    console.log('[Library API 호출 파라미터]', params);
+
     const endpoint = libCode ? '/loanItemSrchByLib' : '/loanItemSrch';
-
-    console.log('[Library API] 호출:', endpoint, params);
-
     const response = await axiosLibrary.get(endpoint, { params });
     return response.data;
   },
