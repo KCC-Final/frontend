@@ -1,15 +1,16 @@
 'use client';
 
 import clsx from 'clsx';
-import { BookIcon, Heart, MessageSquareMore, User } from 'lucide-react';
+import { BookIcon, Heart, MessageSquareMore } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import UserProfileImage from '../profile/image';
+
 import { fetchAladin } from '@/apis';
 import styles from '@/components/common/review-card/review-card.module.scss';
 import { ReviewData } from '@/types';
-import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 import { formatRelativeTime } from '@/utils/format/date';
 
 interface ReviewCardProps {
@@ -59,9 +60,6 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
 
   // 커버 이미지 URL 결정 (로딩 중이거나 에러 시 기본 이미지 사용)
   const finalImgSrc = !isImgLoading && !imgFetchingError && imgUrl ? imgUrl : null;
-
-  // 작성자 프로필 이미지 URL 변환
-  const authorProfileImageUrl = changeImageUrlFromBase64(review.authorProfileImage);
 
   return (
     <li className={clsx(styles.container, size === 3 ? styles.size3 : styles.size4)}>
@@ -122,13 +120,7 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
 
       <footer className={styles.footer}>
         <Link href={`/users/${review.userId}`}>
-          <span className={styles.img}>
-            {review.authorProfileImage ? (
-              <Image src={authorProfileImageUrl} alt="프로필 이미지" width={27} height={27} />
-            ) : (
-              <User size={18} />
-            )}
-          </span>
+          <UserProfileImage userId={review.userId} profileImage={review.authorProfileImage} size={27} />
           <span className={styles.author}>
             <span>by</span>
             <span>{review.authorNickname}</span>

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis/groo';
-import UserProfileCard from '@/components/common/profile';
+import UserProfileCard from '@/components/common/profile/card';
 import ReviewCard from '@/components/common/review-card';
 import styles from '@/components/user/feed/user-feed.module.scss';
 import useBoundStore from '@/stores';

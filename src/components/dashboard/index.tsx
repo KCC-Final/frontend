@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import UserProfileCard from '@/components/common/profile';
+import UserProfileCard from '@/components/common/profile/card';
 import BadgeSection from '@/components/dashboard/badges/badge-section';
 import DashboardCharts from '@/components/dashboard/charts';
 import styles from '@/components/dashboard/dashboard.module.scss';

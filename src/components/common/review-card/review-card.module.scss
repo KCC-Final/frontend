@@ -117,24 +117,6 @@
     color: inherit;
     text-decoration: none;
 
-    .img {
-      width: 27px;
-      height: 27px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background-color: $input-bg;
-      border: 1px solid $black-e;
-      overflow: hidden;
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-
     .author {
       display: flex;
       align-items: center;

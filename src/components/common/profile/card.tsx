@@ -5,10 +5,12 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
+import UserProfileImage from './image';
+
 import { fetchGroo } from '@/apis';
 import FollowButton from '@/components/common/button/follow';
 import FollowListModal from '@/components/common/modal/follow';
-import styles from '@/components/common/profile/profile.module.scss';
+import styles from '@/components/common/profile/card.module.scss';
 import useBoundStore from '@/stores';
 import { devLogger } from '@/utils/dev-logger';
 import { changeImageUrlFromBase64 } from '@/utils/format/base64';
@@ -114,18 +116,7 @@ function UserProfileCard({ userId, user, stats }: UserProfileCardProps) {
 
   return (
     <section className={styles.container}>
-      <div className={styles.image}>
-        {changeImageUrlFromBase64(user ? user.profileImage : userInfo.profileImage) ? (
-          <Image
-            src={changeImageUrlFromBase64(user ? user.profileImage : userInfo.profileImage)}
-            alt="user profile image"
-            width={180}
-            height={180}
-          />
-        ) : (
-          <User size={85} color="#333333" />
-        )}
-      </div>
+      <UserProfileImage userId={myInfo.userId} profileImage={myInfo.profileImage} size={180} />
       <div className={styles.info}>
         <div className={styles.header}>
           <div className={styles.name}>
