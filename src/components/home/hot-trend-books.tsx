@@ -77,20 +77,23 @@ export default function HotTrendBooks() {
           <button
             className={`${styles.arrow} ${styles.left}`}
             onClick={() => scroll('left')}
-            aria-label="이전">
+            aria-label="이전 도서">
             <ChevronLeft size={20} />
           </button>
         )}
 
         <div className={styles.track} ref={ref}>
           {books.map((b) => (
-            <BookCard
-              key={b.isbn13}
-              isbn={b.isbn13}
-              title={b.bookname}
-              author={b.authors}
-              cover={b.bookImageURL ?? ''}
-            />
+            <div key={b.isbn13} className={styles.item}>
+              <BookCard
+                isbn={b.isbn13}
+                title={b.bookname}
+                author={b.authors}
+                cover={b.bookImageURL ?? ''}
+                publisher={b.publisher}
+                pubYear={b.publication_year}
+              />
+            </div>
           ))}
         </div>
 
@@ -98,7 +101,7 @@ export default function HotTrendBooks() {
           <button
             className={`${styles.arrow} ${styles.right}`}
             onClick={() => scroll('right')}
-            aria-label="다음">
+            aria-label="다음 도서">
             <ChevronRight size={20} />
           </button>
         )}

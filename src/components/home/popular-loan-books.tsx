@@ -8,8 +8,9 @@ import styles from './popular-loan-books.module.scss';
 
 import { fetchAladin } from '@/apis/aladin';
 import { fetchLibrary } from '@/apis/library';
+import BookCard from '@/components/common/book/book-card';
 import { Book } from '@/types';
-import { regionList } from '@/types/common/region'; // ✅ 지역 데이터 불러오기
+import { regionList } from '@/types/common/region'; // 지역 데이터 불러오기
 
 // 필터 옵션 타입 정의
 type FilterOption = {
@@ -20,7 +21,7 @@ type FilterOption = {
 
 type FilterCategory = 'region' | 'age' | 'gender';
 
-// ✅ regionList 기반으로 REGION_OPTIONS 생성
+// regionList 기반으로 REGION_OPTIONS 생성
 const REGION_OPTIONS: FilterOption[] = [
   { code: 'all', name: '전국', apiCode: 'all' },
   ...regionList.map((r) => ({
@@ -31,7 +32,7 @@ const REGION_OPTIONS: FilterOption[] = [
   }))
 ];
 
-// ✅ 모든 지역 코드 자동 생성
+// 모든 지역 코드 자동 생성
 const ALL_REGION_CODES = regionList.map((r) => r.code);
 
 // 연령 필터 옵션
@@ -180,28 +181,37 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
       setError(null);
 
       try {
-        // ✅ 최근 1개월 기간
+        // 최근 3개월 기간 계산
         const today = new Date();
         const endDate = today.toISOString().split('T')[0];
         const start = new Date();
         start.setMonth(today.getMonth() - 3);
         const startDate = start.toISOString().split('T')[0];
 
-        // ✅ 필터 값 가져오기
+        // 필터 값 초기화
         let regionCode = '';
         let ageCode = '';
         let genderCode = '';
 
-        const regionOption = REGION_OPTIONS.find((f) => f.code === activeFilter.region);
-        const ageOption = AGE_OPTIONS.find((f) => f.code === activeFilter.age);
-        const genderOption = GENDER_OPTIONS.find((f) => f.code === activeFilter.gender);
+        // 선택된 탭(category)에 따라 한 종류만 값 세팅
+        if (category === 'region') {
+          // "전체"면 region="" 으로 보내야 전국 전체
+          regionCode = value === 'all' ? '' : value;
+          ageCode = '';
+          genderCode = '';
+        } else if (category === 'age') {
+          // "전체"면 age="" 으로 보내야 전체 연령
+          ageCode = value === 'all' ? '' : value;
+          regionCode = '';
+          genderCode = '';
+        } else if (category === 'gender') {
+          // "전체"면 gender="" 으로 보내야 전체 성별
+          genderCode = value === 'all' ? '' : value;
+          regionCode = '';
+          ageCode = '';
+        }
 
-        // ✅ 안전하게 기본값 처리
-        regionCode = regionOption?.code === 'all' ? '11' : regionOption?.apiCode || '11';
-        ageCode = ageOption?.apiCode || '20';
-        genderCode = genderOption?.apiCode || '1';
-
-        console.log('[필터링 API 호출]', {
+        console.log('[필터링 API 호출 파라미터]', {
           category,
           value,
           regionCode,
@@ -209,23 +219,41 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
           genderCode
         });
 
+        // 데이터 요청 결과 담을 배열
         let docs: any[] = [];
 
-        // ✅ 전국 단위 조회
-        if (regionCode === '') {
-          docs = await fetchAllRegionsData(startDate, endDate, genderCode, ageCode);
-        } else {
-          // ✅ 지역 단위 조회
+        // 지역이 있으면 특정 지역만, 없으면 전국(모든 지역 순회)
+        if (regionCode) {
           docs = await fetchSingleRegionData(regionCode, startDate, endDate, genderCode, ageCode);
+        } else {
+          docs = await fetchAllRegionsData(startDate, endDate, genderCode, ageCode);
         }
 
-        // ✅ 알라딘 데이터 병합
+        // 알라딘 API로 상세데이터 병합
         const enriched = await Promise.all(
           docs.map(async (item: any, index: number) => {
             const doc = item.doc || item;
             const isbn13 = doc.isbn13 || '';
-            const aladin = isbn13 ? await enrichBookWithAladinData(isbn13) : null;
+            let aladin: any = null;
 
+            // ISBN이 있을 때만 알라딘 API 호출
+            if (isbn13) {
+              try {
+                const res = await fetchAladin.getBookDetails(isbn13);
+                const detail = res?.item?.[0];
+                if (detail) {
+                  aladin = {
+                    cover: detail.cover,
+                    link: detail.link,
+                    description: detail.description
+                  };
+                }
+              } catch (e) {
+                console.warn(`[알라딘 데이터 불러오기 실패: ${isbn13}]`, e);
+              }
+            }
+
+            // 데이터 병합 후 리턴
             return {
               no: index + 1,
               ranking: doc.ranking || index + 1,
@@ -236,15 +264,14 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
               isbn13,
               bookImageURL: aladin?.cover || doc.bookImageURL || '/images/no-image.png',
               bookDtlUrl: aladin?.link || doc.bookDtlUrl || '',
-              loan_count: doc.loan_count ?? 0, // ✅ undefined 방지
-              // ✅ Book 타입 필수 필드 보완
+              loan_count: doc.loan_count ?? 0,
               class_no: doc.class_no || '',
               class_nm: doc.class_nm || ''
             };
           })
         );
 
-        // ✅ 타입 안정성 유지 (Book[])
+        // 상태 업데이트
         setBooks(enriched as Book[]);
       } catch (err) {
         console.error('[필터링 API 오류]', err);
@@ -256,18 +283,29 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
     [activeFilter]
   );
 
-  // 필터 버튼 클릭 핸들러
   const handleFilterChange = (category: FilterCategory, value: string) => {
-    const newFilter = { ...activeFilter, [category]: value };
-    setActiveFilter(newFilter);
-    fetchFilteredBooks(category, value);
+    // 선택한 기준만 값 유지, 나머지는 all로 강제
+    const next = { region: 'all', age: 'all', gender: 'all' } as Record<FilterCategory, string>;
+    next[category] = value;
+
+    setActiveFilter(next);
+    fetchFilteredBooks(category, value); // 바로 조회
   };
 
+  const handleMainTabChange = (tab: FilterCategory) => {
+    setActiveTab(tab);
+    // 탭 전환 시, 해당 탭만 유지하고 나머지는 all로 리셋
+    setActiveFilter((prev) => ({
+      region: tab === 'region' ? prev.region : 'all',
+      age: tab === 'age' ? prev.age : 'all',
+      gender: tab === 'gender' ? prev.gender : 'all'
+    }));
+  };
   return (
     <section className={styles.popularLoanBooks}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2>인기 대출도서 (랜덤 10권)</h2>
+          <h2>인기 대출도서</h2>
         </div>
 
         {/* 상단 탭 */}
@@ -275,7 +313,7 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
           {['region', 'age', 'gender'].map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveTab(cat as FilterCategory)}
+              onClick={() => handleMainTabChange(cat as FilterCategory)}
               className={`${styles.mainTab} ${activeTab === cat ? styles.active : ''}`}>
               {cat === 'region' ? '지역별' : cat === 'age' ? '연령별' : '성별'}
             </button>
@@ -313,36 +351,26 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
             </button>
           </div>
         )}
-
-        {/* 도서 목록 */}
         {!isLoading && !error && (
           <div className={styles.bookGrid}>
             {books.length > 0 ? (
               books.map((book, i) => (
-                <Link
-                  key={`${book.isbn13 || i}-${i}`}
-                  href={`/books/${book.isbn13 || 'no-isbn'}`}
-                  className={styles.bookItem}>
+                <div key={book.isbn13 || i} className={styles.bookItem}>
+                  {/* 순위 표시 */}
                   <div className={styles.ranking}>
                     <span className={i < 3 ? styles.top3 : styles.normal}>{i + 1}</span>
                   </div>
-                  <div className={styles.bookCover}>
-                    <Image
-                      src={book.bookImageURL}
-                      alt={book.bookname}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                    />
-                  </div>
-                  <div className={styles.bookInfo}>
-                    <h3>{book.bookname}</h3>
-                    <p className={styles.author}>{book.authors}</p>
-                    <p className={styles.publisher}>{book.publisher}</p>
-                    {(book.loan_count ?? 0) > 0 && (
-                      <p className={styles.loanCount}>대출 {book.loan_count ?? 0}회</p>
-                    )}
-                  </div>
-                </Link>
+
+                  {/* 도서 카드 */}
+                  <BookCard
+                    isbn={book.isbn13 || ''}
+                    title={book.bookname || '제목 없음'}
+                    author={book.authors || '저자 없음'}
+                    cover={book.bookImageURL || '/images/no-image.png'}
+                    publisher={book.publisher || ''}
+                    pubYear={book.publication_year || ''}
+                  />
+                </div>
               ))
             ) : (
               <div className={styles.emptyState}>

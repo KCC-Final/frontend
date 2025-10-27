@@ -1,5 +1,5 @@
 .trend_section {
-  padding: 48px 0;
+  padding: 48px 20px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -13,11 +13,49 @@
 .subtitle {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .nav {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.arrow {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.left {
+    margin-right: -8px;
+  }
+
+  &.right {
+    margin-left: -8px;
+  }
 }
 
 .track {
@@ -25,61 +63,52 @@
   gap: 24px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 4px 0 16px;
-}
-.track::-webkit-scrollbar {
-  display: none;
-}
-.track {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+  padding: 8px 4px;
+  flex: 1;
 
-/* BookCard 내부 오버라이드 */
-.track :global(.book_card) {
-  width: 160px;
-}
-.track :global(.book_title) {
-  font-size: 14px;
-  line-height: 1.35;
-}
-.track :global(.book_author) {
-  font-size: 12px;
-  color: #6b7280;
-}
-.track :global(.book_meta) {
-  font-size: 12px;
-  color: #9ca3af;
-}
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
 
-/* 좌우 화살표 */
-.arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  cursor: pointer;
-  user-select: none;
-}
-.left {
-  left: -8px;
-}
-.right {
-  right: -8px;
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+
+    &:hover {
+      background: #555;
+    }
+  }
+
+  .item {
+    flex-shrink: 0;
+    width: 160px;
+  }
 }
 
 @media (max-width: 768px) {
-  .left {
-    left: 0;
+  .trend_section {
+    padding: 32px 16px;
   }
-  .right {
-    right: 0;
+
+  .arrow {
+    width: 40px;
+    height: 40px;
+
+    &.left {
+      margin-right: 0;
+    }
+
+    &.right {
+      margin-left: 0;
+    }
+  }
+
+  .track {
+    gap: 16px;
   }
 }
