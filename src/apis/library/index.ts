@@ -11,6 +11,19 @@ import {
   GetRegionalReadingStatsResDTO
 } from '@/types';
 
+function ensurePeriod(startDt?: string, endDt?: string) {
+  if (startDt && endDt) return { startDt, endDt };
+
+  const end = new Date();
+  const start = new Date();
+  start.setMonth(end.getMonth() - 3);
+
+  return {
+    startDt: startDt ?? start.toISOString().slice(0, 10),
+    endDt: endDt ?? end.toISOString().slice(0, 10)
+  };
+}
+
 export const fetchLibrary = {
   // 책 검색 API
   searchBooks: async (keyword: string, pageNo: number = 1, pageSize: number = 10) => {
@@ -24,14 +37,25 @@ export const fetchLibrary = {
     return response;
   },
 
-  // 인기대출도서 조회 API
-  getPopularBooks: async (startDt: string, endDt: string, pageNo: number = 1, pageSize: number = 10) => {
+  // 인기대출도서 조회 API (기존 방식 유지)
+  getPopularBooks: async (
+    startDt: string,
+    endDt: string,
+    pageNo: number = 1,
+    pageSize: number = 10,
+    gender?: string,
+    age?: string,
+    region?: string
+  ) => {
     const response = await axiosLibrary.get('/loanItemSrch', {
       params: {
         startDt,
         endDt,
         pageNo,
-        pageSize
+        pageSize,
+        gender,
+        age,
+        region
       }
     });
     return response.data;
@@ -214,7 +238,6 @@ export const fetchLibrary = {
     return response.data;
   },
 
-  // 도서관/지역별 인기대출 도서 조회 API
   getLoanItemsByLibOrRegion: async (
     libCode?: string,
     region?: string,
@@ -224,21 +247,32 @@ export const fetchLibrary = {
     gender?: string,
     age?: string,
     pageNo: number = 1,
-    pageSize: number = 10
+    pageSize: number = 200
   ): Promise<GetLoanItemsByLibOrRegionResDTO> => {
-    const response = await axiosLibrary.get('/loanItemSrchByLib', {
-      params: {
-        libCode,
-        region,
-        dtl_region,
-        startDt,
-        endDt,
-        gender,
-        age,
-        pageNo,
-        pageSize
-      }
-    });
+    const { startDt: start, endDt: end } = ensurePeriod(startDt, endDt);
+
+    // 파라미터 구성
+    const params: any = {
+      startDt: start,
+      endDt: end,
+      pageNo,
+      pageSize
+    };
+
+    // 선택적 파라미터 추가 (값이 있을 때만)
+    if (gender) params.gender = gender;
+    if (age) params.age = age;
+    if (region) params.region = region;
+    if (dtl_region) params.dtl_region = dtl_region;
+    if (libCode) params.libCode = libCode;
+
+    // API 엔드포인트 결정
+    // libCode가 있으면 도서관별 조회, 없으면 지역/전국 조회
+    const endpoint = libCode ? '/loanItemSrchByLib' : '/loanItemSrch';
+
+    console.log('[Library API] 호출:', endpoint, params);
+
+    const response = await axiosLibrary.get(endpoint, { params });
     return response.data;
   },
 
@@ -252,5 +286,54 @@ export const fetchLibrary = {
       }
     });
     return response.data;
+  },
+
+  getLoanItemsAll: async (params: {
+    startDt?: string;
+    endDt?: string;
+    gender?: string;
+    age?: string;
+    pageNo?: number;
+    pageSize?: number;
+  }): Promise<GetLoanItemsByLibOrRegionResDTO> => {
+    return await fetchLibrary.getLoanItemsByLibOrRegion(
+      undefined, // libCode
+      undefined, // region
+      undefined, // dtl_region
+      params.startDt,
+      params.endDt,
+      params.gender,
+      params.age,
+      params.pageNo ?? 1,
+      params.pageSize ?? 200
+    );
+  },
+
+  getLoanItemsByRegion: async (params: {
+    region: string | string[];
+    dtl_region?: string | string[];
+    startDt?: string;
+    endDt?: string;
+    gender?: string;
+    age?: string;
+    pageNo?: number;
+    pageSize?: number;
+  }): Promise<GetLoanItemsByLibOrRegionResDTO> => {
+    // 다중 지역 처리 (세미콜론으로 구분)
+    const region = Array.isArray(params.region) ? params.region.join(';') : params.region;
+
+    const dtl_region = Array.isArray(params.dtl_region) ? params.dtl_region.join(';') : params.dtl_region;
+
+    return await fetchLibrary.getLoanItemsByLibOrRegion(
+      undefined, // libCode
+      region,
+      dtl_region,
+      params.startDt,
+      params.endDt,
+      params.gender,
+      params.age,
+      params.pageNo ?? 1,
+      params.pageSize ?? 200
+    );
   }
 };

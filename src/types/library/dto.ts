@@ -307,3 +307,55 @@ export type LoanTrendChartData = {
   count: number;
   formattedMonth: string; // 표시용
 };
+// dto.ts
+// Data4Library: loanItemSrch / loanItemSrchByLib 공통 응답 DTO (docs/doc 형태 모두 대응)
+
+export interface LoanItemDoc {
+  no?: number | string;
+  ranking?: number | string;
+  bookname: string;
+  authors?: string;
+  publisher?: string;
+  publication_year?: string;
+  isbn13: string;
+  addition_symbol?: string;
+  vol?: string;
+  class_no?: string;
+  class_nm?: string;
+  bookImageURL?: string;
+  bookDtlUrl?: string;
+  loan_count?: number | string;
+}
+
+export type DocsShape =
+  | LoanItemDoc[] // docs: []
+  | { doc: LoanItemDoc[] } // docs: { doc: [] }
+  | { doc: LoanItemDoc } // docs: { doc: {} }
+  | LoanItemDoc; // docs: {}
+
+export interface LoanItemsResponse {
+  response?: {
+    resultNum?: number | string;
+    numFound?: number | string;
+    docs?: DocsShape;
+  };
+  // 간혹 최상위에 docs가 오는 사례까지 방어
+  docs?: DocsShape;
+}
+
+// 안전 파서
+export function extractLoanDocs(payload: LoanItemsResponse): LoanItemDoc[] {
+  const target = payload?.response?.docs ?? payload?.docs;
+  if (!target) return [];
+
+  // 배열 그대로
+  if (Array.isArray(target)) return target as LoanItemDoc[];
+
+  // { doc: [...] } or { doc: {...} }
+  const maybeDoc: any = (target as any).doc;
+  if (Array.isArray(maybeDoc)) return maybeDoc as LoanItemDoc[];
+  if (maybeDoc) return [maybeDoc as LoanItemDoc];
+
+  // 최후 보루: 단일 객체로 가정
+  return [target as LoanItemDoc];
+}
