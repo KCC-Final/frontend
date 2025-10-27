@@ -63,14 +63,22 @@ export interface Book {
   loan_count?: number;
 }
 
-/** 대출 급상승 도서 API 응답 타입 */
+/**
+ * 대출 급상승 도서 API 응답 타입 (최종 수정)
+ * @author uyh
+ */
 export interface GetHotTrendBooksResDTO {
   response: {
-    results: {
-      result: Array<{
+    request: {
+      searchDt: string;
+    };
+    results: Array<{
+      result: {
         date: string;
-        docs: {
-          doc: Array<{
+        docs: Array<{
+          // docs는 배열
+          doc: {
+            // 각 요소가 {doc: {...}} 형태
             no: number;
             difference: number;
             baseWeekRank: number;
@@ -86,13 +94,12 @@ export interface GetHotTrendBooksResDTO {
             class_nm: string;
             bookImageURL: string;
             bookDtlUrl: string;
-          }>;
-        };
-      }>;
-    };
+          };
+        }>;
+      };
+    }>;
   };
 }
-
 /** 이달의 키워드 API 응답 타입 */
 export interface GetMonthlyKeywordsResDTO {
   response: {
