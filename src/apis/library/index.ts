@@ -196,19 +196,60 @@ export const fetchLibrary = {
   },
 
   // 지역별 독서량/독서율 API
-  getRegionalReadingStats: async (
-    region?: string,
-    year?: string,
-    month?: string
-  ): Promise<GetRegionalReadingStatsResDTO> => {
-    const response = await axiosLibrary.get('/readQt', {
-      params: {
-        region,
-        year,
-        month
+  getRegionalReadingStats: async () => {
+    const regions = [
+      { code: '11', name: '서울' },
+      { code: '21', name: '부산' },
+      { code: '22', name: '대구' },
+      { code: '23', name: '인천' },
+      { code: '24', name: '광주' },
+      { code: '25', name: '대전' },
+      { code: '26', name: '울산' },
+      { code: '29', name: '세종' },
+      { code: '31', name: '경기' },
+      { code: '32', name: '강원' },
+      { code: '33', name: '충북' },
+      { code: '34', name: '충남' },
+      { code: '35', name: '전북' },
+      { code: '36', name: '전남' },
+      { code: '37', name: '경북' },
+      { code: '38', name: '경남' },
+      { code: '39', name: '제주' }
+    ];
+
+    const requests = regions.map(async (r) => {
+      try {
+        const res = await axiosLibrary.get('/readQt', {
+          params: { region: r.code, format: 'json' }
+        });
+
+        // 로그 1: 지역별 원본 응답 확인
+        console.log(`[READ_QT][${r.name}]`, res.data);
+
+        const item = res?.data?.response?.results?.[0]?.result;
+        if (!item) {
+          console.warn(`[READ_QT][${r.name}] result 없음`);
+          return null;
+        }
+
+        const parsed = {
+          region: r.name,
+          quantity: parseFloat(item.quantity ?? 0),
+          rate: parseFloat(item.rate ?? 0)
+        };
+
+        // 로그 2: 지역별 변환 결과
+        console.log(`[READ_QT_PARSED][${r.name}]`, parsed);
+        return parsed;
+      } catch (e) {
+        console.error(`[READ_QT_ERROR][${r.name}]`, e);
+        return null;
       }
     });
-    return response.data;
+
+    const results = await Promise.all(requests);
+    console.log(' [READ_QT_ALL_RESULTS]', results);
+    return results.filter(Boolean);
   },
 
   // 신착도서 조회 API
