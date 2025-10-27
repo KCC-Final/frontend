@@ -4,6 +4,8 @@ import { fetchAladin } from '@/apis/aladin';
 import { fetchGrooInServer } from '@/apis/groo/server';
 import GlobalLayout from '@/components/common/layout';
 import BestsellerList from '@/components/home/bestseller';
+import HotTrendBooks from '@/components/home/hot-trend-books';
+import RegionalReadingChart from '@/components/home/regional-reading-chart'; //  추가
 import TodaySentence from '@/components/home/today-sentence';
 import { getTokenInCookie } from '@/utils/cookie';
 
@@ -26,6 +28,8 @@ async function BookRecommendationPage() {
     <GlobalLayout wide={true}>
       <TodaySentence initialQuoteData={initialQuoteData.data} />
       <BestsellerList books={bestsellerBooks} />
+      <HotTrendBooks /> {/*  기존 대출급상승 도서 섹션 */}
+      <RegionalReadingChart /> {/*  지역별 독서량/독서율 섹션 추가 */}
     </GlobalLayout>
   );
 }

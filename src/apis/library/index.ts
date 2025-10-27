@@ -196,19 +196,11 @@ export const fetchLibrary = {
   },
 
   // 지역별 독서량/독서율 API
-  getRegionalReadingStats: async (
-    region?: string,
-    year?: string,
-    month?: string
-  ): Promise<GetRegionalReadingStatsResDTO> => {
-    const response = await axiosLibrary.get('/readQt', {
-      params: {
-        region,
-        year,
-        month
-      }
+  getRegionalReadingRaw: async (regionCode: string) => {
+    const res = await axiosLibrary.get('/readQt', {
+      params: { region: regionCode, format: 'json' }
     });
-    return response.data;
+    return res.data; // 원본 그대로 반환
   },
 
   // 신착도서 조회 API

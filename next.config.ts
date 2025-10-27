@@ -11,14 +11,29 @@ if (isDev) console.log('개발 환경에서 실행');
 if (isProd) console.log('운영 환경에서 실행');
 
 const nextConfig: NextConfig = {
-  // 알라딘 api에서 제공하는 이미지 도메인을 허용
+  // 외부 이미지 도메인 허용
   images: {
     remotePatterns: [
+      // 알라딘 이미지 (https)
       {
         protocol: 'https',
         hostname: 'image.aladin.co.kr',
         port: '',
         pathname: '/product/**'
+      },
+      // 알라딘 이미지 (http)
+      {
+        protocol: 'http',
+        hostname: 'image.aladin.co.kr',
+        port: '',
+        pathname: '/product/**'
+      },
+      // 네이버 책 이미지
+      {
+        protocol: 'https',
+        hostname: 'bookthumb-phinf.pstatic.net',
+        port: '',
+        pathname: '/**'
       }
     ]
   },
