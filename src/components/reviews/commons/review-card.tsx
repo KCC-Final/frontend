@@ -39,12 +39,6 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
         noImageClassName={styles.noImage}
       />
 
-      {showSecretBadge && review.secret && (
-        <div className={styles.secretBadge}>
-          <Lock size={16} />
-        </div>
-      )}
-
       <div className={styles.reviewInfo}>
         <div className={styles.userInfo}>
           {convertedProfileImage ? (
@@ -59,7 +53,14 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
             </div>
           )}
           <div className={styles.userDetails}>
-            <span className={styles.nickname}>{review.authorNickname || review.userId}</span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span className={styles.nickname}>{review.authorNickname || review.userId}</span>
+              {showSecretBadge && review.secret && (
+                <div className={styles.secretBadge}>
+                  <Lock size={16} />
+                </div>
+              )}
+            </div>
             <span className={styles.date}>{formatDate(review.createdAt)}</span>
           </div>
         </div>

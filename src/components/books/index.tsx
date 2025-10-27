@@ -51,7 +51,7 @@ function BookInformation({ bookInfo }: BookInformationProps) {
           }
         });
       },
-      { rootMargin: '-50% 0px -50% 0px', threshold: 0 } // 화면 중앙에 올 때를 기준으로 판단
+      { rootMargin: '-50% 0px -50% 0px', threshold: 0 }
     );
 
     const refs = [detailsRef, reviewsRef, libraryRef];
