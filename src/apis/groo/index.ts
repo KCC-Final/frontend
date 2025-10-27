@@ -4,9 +4,9 @@ import { bookshelf } from '@/apis/groo/bookshelf';
 import { comment } from '@/apis/groo/comment';
 import { dashboard } from '@/apis/groo/dashboard';
 import { follow } from '@/apis/groo/follow';
+import { notification } from '@/apis/groo/notification';
 import { review } from '@/apis/groo/review';
 import { user } from '@/apis/groo/user';
-
 export const fetchGroo = {
   auth: auth,
   book: book,
@@ -15,5 +15,6 @@ export const fetchGroo = {
   bookshelf: bookshelf,
   follow: follow,
   review: review,
-  user: user
+  user: user,
+  notification: notification
 };

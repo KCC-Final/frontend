@@ -8,3 +8,4 @@ export * from '@/types/follow';
 export * from '@/types/reviews';
 export * from '@/types/user';
 export * from '@/types/library';
+export * from '@/types/notification';
