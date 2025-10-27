@@ -1,0 +1,81 @@
+.book_card {
+  flex: 0 0 160px; /* 폭 고정 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  height: 320px; /* 카드 전체 높이 고정 */
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.book_cover {
+  width: 160px;
+  height: 240px;
+  flex-shrink: 0;
+  border-radius: 6px 6px 0 0;
+  overflow: hidden;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img,
+  .cover_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.book_info {
+  flex: 1;
+  width: 100%;
+  padding: 0.6rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  .book_title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+    height: 2.6em; /* 두 줄 고정 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 두 줄 제한 */
+    -webkit-box-orient: vertical;
+  }
+
+  .book_author {
+    font-size: 0.9rem;
+    color: #4b5563;
+    margin-bottom: 0.2rem;
+    height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .book_meta {
+    font-size: 0.8rem;
+    color: #6b7280;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

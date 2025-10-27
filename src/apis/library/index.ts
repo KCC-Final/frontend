@@ -1,5 +1,15 @@
 import axiosLibrary from '@/apis/library/config';
-import { CheckBookAvailabilityResDTO, GetLibrariesByISBNResDTO } from '@/types';
+import {
+  CheckBookAvailabilityResDTO,
+  GetLibrariesByISBNResDTO,
+  GetHotTrendBooksResDTO,
+  GetMonthlyKeywordsResDTO,
+  GetNewArrivalBooksResDTO,
+  GetRecommendBooksResDTO,
+  GetLoanItemsByLibOrRegionResDTO,
+  GetLibraryPopularBooksIntegratedResDTO,
+  GetRegionalReadingStatsResDTO
+} from '@/types';
 
 export const fetchLibrary = {
   // 책 검색 API
@@ -52,7 +62,7 @@ export const fetchLibrary = {
   },
 
   // 대출 급상승 도서 API
-  getHotTrendBooks: async (searchDt: string) => {
+  getHotTrendBooks: async (searchDt: string): Promise<GetHotTrendBooksResDTO> => {
     const response = await axiosLibrary.get('/hotTrend', {
       params: {
         searchDt
@@ -80,7 +90,7 @@ export const fetchLibrary = {
   },
 
   // 마니아를 위한 추천도서 API
-  getManiaRecommendBooks: async (isbn13: string) => {
+  getManiaRecommendBooks: async (isbn13: string): Promise<GetRecommendBooksResDTO> => {
     const response = await axiosLibrary.get('/recommandList', {
       params: {
         isbn13: isbn13
@@ -90,7 +100,7 @@ export const fetchLibrary = {
   },
 
   // 다독자를 위한 추천도서 API
-  getReaderRecommendBooks: async (isbn13: string) => {
+  getReaderRecommendBooks: async (isbn13: string): Promise<GetRecommendBooksResDTO> => {
     const response = await axiosLibrary.get('/recommandList', {
       params: {
         type: 'reader',
@@ -176,7 +186,7 @@ export const fetchLibrary = {
   },
 
   // 이달의 키워드 API
-  getMonthlyKeywords: async (month?: string) => {
+  getMonthlyKeywords: async (month?: string): Promise<GetMonthlyKeywordsResDTO> => {
     const response = await axiosLibrary.get('/monthlyKeywords', {
       params: {
         month
@@ -186,7 +196,11 @@ export const fetchLibrary = {
   },
 
   // 지역별 독서량/독서율 API
-  getRegionalReadingStats: async (region?: string, year?: string, month?: string) => {
+  getRegionalReadingStats: async (
+    region?: string,
+    year?: string,
+    month?: string
+  ): Promise<GetRegionalReadingStatsResDTO> => {
     const response = await axiosLibrary.get('/readQt', {
       params: {
         region,
@@ -198,11 +212,51 @@ export const fetchLibrary = {
   },
 
   // 신착도서 조회 API
-  getNewArrivalBooks: async (libCode: string, searchDt?: string) => {
+  getNewArrivalBooks: async (libCode: string, searchDt?: string): Promise<GetNewArrivalBooksResDTO> => {
     const response = await axiosLibrary.get('/newArrivalBook', {
       params: {
         libCode,
         searchDt
+      }
+    });
+    return response.data;
+  },
+
+  // 도서관/지역별 인기대출 도서 조회 API
+  getLoanItemsByLibOrRegion: async (
+    libCode?: string,
+    region?: string,
+    dtl_region?: string,
+    startDt?: string,
+    endDt?: string,
+    gender?: string,
+    age?: string,
+    pageNo: number = 1,
+    pageSize: number = 10
+  ): Promise<GetLoanItemsByLibOrRegionResDTO> => {
+    const response = await axiosLibrary.get('/loanItemSrchByLib', {
+      params: {
+        libCode,
+        region,
+        dtl_region,
+        startDt,
+        endDt,
+        gender,
+        age,
+        pageNo,
+        pageSize
+      }
+    });
+    return response.data;
+  },
+
+  // 도서관별 인기대출도서 통합 API
+  getLibraryPopularBooksIntegrated: async (
+    libCode: string
+  ): Promise<GetLibraryPopularBooksIntegratedResDTO> => {
+    const response = await axiosLibrary.get('/extends/loanItemSrchByLib', {
+      params: {
+        libCode
       }
     });
     return response.data;

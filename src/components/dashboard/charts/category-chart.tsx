@@ -33,12 +33,11 @@ const CATEGORY_COLORS = {
 export default function CategoryChart({ data }: CategoryChartProps) {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
-  const [expanded, setExpanded] = useState(false); // 전체보기 상태
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // 기존 차트 제거
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
@@ -46,11 +45,12 @@ export default function CategoryChart({ data }: CategoryChartProps) {
     const ctx = chartRef.current.getContext('2d');
     if (!ctx) return;
 
-    // 데이터가 없을 경우 처리
-    if (!data || data.length === 0) return;
+    // 데이터 처리 로직
+    const hasData = Array.isArray(data) && data.length > 0;
+    const validData = hasData ? data : [{ category: '데이터 없음', count: 1 }];
 
-    // 상위 5개 + etc 그룹화
-    const sortedData = [...data].sort((a, b) => b.count - a.count);
+    const sortedData = [...validData].sort((a, b) => b.count - a.count);
+
     const topFive = sortedData.slice(0, 5);
     const others = sortedData.slice(5);
 
@@ -64,7 +64,6 @@ export default function CategoryChart({ data }: CategoryChartProps) {
 
     const labels = chartData.map((item) => item.category);
     const values = chartData.map((item) => item.count);
-    const total = values.reduce((a, b) => a + b, 0);
 
     chartInstance.current = new Chart(ctx, {
       type: 'doughnut',
@@ -76,8 +75,7 @@ export default function CategoryChart({ data }: CategoryChartProps) {
             data: values,
             backgroundColor: CATEGORY_COLORS.backgroundColor.slice(0, chartData.length),
             borderColor: CATEGORY_COLORS.borderColor.slice(0, chartData.length),
-            borderWidth: 2,
-            hoverOffset: 8
+            borderWidth: 2
           }
         ]
       },
@@ -85,76 +83,21 @@ export default function CategoryChart({ data }: CategoryChartProps) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            position: 'right',
-            labels: {
-              padding: 15,
-              font: { size: 12 },
-              color: '#333',
-              // 범례 클릭 비활성화
-              usePointStyle: true,
-              generateLabels: (chart): import('chart.js').LegendItem[] => {
-                const dataset = chart.data.datasets[0];
-                const labels = chart.data.labels ?? []; // undefined 방지
-
-                if (!dataset) return [];
-
-                return labels.map((label, i) => {
-                  const value = dataset.data?.[i] as number;
-                  const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-
-                  // 타입 안정성을 위해 as const로 명시
-                  return {
-                    text: `${label}: ${value}권 (${percentage}%)`,
-                    fillStyle: Array.isArray(dataset.backgroundColor)
-                      ? (dataset.backgroundColor[i] ?? '#000')
-                      : (dataset.backgroundColor ?? '#000'),
-                    strokeStyle: Array.isArray(dataset.borderColor)
-                      ? (dataset.borderColor[i] ?? '#000')
-                      : (dataset.borderColor ?? '#000'),
-                    lineWidth: typeof dataset.borderWidth === 'number' ? dataset.borderWidth : 1,
-                    hidden: false,
-                    index: i
-                  } as import('chart.js').LegendItem;
-                });
-              }
-            },
-            // 클릭 시 토글 비활성화
-            onClick: () => null
-          },
-          tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleFont: { size: 13 },
-            bodyFont: { size: 12 },
-            padding: 10,
-            cornerRadius: 5,
-            displayColors: true,
-            callbacks: {
-              label: (context) => {
-                const label = context.label || '';
-                const value = context.parsed;
-                const percentage = ((value / total) * 100).toFixed(1);
-                return `${label}: ${value}권 (${percentage}%)`;
-              }
-            }
-          }
+          legend: { display: hasData },
+          tooltip: { enabled: hasData }
         },
-        cutout: '65%', // 내부 구멍 확대 (기존 60%)
-        radius: '85%', // 전체 크기 줄임 (기본 100%)
-        animation: {
-          animateRotate: true,
-          duration: 1000,
-          easing: 'easeInOutCubic'
-        }
+        cutout: '65%',
+        radius: '85%'
       }
     });
 
     return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
+      chartInstance.current?.destroy();
     };
   }, [data, expanded]);
+
+  // 오버레이 표시 조건
+  const showOverlay = !Array.isArray(data) || data.length === 0;
 
   return (
     <div className={styles.chartCard}>
@@ -163,10 +106,18 @@ export default function CategoryChart({ data }: CategoryChartProps) {
       </div>
       <div className={styles.chartContainer}>
         <canvas ref={chartRef}></canvas>
+        {showOverlay && (
+          <div className={styles.chartOverlay}>
+            <p>
+              작성한 독후감이 없습니다.
+              <br />
+              독후감을 작성해 보세요.
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* 전체보기 버튼 */}
-      {data.length > 5 && (
+      {Array.isArray(data) && data.length > 5 && (
         <div className={styles.chartFooter}>
           <button className={styles.expandButton} onClick={() => setExpanded((prev) => !prev)}>
             {expanded ? '간략히 보기' : '전체 보기'}

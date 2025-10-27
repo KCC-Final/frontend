@@ -68,6 +68,25 @@
     height: 100% !important;
   }
 }
+.chartOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 12px;
+  color: #2d2d2d;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+  z-index: 5;
+}
 
 .chartTitle {
   font-size: 1.4rem;

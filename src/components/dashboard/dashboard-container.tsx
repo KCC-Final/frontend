@@ -61,11 +61,12 @@ export default function DashboardContainer() {
         fetchGroo.dashboard.getMonthlyReport()
       ]);
 
-      // categoryStats가 없을 경우 안전하게 빈 배열로 보정
+      // categoryStats가 없거나 null이면 빈 배열로 보정
       setSummaryData({
         ...summary,
-        categoryStats: summary.categoryStats ?? []
+        categoryStats: summary.categoryStats || []
       });
+
       setMonthlyData(monthly);
       setYearlyData(yearly);
       setReportData(report);
@@ -131,8 +132,9 @@ export default function DashboardContainer() {
         />
       )}
 
-      {/*  차트 섹션 */}
+      {/* 차트 섹션 */}
       <div className={styles.chartsSection}>
+        {/* 월별/연도별 차트 */}
         <div className={styles.chartWrapper}>
           <div className={styles.chartHeader}>
             <div className={styles.chartTitleArea}>
@@ -175,8 +177,8 @@ export default function DashboardContainer() {
           {viewMode === 'yearly' && yearlyData && <YearlyChart data={yearlyData.yearlyStats} />}
         </div>
 
-        {/*  분야별 통계 (TS 에러 및 런타임 오류 모두 방지) */}
-        {summaryData?.categoryStats?.length ? <CategoryChart data={summaryData.categoryStats} /> : null}
+        {/* 분야별 통계 — 항상 렌더링 */}
+        <CategoryChart data={summaryData?.categoryStats || []} />
       </div>
 
       {/* 월간 리포트 */}

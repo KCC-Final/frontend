@@ -1,4 +1,6 @@
-import styles from '@/components/books/details.module.scss';
+import styles from '@/components/books/details/details.module.scss';
+import LoanTrendChart from '@/components/books/details/Loan-trend-chart';
+import RecommendedBooks from '@/components/books/details/recommended-books';
 import { AladinBookDetailsItem } from '@/types';
 
 interface BookDetailsProps {
@@ -90,6 +92,8 @@ function BookDetails({ bookInfo, ref, id }: BookDetailsProps) {
           </div>
         </div>
       </div>
+      <LoanTrendChart isbn13={bookInfo.isbn13} />
+      <RecommendedBooks isbn13={bookInfo.isbn13} />
     </section>
   );
 }
