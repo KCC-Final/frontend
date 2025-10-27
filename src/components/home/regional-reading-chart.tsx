@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './regional-reading-chart.module.scss';
 
 import { fetchLibrary } from '@/apis/library';
+import { regionList } from '@/types/common/region'; // 지역 코드 import
 
 interface ReadingStat {
   region: string;
@@ -17,31 +18,46 @@ export default function RegionalReadingChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const [stats, setStats] = useState<ReadingStat[]>([]);
 
+  // 지역별 독서량 불러오기 (직접 로직 처리)
   useEffect(() => {
     const load = async () => {
       try {
-        const results = await fetchLibrary.getRegionalReadingStats();
-        console.log(' 지역별 전체 통계 (원본):', results);
+        // 지역별 API 호출 (병렬 요청)
+        const requests = regionList.map(async (r) => {
+          try {
+            const data = await fetchLibrary.getRegionalReadingRaw(r.code);
+            const item = data?.response?.results?.[0]?.result;
 
-        if (!Array.isArray(results)) {
-          console.error('⚠️ getRegionalReadingStats() 결과가 배열이 아님:', results);
-          return;
-        }
+            if (!item) {
+              console.warn(`[READ_QT][${r.name}] result 없음`);
+              return null;
+            }
 
-        //  null, undefined 제거 + 타입 보정
+            return {
+              region: r.name,
+              quantity: parseFloat(item.quantity ?? 0),
+              rate: parseFloat(item.rate ?? 0)
+            };
+          } catch (e) {
+            console.error(`[READ_QT_ERROR][${r.name}]`, e);
+            return null;
+          }
+        });
+
+        const results = await Promise.all(requests);
+        console.log('지역별 통계 원본:', results);
+
+        // 유효 데이터만 필터링
         const validResults = results.filter((r): r is ReadingStat => !!r && typeof r.quantity === 'number');
 
-        console.log(' 유효한 데이터만 필터링:', validResults);
-
         if (validResults.length === 0) {
-          console.warn('⚠️ 지역별 독서 통계 데이터가 비어있음');
+          console.warn(' 지역별 독서 통계 데이터가 비어있음');
           return;
         }
 
-        //  정렬 후 상태 반영
+        // 정렬 후 상태 업데이트
         const sorted = [...validResults].sort((a, b) => b.quantity - a.quantity);
-        console.log(' 정렬된 데이터:', sorted);
-
+        console.log('정렬된 데이터:', sorted);
         setStats(sorted);
       } catch (err) {
         console.error('지역별 독서 통계 불러오기 실패:', err);
@@ -50,7 +66,7 @@ export default function RegionalReadingChart() {
     load();
   }, []);
 
-  // 2. 차트 생성
+  // 차트 렌더링
   useEffect(() => {
     if (!chartRef.current || stats.length === 0) return;
 
@@ -88,22 +104,18 @@ export default function RegionalReadingChart() {
         plugins: {
           legend: {
             display: true,
-            labels: {
-              boxWidth: 12,
-              font: { size: 12 }
-            }
+            labels: { boxWidth: 12, font: { size: 12 } }
           },
           tooltip: {
             callbacks: {
               label: (ctx) => {
-                const y = ctx.parsed?.y ?? 0; //  null-safe
+                const y = ctx.parsed?.y ?? 0;
                 if (ctx.dataset.label === '1인당 평균 독서권수') return `${y.toFixed(1)} 권`;
                 if (ctx.dataset.label === '독서율(%)') return `${y.toFixed(1)} %`;
                 return '';
               }
             }
           },
-
           title: {
             display: true,
             text: ' 전국 지역별 독서량 & 독서율 비교',
