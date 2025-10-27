@@ -1,19 +1,14 @@
 .statsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-bottom: 3rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  gap: 24px;
+  margin: 24px 20px;
 }
 
 .statCard {
-  background: white;
+  flex-grow: 1;
   padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -31,11 +26,10 @@
   gap: 0.6rem;
 }
 
-.statLabel {
-  color: #777;
-  font-size: 1.5rem; /* 기존 0.9rem → 1.05rem */
-  font-weight: 600; /* 강조 살짝 */
-  letter-spacing: -0.2px;
+.title {
+  color: #444444;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .statValue {
@@ -68,19 +62,4 @@
 .iconLikes {
   background: #fce4ec;
   color: #e91e63;
-}
-
-/* 반응형 조정 */
-@media (max-width: 768px) {
-  .statCard {
-    padding: 1.6rem;
-  }
-
-  .statLabel {
-    font-size: 1rem;
-  }
-
-  .statValue {
-    font-size: 2.2rem;
-  }
 }

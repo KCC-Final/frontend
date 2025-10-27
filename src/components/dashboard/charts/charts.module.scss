@@ -1,57 +1,64 @@
-.chartCard {
-  background: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  height: 100%;
+.chartsSection {
   display: flex;
-  flex-direction: column;
+  gap: 24px;
+  margin: 24px 20px;
 }
 
-.chartWrapper {
-  background: #fff;
+.chartCard {
+  flex: 1 1 50%;
+  padding: 2rem;
   border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-
-  /* 드롭다운 잘림 방지 */
-  overflow: visible;
-  position: relative;
-  z-index: 2;
 }
 
 .chartHeader {
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-
-  /* 헤더 영역도 overflow 해제 */
-  overflow: visible;
+  padding-bottom: 24px;
 }
 
-.inlineYearSelect {
-  position: relative;
-  z-index: 30; /* 드롭다운이 위로 뜨게 */
-  background: #fff;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  padding: 0.25rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.chartTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
-  &:hover {
-    border-color: #007664;
+  select {
+    font-size: 1.5rem;
   }
+}
 
-  &:focus {
-    outline: none;
-    border-color: #007664;
-    box-shadow: 0 0 0 3px rgba(0, 118, 100, 0.2);
+.chartTitle {
+  color: #444444;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.chartTypeButtons {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 1px;
+
+  button {
+    padding: 6px 12px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 1.4rem;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #dcdcdc;
+    }
+
+    &.active {
+      background-color: #2d5a3d;
+      color: #ffffff;
+    }
   }
 }
 
@@ -59,77 +66,6 @@
 .chartContainer {
   position: relative;
   z-index: 1;
-  height: 250px;
   width: 100%;
-  flex: 1;
-
-  canvas {
-    width: 100% !important;
-    height: 100% !important;
-  }
-}
-.chartOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(4px);
-  background: rgba(255, 255, 255, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-radius: 12px;
-  color: #2d2d2d;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.4;
-  z-index: 5;
-}
-
-.chartTitle {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #333;
-  margin: 0;
-}
-
-/* 하단 버튼 영역 */
-.chartFooter {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-.expandButton {
-  background: #2d5a3d;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #1f4029;
-  }
-}
-
-/* 반응형 */
-@media (max-width: 768px) {
-  .chartCard {
-    padding: 1.5rem;
-    overflow: visible; /* 모바일에서도 드롭다운 안짤림 */
-  }
-
-  .chartTitle {
-    font-size: 1.1rem;
-  }
-
-  .chartContainer {
-    height: 200px;
-  }
+  height: 300px;
 }

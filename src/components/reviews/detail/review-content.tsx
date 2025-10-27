@@ -79,7 +79,7 @@ export default function ReviewContent({ reviewData, isLiked, likeCount, onLike, 
   };
 
   const handleUserClick = () => {
-    router.push(`/my-feeds?userId=${reviewData.userId}`);
+    router.push(`/users/${reviewData.userId}`);
   };
 
   const getInitial = (name: string) => (name ? name.charAt(0).toUpperCase() : 'U');

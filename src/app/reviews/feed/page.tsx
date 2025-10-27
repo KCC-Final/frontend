@@ -1,4 +1,4 @@
-import ReviewFeed from '@/components/reviews/feed/feed';
+import ReviewFeed from '@/components/reviews/feed';
 
 import type { Metadata } from 'next';
 
@@ -8,9 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ReviewsPage() {
-  return (
-    <div>
-      <ReviewFeed />
-    </div>
-  );
+  return <ReviewFeed />;
 }

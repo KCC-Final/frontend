@@ -1,17 +1,18 @@
 'use client';
 
+import clsx from 'clsx';
 import { PenSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 
-import styles from './review-feed.module.scss';
-
-import { fetchGroo } from '@/apis/groo';
-import ReviewCard from '@/components/reviews/commons/review-card';
-import { ReviewData } from '@/types/reviews';
+import { fetchGroo } from '@/apis';
+import BasicButton from '@/components/common/button/basic';
+import ReviewCard from '@/components/common/review-card';
+import styles from '@/components/reviews/feed/feed.module.scss';
+import { ReviewData } from '@/types';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
-export default function ReviewFeed() {
+function ReviewFeed() {
   const router = useRouter();
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [visibleReviews, setVisibleReviews] = useState<ReviewData[]>([]);
@@ -58,17 +59,13 @@ export default function ReviewFeed() {
     }
   };
 
-  const handleFilterChange = (newFilter: 'latest' | 'popular' | 'following') => {
-    setFilter(newFilter);
-    loadReviews(newFilter);
+  const filterHandler = (filter: 'latest' | 'popular' | 'following') => () => {
+    setFilter(filter);
+    loadReviews(filter);
   };
 
-  const handleWriteReview = () => {
+  const writeReviewHandler = () => {
     router.push('/reviews/write?from=/reviews/feed');
-  };
-
-  const handleReviewClick = (reviewId: number) => {
-    router.push(`/reviews/${reviewId}`);
   };
 
   // IntersectionObserver로 무한 스크롤 구현
@@ -120,43 +117,42 @@ export default function ReviewFeed() {
   }
 
   return (
-    <div className={styles.container}>
+    <section className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>독서 피드</h1>
-        <button className={styles.writeButton} onClick={handleWriteReview}>
-          <PenSquare size={20} />
-          <span>독후감 작성</span>
-        </button>
+        <nav className={styles.filter}>
+          <button
+            className={clsx({ [styles.active]: filter === 'latest' })}
+            onClick={filterHandler('latest')}>
+            최신
+          </button>
+          <button
+            className={clsx({ [styles.active]: filter === 'popular' })}
+            onClick={filterHandler('popular')}>
+            인기
+          </button>
+          <button
+            className={clsx({ [styles.active]: filter === 'following' })}
+            onClick={filterHandler('following')}>
+            팔로잉
+          </button>
+        </nav>
+        <BasicButton
+          name={
+            <>
+              <PenSquare size={18} />
+              <span>글쓰기</span>
+            </>
+          }
+          handler={writeReviewHandler}
+          height="36"
+        />
       </header>
 
-      <nav className={styles.filterNav}>
-        <button
-          className={`${styles.filterButton} ${filter === 'latest' ? styles.active : ''}`}
-          onClick={() => handleFilterChange('latest')}>
-          최신순
-        </button>
-        <button
-          className={`${styles.filterButton} ${filter === 'popular' ? styles.active : ''}`}
-          onClick={() => handleFilterChange('popular')}>
-          인기순
-        </button>
-        <button
-          className={`${styles.filterButton} ${filter === 'following' ? styles.active : ''}`}
-          onClick={() => handleFilterChange('following')}>
-          팔로잉
-        </button>
-      </nav>
-
-      <div className={styles.feedGrid}>
+      <ul className={styles.list}>
         {visibleReviews.map((review) => (
-          <ReviewCard
-            key={review.reviewId}
-            review={review}
-            onClick={handleReviewClick}
-            showSecretBadge={false}
-          />
+          <ReviewCard key={review.reviewId} review={review} />
         ))}
-      </div>
+      </ul>
 
       {/* 로딩 트리거용 div */}
       <div ref={loaderRef} style={{ height: '60px' }} />
@@ -166,20 +162,22 @@ export default function ReviewFeed() {
           {filter === 'following' ? (
             <>
               <p>팔로잉한 유저가 없습니다.</p>
-              <button className={styles.emptyButton} onClick={() => handleFilterChange('latest')}>
+              <button className={styles.emptyButton} onClick={() => filterHandler('latest')}>
                 전체 피드 보기
               </button>
             </>
           ) : (
             <>
               <p>아직 작성된 독후감이 없습니다.</p>
-              <button className={styles.emptyButton} onClick={handleWriteReview}>
+              <button className={styles.emptyButton} onClick={writeReviewHandler}>
                 첫 독후감 작성하기
               </button>
             </>
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }
+
+export default ReviewFeed;

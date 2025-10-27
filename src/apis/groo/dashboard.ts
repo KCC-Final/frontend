@@ -1,4 +1,5 @@
 import axiosGroo from '@/apis/groo/config';
+import { GetAllDashboardDataResDTO } from '@/types';
 import {
   DashboardSummaryResponse,
   MonthlyStatsResponse,
@@ -7,6 +8,12 @@ import {
 } from '@/types/dashboard/dashboard';
 
 export const dashboard = {
+  /** 대시보드에 필요한 전체 데이터 조회 */
+  getAllDashboardData: async (): Promise<GetAllDashboardDataResDTO> => {
+    const response = await axiosGroo.get('/dashboard/all');
+    return response.data;
+  },
+
   // 대시보드 요약 통계 조회
   getSummaryStats: async (): Promise<DashboardSummaryResponse> => {
     const response = await axiosGroo.get<{ data: DashboardSummaryResponse }>('/dashboard/summary');

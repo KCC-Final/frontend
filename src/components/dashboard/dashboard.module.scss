@@ -1,17 +1,6 @@
-.container {
-  max-width: 120rem;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #f8fafb 0%, #f3f4f6 100%);
-}
-
-/* =========================================
-   Chart Card Container
-========================================= */
 .chartWrapper {
-  background: #ffffff;
-  border-radius: 16px;
+  flex: 1 1 50%;
+  border-radius: 12px;
   padding: 2rem;
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -230,27 +219,6 @@
       padding: 0.5rem;
       font-weight: 500;
     }
-  }
-}
-
-/* =========================================
-   Charts Section
-========================================= */
-.chartsSection {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2.5rem;
-  margin-bottom: 3rem;
-  position: relative;
-  z-index: 5;
-
-  @media (max-width: 1024px) {
-    gap: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
   }
 }
 
