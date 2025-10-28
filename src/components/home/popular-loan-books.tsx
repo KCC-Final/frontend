@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import styles from './popular-loan-books.module.scss';
 
@@ -21,13 +21,31 @@ type FilterOption = {
 
 type FilterCategory = 'region' | 'age' | 'gender';
 
-// regionList 기반으로 REGION_OPTIONS 생성
+const REGION_NAME_MAP: Record<string, string> = {
+  서울특별시: '서울',
+  부산광역시: '부산',
+  대구광역시: '대구',
+  인천광역시: '인천',
+  광주광역시: '광주',
+  대전광역시: '대전',
+  울산광역시: '울산',
+  세종특별자치시: '세종',
+  경기도: '경기',
+  강원특별자치도: '강원',
+  충청북도: '충북',
+  충청남도: '충남',
+  전북특별자치도: '전북',
+  전라남도: '전남',
+  경상북도: '경북',
+  경상남도: '경남',
+  제주특별자치도: '제주'
+};
+
 const REGION_OPTIONS: FilterOption[] = [
   { code: 'all', name: '전국', apiCode: 'all' },
   ...regionList.map((r) => ({
     code: r.code,
-    // "서울특별시" → "서울", "경기도" → "경기"
-    name: r.name.replace(/(특별시|광역시|도|특별자치시|특별자치도)$/g, ''),
+    name: REGION_NAME_MAP[r.name] || r.name, // 매핑 없으면 원본 그대로
     apiCode: r.code
   }))
 ];
@@ -77,6 +95,18 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
   const [books, setBooks] = useState<Book[]>(initialBooks);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 페이지 로드시 자동 데이터 로드
+  useEffect(() => {
+    // initialBooks가 비어 있으면 전국 데이터 조회 실행
+    if (!initialBooks || initialBooks.length === 0) {
+      fetchFilteredBooks('region', 'all');
+    } else {
+      // 초기 도서 데이터를 한번 표시하고 최신화 위해 재조회
+      setBooks(initialBooks);
+      fetchFilteredBooks('region', 'all');
+    }
+  }, []); // 최초 한 번만 실행
 
   // 현재 탭에 따른 옵션 리스트 반환
   const getCurrentOptions = (): FilterOption[] => {
@@ -303,83 +333,78 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
   };
   return (
     <section className={styles.popularLoanBooks}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h2>인기 대출도서</h2>
-        </div>
+      <h1>인기 대출도서</h1>
 
-        {/* 상단 탭 */}
-        <div className={styles.mainTabs}>
-          {['region', 'age', 'gender'].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => handleMainTabChange(cat as FilterCategory)}
-              className={`${styles.mainTab} ${activeTab === cat ? styles.active : ''}`}>
-              {cat === 'region' ? '지역별' : cat === 'age' ? '연령별' : '성별'}
-            </button>
-          ))}
-        </div>
-
-        {/* 하위 필터 */}
-        <div className={styles.subTabs}>
-          {getCurrentOptions().map((option) => (
-            <button
-              key={option.code}
-              onClick={() => handleFilterChange(activeTab, option.code)}
-              className={`${styles.subTab} ${activeFilter[activeTab] === option.code ? styles.active : ''}`}
-              disabled={isLoading}>
-              {option.name}
-            </button>
-          ))}
-        </div>
-
-        {/* 로딩 상태 */}
-        {isLoading && (
-          <div className={styles.loadingState}>
-            <p>{activeFilter.region === 'all' ? '전국 데이터를 수집 중...' : '데이터를 불러오는 중...'}</p>
-          </div>
-        )}
-
-        {/* 에러 상태 */}
-        {error && (
-          <div className={styles.errorState}>
-            <p>{error}</p>
-            <button
-              onClick={() => fetchFilteredBooks(activeTab, activeFilter[activeTab])}
-              className={styles.retryButton}>
-              다시 시도
-            </button>
-          </div>
-        )}
-        {!isLoading && !error && (
-          <div className={styles.bookGrid}>
-            {books.length > 0 ? (
-              books.map((book, i) => (
-                <div key={book.isbn13 || i} className={styles.bookItem}>
-                  {/* 순위 표시 */}
-                  <div className={styles.ranking}>
-                    <span className={i < 3 ? styles.top3 : styles.normal}>{i + 1}</span>
-                  </div>
-
-                  {/* 도서 카드 */}
-                  <BookCard
-                    isbn={book.isbn13 || ''}
-                    title={book.bookname || '제목 없음'}
-                    author={book.authors || '저자 없음'}
-                    cover={book.bookImageURL || '/images/no-image.png'}
-                    publisher={book.publisher || ''}
-                    pubYear={book.publication_year || ''}
-                  />
-                </div>
-              ))
-            ) : (
-              <div className={styles.emptyState}>
-                <p>해당 조건의 인기 대출도서가 없습니다.</p>
-              </div>
-            )}
-          </div>
-        )}
+      {/* 상단 탭 */}
+      <div className={styles.mainTabs}>
+        {['region', 'age', 'gender'].map((cat) => (
+          <button
+            key={cat}
+            onClick={() => handleMainTabChange(cat as FilterCategory)}
+            className={`${styles.mainTab} ${activeTab === cat ? styles.active : ''}`}>
+            {cat === 'region' ? '지역별' : cat === 'age' ? '연령별' : '성별'}
+          </button>
+        ))}
       </div>
+
+      {/* 하위 필터 */}
+      <div className={styles.subTabs}>
+        {getCurrentOptions().map((option) => (
+          <button
+            key={option.code}
+            onClick={() => handleFilterChange(activeTab, option.code)}
+            className={`${styles.subTab} ${activeFilter[activeTab] === option.code ? styles.active : ''}`}
+            disabled={isLoading}>
+            {option.name}
+          </button>
+        ))}
+      </div>
+
+      {/* 로딩 상태 */}
+      {isLoading && (
+        <div className={styles.loadingState}>
+          <p>{activeFilter.region === 'all' ? '전국 데이터를 수집 중...' : '데이터를 불러오는 중...'}</p>
+        </div>
+      )}
+
+      {/* 에러 상태 */}
+      {error && (
+        <div className={styles.errorState}>
+          <p>{error}</p>
+          <button
+            onClick={() => fetchFilteredBooks(activeTab, activeFilter[activeTab])}
+            className={styles.retryButton}>
+            다시 시도
+          </button>
+        </div>
+      )}
+      {!isLoading && !error && (
+        <div className={styles.bookGrid}>
+          {books.length > 0 ? (
+            books.map((book, i) => (
+              <div key={book.isbn13 || i} className={styles.bookItem}>
+                {/* 순위 표시 */}
+                <div className={styles.ranking}>
+                  <span className={i < 3 ? styles.top3 : styles.normal}>{i + 1}</span>
+                </div>
+
+                {/* 도서 카드 */}
+                <BookCard
+                  isbn={book.isbn13 || ''}
+                  title={book.bookname || '제목 없음'}
+                  author={book.authors || '저자 없음'}
+                  cover={book.bookImageURL || '/images/no-image.png'}
+                  publisher={book.publisher || ''}
+                />
+              </div>
+            ))
+          ) : (
+            <div className={styles.emptyState}>
+              <p>해당 조건의 인기 대출도서가 없습니다.</p>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }
