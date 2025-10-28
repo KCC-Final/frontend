@@ -102,9 +102,9 @@ async function BookRecommendationPage() {
     <GlobalLayout wide={true}>
       <TodaySentence initialQuoteData={initialQuoteData.data} />
       <BestsellerList books={bestsellerBooks} />
+      {librarianRecommendBooks.length > 0 && <LibrarianRecommendList books={librarianRecommendBooks} />}
       <HotTrendBooks /> {/*  기존 대출급상승 도서 섹션 */}
       <RegionalReadingChart /> {/*  지역별 독서량/독서율 섹션 추가 */}
-      {librarianRecommendBooks.length > 0 && <LibrarianRecommendList books={librarianRecommendBooks} />}
       <PopularLoanBooks initialBooks={initialPopularBooks} />
     </GlobalLayout>
   );

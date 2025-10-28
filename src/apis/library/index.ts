@@ -238,33 +238,75 @@ export const fetchLibrary = {
     return response.data;
   },
 
+  // 라이브러리 API: loanItemSrch/loanItemSrchByLib
   getLoanItemsByLibOrRegion: async (
     libCode?: string,
-    region?: string,
+    region?: string, // '' 가능 (전체)
     dtl_region?: string,
     startDt?: string,
     endDt?: string,
-    gender?: string,
-    age?: string,
+    gender?: string, // '' 가능 (전체)
+    age?: string, // '' 가능 (전체) | '0' | '6' | '8' | '14' | '20' | '30' | '40' | '50' | '60'
     pageNo: number = 1,
     pageSize: number = 100
   ) => {
     const { startDt: start, endDt: end } = ensurePeriod(startDt, endDt);
 
+    // 기본 파라미터
     const params: any = {
-      authKey: process.env.NEXT_PUBLIC_DATA4LIBRARY_KEY, // ✅ 명시적 추가
+      authKey: process.env.NEXT_PUBLIC_DATA4LIBRARY_KEY,
       startDt: start,
       endDt: end,
       pageNo,
       pageSize,
-      format: 'json' // ✅ 명시적으로 json 요청
+      format: 'json'
     };
 
-    if (gender && gender !== 'all') params.gender = gender;
-    if (age && age !== 'all') params.age = age;
-    if (region && region !== 'all') params.region = region;
-    if (dtl_region) params.dtl_region = dtl_region;
-    if (libCode) params.libCode = libCode;
+    // 도서관/상세지역
+    if (libCode !== undefined) params.libCode = libCode;
+    if (dtl_region !== undefined) params.dtl_region = dtl_region;
+
+    // 지역: undefined가 아니면 그대로 넣음 ('' 포함)
+    if (region !== undefined) {
+      params.region = region; // ''이면 region= (전체), '11'이면 서울
+    }
+
+    // 성별: undefined가 아니면 그대로 넣음 ('' 포함)
+    if (gender !== undefined) {
+      params.gender = gender; // ''이면 gender= (전체), '0'|'1'이면 남/여
+    }
+
+    // 연령: undefined가 아니면 처리
+    if (age !== undefined) {
+      if (age === '') {
+        // 전체 연령: age= (빈값) 그대로 전송
+        params.age = '';
+      } else {
+        // 특정 연령대
+        switch (age) {
+          case '0': // 0~5
+            params.from_age = 0;
+            params.to_age = 5;
+            break;
+          case '6': // 6~7
+            params.from_age = 6;
+            params.to_age = 7;
+            break;
+          case '8': // 8~13
+            params.from_age = 8;
+            params.to_age = 13;
+            break;
+          case '14': // 14~19
+            params.from_age = 14;
+            params.to_age = 19;
+            break;
+          default:
+            // 20/30/40/50/60 등은 단일 age 코드
+            params.age = age;
+            break;
+        }
+      }
+    }
 
     console.log('[Library API 호출 파라미터]', params);
 

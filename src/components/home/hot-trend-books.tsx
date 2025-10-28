@@ -1,13 +1,11 @@
 'use client';
 
 import { format } from 'date-fns';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
-
-import styles from './hot-trend-books.module.scss';
 
 import { fetchLibrary } from '@/apis/library';
 import BookCard from '@/components/common/book/book-card';
+import styles from '@/components/home/main-book.module.scss';
 
 interface TrendDoc {
   isbn13: string;
@@ -18,9 +16,12 @@ interface TrendDoc {
   bookImageURL?: string;
 }
 
+/**
+ * 대출 급상승 도서 리스트 (BestsellerList 스타일 적용)
+ */
 export default function HotTrendBooks() {
   const [books, setBooks] = useState<TrendDoc[]>([]);
-  const ref = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -53,55 +54,55 @@ export default function HotTrendBooks() {
     loadBooks();
   }, []);
 
-  const scroll = (dir: 'left' | 'right') => {
-    const el = ref.current;
-    if (!el) return;
-    const cardWidth = 160;
-    const gap = 24;
-    const count = 4;
-    const amount = (cardWidth + gap) * count;
-    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  const scroll = (direction: 'left' | 'right') => {
+    if (!scrollContainerRef.current) return;
+    const scrollAmount = 400;
+    const newScrollPosition =
+      direction === 'left'
+        ? scrollContainerRef.current.scrollLeft - scrollAmount
+        : scrollContainerRef.current.scrollLeft + scrollAmount;
+    scrollContainerRef.current.scrollTo({
+      left: newScrollPosition,
+      behavior: 'smooth'
+    });
   };
 
   if (books.length === 0) return null;
 
-  const showArrows = books.length > 6;
-
   return (
-    <section className={styles.trend_section}>
-      <h2 className={styles.title}>대출 급상승 도서</h2>
-      <p className={styles.subtitle}>최근 3일간 급상승 도서</p>
+    <section className={styles.mainBook}>
+      <h1>대출 급상승 도서</h1>
+      <div className={styles.container}>
+        <button
+          className={`${styles.navButton} ${styles.left}`}
+          onClick={() => scroll('left')}
+          aria-label="이전 도서">
+          &#8249;
+        </button>
 
-      <div className={styles.nav}>
-        {showArrows && (
-          <button
-            className={`${styles.arrow} ${styles.left}`}
-            onClick={() => scroll('left')}
-            aria-label="이전">
-            <ChevronLeft size={20} />
-          </button>
-        )}
-
-        <div className={styles.track} ref={ref}>
-          {books.map((b) => (
-            <BookCard
-              key={b.isbn13}
-              isbn={b.isbn13}
-              title={b.bookname}
-              author={b.authors}
-              cover={b.bookImageURL ?? ''}
-            />
+        <div className={styles.items} ref={scrollContainerRef}>
+          {books.map((book, index) => (
+            <div key={book.isbn13} className={styles.item}>
+              <div className={styles.ranking}>
+                <span className={index < 3 ? styles.top3 : styles.normal}>{index + 1}</span>
+              </div>
+              <BookCard
+                isbn={book.isbn13}
+                title={book.bookname}
+                author={book.authors}
+                cover={book.bookImageURL || '/images/no-image.png'}
+                publisher={book.publisher}
+              />
+            </div>
           ))}
         </div>
 
-        {showArrows && (
-          <button
-            className={`${styles.arrow} ${styles.right}`}
-            onClick={() => scroll('right')}
-            aria-label="다음">
-            <ChevronRight size={20} />
-          </button>
-        )}
+        <button
+          className={`${styles.navButton} ${styles.right}`}
+          onClick={() => scroll('right')}
+          aria-label="다음 도서">
+          &#8250;
+        </button>
       </div>
     </section>
   );
