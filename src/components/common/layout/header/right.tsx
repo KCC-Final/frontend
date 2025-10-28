@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
@@ -9,6 +9,7 @@ import { fetchGroo } from '@/apis';
 import styles from '@/components/common/layout/header/header.module.scss';
 import AlertModal from '@/components/common/modal/alert';
 import UserProfileImage from '@/components/common/profile/image';
+import NotificationBell from '@/components/notification/bell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,15 +20,12 @@ import {
 import { useModalState } from '@/hooks/useModal';
 import useBoundStore from '@/stores';
 import { devLogger } from '@/utils/dev-logger';
-
 function RightNavigation() {
   const router = useRouter();
 
   const { myInfo, setMyInfo } = useBoundStore(
     useShallow((state) => ({ myInfo: state.myInfo, setMyInfo: state.setMyInfo }))
   );
-
-  const [isNotificationModalOpen, setNotificationModalOpen, openNotificationModal] = useModalState(false);
 
   const routePageHandler = (url: string) => () => {
     router.push(url);
@@ -55,13 +53,7 @@ function RightNavigation() {
         </div>
       </Link>
       <div className={styles.user}>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button onClick={openNotificationModal}>
-              <Bell size={26} color="#333333" />
-            </button>
-          </DropdownMenuTrigger>
-        </DropdownMenu>
+        <NotificationBell />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={styles.user_avatar_button}>
@@ -108,15 +100,6 @@ function RightNavigation() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <AlertModal
-          open={isNotificationModalOpen}
-          onOpenChange={setNotificationModalOpen}
-          title={<div className={styles.profile_title}>현재 구현되지 않은 기능입니다.</div>}
-          description={
-            <div className={styles.profile_description}>사용자에게 온 알림 정보를 확인할 수 있습니다.</div>
-          }
-          button={<button className={styles.profile_confirm}>확인</button>}
-        />
       </div>
     </nav>
   );

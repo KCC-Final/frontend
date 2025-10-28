@@ -8,6 +8,7 @@ export * from '@/types/follow';
 export * from '@/types/reviews';
 export * from '@/types/user';
 export * from '@/types/library';
+export * from '@/types/notification';
 
 // 기존 알라딘 타입들
 export * from '@/types/aladin/dto';
