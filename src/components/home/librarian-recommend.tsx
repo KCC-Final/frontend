@@ -1,12 +1,14 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRef } from 'react';
 
-import styles from '@/components/home/home.module.scss';
+import BookCard from '@/components/common/book/book-card';
+import styles from '@/components/home/main-book.module.scss';
 import { LibrarianRecommendBook } from '@/types/nl-library';
 
+/**
+ * 사서 추천 도서 리스트 (BestsellerList 스타일 적용)
+ */
 interface LibrarianRecommendListProps {
   books: LibrarianRecommendBook[];
 }
@@ -15,22 +17,22 @@ function LibrarianRecommendList({ books }: LibrarianRecommendListProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 400;
-      const newScrollPosition =
-        direction === 'left'
-          ? scrollContainerRef.current.scrollLeft - scrollAmount
-          : scrollContainerRef.current.scrollLeft + scrollAmount;
-
-      scrollContainerRef.current.scrollTo({
-        left: newScrollPosition,
-        behavior: 'smooth'
-      });
-    }
+    if (!scrollContainerRef.current) return;
+    const scrollAmount = 400;
+    const newScrollPosition =
+      direction === 'left'
+        ? scrollContainerRef.current.scrollLeft - scrollAmount
+        : scrollContainerRef.current.scrollLeft + scrollAmount;
+    scrollContainerRef.current.scrollTo({
+      left: newScrollPosition,
+      behavior: 'smooth'
+    });
   };
 
+  if (!books || books.length === 0) return null;
+
   return (
-    <section className={styles.librarianRecommend}>
+    <section className={styles.mainBook}>
       <h1>사서 추천 도서</h1>
       <div className={styles.container}>
         <button
@@ -39,38 +41,24 @@ function LibrarianRecommendList({ books }: LibrarianRecommendListProps) {
           aria-label="이전 도서">
           &#8249;
         </button>
+
         <div className={styles.items} ref={scrollContainerRef}>
           {books.map((book) => (
             <div key={book.recomNo} className={styles.item}>
-              <Link href={`/books/${book.recomisbn}`}>
-                <div className={styles.cover}>
-                  {book.recomfilepath ? (
-                    <Image
-                      src={book.recomfilepath}
-                      alt={book.recomtitle}
-                      fill
-                      sizes="180px"
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/no-image.png';
-                      }}
-                    />
-                  ) : (
-                    <div className={styles.noImage}>이미지 없음</div>
-                  )}
-                  <span className={styles.badge}>사서추천</span>
-                </div>
-                <div className={styles.info}>
-                  <div className={styles.category}>{book.drCodeName}</div>
-                  <div className={styles.title}>{book.recomtitle}</div>
-                  <div className={styles.author}>{book.recomauthor}</div>
-                  <div className={styles.date}>
-                    {book.recomYear}년 {book.recomMonth}월
-                  </div>
-                </div>
-              </Link>
+              <div className={styles.ranking}>
+                <span className={styles.badge}>{book.drCodeName}</span>
+              </div>
+              <BookCard
+                isbn={book.recomisbn}
+                title={book.recomtitle}
+                author={book.recomauthor}
+                cover={book.recomfilepath || '/images/no-image.png'}
+                publisher=""
+              />
             </div>
           ))}
         </div>
+
         <button
           className={`${styles.navButton} ${styles.right}`}
           onClick={() => scroll('right')}
