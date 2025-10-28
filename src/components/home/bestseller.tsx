@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRef } from 'react';
 
-import styles from '@/components/home/home.module.scss';
+import styles from './main-book.module.scss';
+
+import BookCard from '@/components/common/book/book-card';
 import { AladinBestsellerItem } from '@/types/aladin/dto';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 
@@ -46,18 +46,18 @@ function BestsellerList({ books }: BestsellerListProps) {
           &#8249;
         </button>
         <div className={styles.items} ref={scrollContainerRef}>
-          {books.map((book) => (
+          {books.map((book, index) => (
             <div key={book.itemId} className={styles.item}>
-              <Link href={`/books/${book.isbn13}`}>
-                <div className={styles.cover}>
-                  <Image src={book.cover} alt={book.title} fill sizes="180px" />
-                  <span className={styles.rank}>{book.bestRank}</span>
-                </div>
-                <div className={styles.info}>
-                  <div className={styles.title}>{formatBookTitle(book.title)}</div>
-                  <div className={styles.author}>{formatBookAuthor(book.author)}</div>
-                </div>
-              </Link>
+              <div className={styles.ranking}>
+                <span className={index < 3 ? styles.top3 : styles.normal}>{book.bestRank}</span>
+              </div>
+              <BookCard
+                isbn={book.isbn13}
+                title={formatBookTitle(book.title)}
+                author={formatBookAuthor(book.author)}
+                cover={book.cover}
+                publisher={book.publisher}
+              />
             </div>
           ))}
         </div>
