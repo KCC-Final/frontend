@@ -2,6 +2,7 @@ export * from '@/types/aladin';
 export * from '@/types/auth';
 export * from '@/types/book';
 export * from '@/types/challenge';
+export * from '@/types/dashboard';
 export * from '@/types/common';
 export * from '@/types/follow';
 export * from '@/types/reviews';

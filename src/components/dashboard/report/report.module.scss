@@ -1,44 +1,23 @@
 .reportCard {
-  background: #ffffff;
-  color: #1f2937;
-  padding: 2.5rem;
-  border-radius: 16px;
-  margin-bottom: 3rem;
-  border: 1px solid #e5e7eb;
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.04);
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:hover {
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.08),
-      0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  }
-
-  @media (max-width: 768px) {
-    padding: 1.5rem;
-  }
+  padding: 20px;
+  border-radius: 12px;
+  margin: 24px 20px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
 }
 
 .reportHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
+  margin-bottom: 50px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #f3f4f6;
 }
 
-.reportTitle {
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin: 0;
-  color: #2d5a3d;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.title {
+  color: #444444;
+  font-size: 1.6rem;
+  font-weight: 600;
 }
 
 .selectButton {
@@ -82,7 +61,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 2rem 0;
+  margin: 12px 32px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -92,25 +71,26 @@
 }
 
 .reportStat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   text-align: center;
 }
 
 .statLabel {
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 500;
-  color: #6b7280;
-  margin-bottom: 0.75rem;
+  color: #777777;
   display: block;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .statValue {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: 700;
   display: block;
-  color: #111827;
-  line-height: 1;
+  line-height: normal;
 
   @media (max-width: 768px) {
     font-size: 2rem;
@@ -118,9 +98,9 @@
 }
 
 .vsText {
-  font-size: 1.25rem;
+  font-size: 1.6rem;
   font-weight: 600;
-  color: #9ca3af;
+  color: #777777;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -135,7 +115,7 @@
 .reportDifference {
   display: flex;
   justify-content: center;
-  margin: 2rem 0 1.5rem;
+  margin: 16px 0;
 }
 
 .differenceIndicator {
@@ -189,7 +169,7 @@
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid #f3f4f6;
-  font-size: 0.95rem;
+  font-size: 1.4rem;
   font-weight: 900;
   color: #6b7280;
   line-height: 1.6;

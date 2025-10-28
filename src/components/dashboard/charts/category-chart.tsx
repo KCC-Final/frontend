@@ -3,9 +3,8 @@
 import Chart from 'chart.js/auto';
 import { useEffect, useRef, useState } from 'react';
 
-import styles from './charts.module.scss';
-
-import { CategoryChartProps } from '@/types/dashboard/dashboard';
+import styles from '@/components/dashboard/charts/charts.module.scss';
+import { useDashboardStore } from '@/stores/dashboard';
 
 const CATEGORY_COLORS = {
   backgroundColor: [
@@ -30,7 +29,10 @@ const CATEGORY_COLORS = {
   ]
 };
 
-export default function CategoryChart({ data }: CategoryChartProps) {
+export default function CategoryChart() {
+  const { dashboardData } = useDashboardStore();
+  const { categoryStats } = dashboardData;
+
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
   const [expanded, setExpanded] = useState(false);
@@ -46,8 +48,8 @@ export default function CategoryChart({ data }: CategoryChartProps) {
     if (!ctx) return;
 
     // 데이터 처리 로직
-    const hasData = Array.isArray(data) && data.length > 0;
-    const validData = hasData ? data : [{ category: '데이터 없음', count: 1 }];
+    const hasData = Array.isArray(categoryStats) && categoryStats.length > 0;
+    const validData = hasData ? categoryStats : [{ category: '데이터 없음', count: 1 }];
 
     const sortedData = [...validData].sort((a, b) => b.count - a.count);
 
@@ -94,10 +96,10 @@ export default function CategoryChart({ data }: CategoryChartProps) {
     return () => {
       chartInstance.current?.destroy();
     };
-  }, [data, expanded]);
+  }, [categoryStats, expanded]);
 
   // 오버레이 표시 조건
-  const showOverlay = !Array.isArray(data) || data.length === 0;
+  const showOverlay = !Array.isArray(categoryStats) || categoryStats.length === 0;
 
   return (
     <div className={styles.chartCard}>
@@ -116,14 +118,6 @@ export default function CategoryChart({ data }: CategoryChartProps) {
           </div>
         )}
       </div>
-
-      {Array.isArray(data) && data.length > 5 && (
-        <div className={styles.chartFooter}>
-          <button className={styles.expandButton} onClick={() => setExpanded((prev) => !prev)}>
-            {expanded ? '간략히 보기' : '전체 보기'}
-          </button>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
-import { Bell, Search, User } from 'lucide-react';
-import Image from 'next/image';
+import { Bell, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/shallow';
@@ -9,6 +8,7 @@ import { useShallow } from 'zustand/shallow';
 import { fetchGroo } from '@/apis';
 import styles from '@/components/common/layout/header/header.module.scss';
 import AlertModal from '@/components/common/modal/alert';
+import UserProfileImage from '@/components/common/profile/image';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,6 @@ import {
 import { useModalState } from '@/hooks/useModal';
 import useBoundStore from '@/stores';
 import { devLogger } from '@/utils/dev-logger';
-import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 function RightNavigation() {
   const router = useRouter();
@@ -66,27 +65,24 @@ function RightNavigation() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={styles.user_avatar_button}>
-              {changeImageUrlFromBase64(myInfo?.profileImage) ? (
-                <Image
-                  src={changeImageUrlFromBase64(myInfo?.profileImage)}
-                  alt="user profile image"
-                  width={38}
-                  height={38}
-                />
+              {myInfo ? (
+                <UserProfileImage userId={myInfo.userId} profileImage={myInfo.profileImage} size={38} />
               ) : (
-                <User size={26} color="#333333" />
+                <UserProfileImage userId={''} profileImage={null} size={38} />
               )}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-[12rem]">
-            {myInfo?.userId ? (
+            {myInfo ? (
               <DropdownMenuItem
                 className="text-[1.4rem] px-[1rem] py-[0.8rem]"
-                onClick={routePageHandler(`/my-feeds?userId=${myInfo?.userId}`)}>
+                onClick={routePageHandler(`/users/${myInfo.userId}`)}>
                 내 피드
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" disabled>
+              <DropdownMenuItem
+                className="text-[1.4rem] px-[1rem] py-[0.8rem]"
+                onClick={routePageHandler(`/users/`)}>
                 내 피드
               </DropdownMenuItem>
             )}

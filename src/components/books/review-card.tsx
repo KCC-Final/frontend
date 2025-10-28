@@ -44,7 +44,7 @@ function ReviewCard({ review, coverUrl }: ReviewCardProps) {
             <User size={24} />
           </div>
           <div className={styles.author_details}>
-            <Link href={`/my-feeds?userId=${review.userId}`} className={styles.author_nickname}>
+            <Link href={`/users/${review.userId}`} className={styles.author_nickname}>
               {review.userId}
             </Link>
             <span className={styles.created_at}>{new Date(review.createdAt).toLocaleDateString()}</span>

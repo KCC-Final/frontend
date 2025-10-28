@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
-import styles from './user-profile-section.module.scss';
-
 import { fetchGroo } from '@/apis/groo';
+import styles from '@/components/user/feed/profile.module.scss';
 import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
-interface UserProfileSectionProps {
+interface UserProfileProps {
   user: {
     userId: string;
     nickname: string;
@@ -23,7 +22,7 @@ interface UserProfileSectionProps {
   onFollowingClick: () => void;
 }
 
-export default function UserProfileSection({
+function UserProfile({
   user,
   reviewCount,
   followerCount,
@@ -32,7 +31,7 @@ export default function UserProfileSection({
   isOwner,
   onFollowerClick,
   onFollowingClick
-}: UserProfileSectionProps) {
+}: UserProfileProps) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -83,7 +82,7 @@ export default function UserProfileSection({
   const convertedProfileImage = changeImageUrlFromBase64(user.profileImage);
 
   return (
-    <section className={styles.profileSection}>
+    <section className={styles.profile}>
       {convertedProfileImage ? (
         <img src={convertedProfileImage} alt={user.nickname} className={styles.profileImage} />
       ) : (
@@ -121,3 +120,5 @@ export default function UserProfileSection({
     </section>
   );
 }
+
+export default UserProfile;

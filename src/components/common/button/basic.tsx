@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import styles from '@/components/common/button/button.module.scss';
 
 interface BasicButtonProps {
-  name: string;
+  name: string | React.ReactNode;
   buttonType?: 'submit' | 'reset' | 'button';
   handler?: () => void;
   classname?: string;
