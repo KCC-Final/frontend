@@ -7,7 +7,8 @@ import styles from '@/components/home/main-book.module.scss';
 import { LibrarianRecommendBook } from '@/types/nl-library';
 
 /**
- * 사서 추천 도서 리스트 (BestsellerList 스타일 적용)
+ * 사서 추천 도서 리스트
+ * @author uyh
  */
 interface LibrarianRecommendListProps {
   books: LibrarianRecommendBook[];

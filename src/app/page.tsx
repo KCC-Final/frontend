@@ -9,11 +9,15 @@ import BestsellerList from '@/components/home/bestseller';
 import HotTrendBooks from '@/components/home/hot-trend-books';
 import LibrarianRecommendList from '@/components/home/librarian-recommend';
 import PopularLoanBooks from '@/components/home/popular-loan-books';
-import RegionalReadingChart from '@/components/home/regional-reading-chart'; //  추가
+import RegionalReadingChart from '@/components/home/regional-reading-chart';
 import TodaySentence from '@/components/home/today-sentence';
 import { Book } from '@/types';
 import { getTokenInCookie } from '@/utils/cookie';
 
+/**
+ * 메인 페이지
+ * @author uyh
+ */
 async function BookRecommendationPage() {
   // 서버 컴포넌트에서 쿠키를 가져옵니다.
   const cookieStore = await cookies();
@@ -35,14 +39,25 @@ async function BookRecommendationPage() {
   // 사서 추천 도서 데이터 페칭 (에러 발생 시 빈 배열)
   let librarianRecommendBooks = [];
   try {
+    console.log('[메인 페이지] 사서 추천 도서 API 호출 시작');
     const librarianRecommendResponse = await fetchNLLibrary.getLibrarianRecommendBooks(1, 16);
+
+    console.log('[메인 페이지] 사서 추천 도서 응답:', JSON.stringify(librarianRecommendResponse, null, 2));
+
     librarianRecommendBooks = Array.isArray(librarianRecommendResponse.channel?.list)
       ? librarianRecommendResponse.channel.list.map((entry: any) => entry.item)
       : librarianRecommendResponse.channel?.list?.item
         ? [librarianRecommendResponse.channel.list.item]
         : [];
+
+    console.log('[메인 페이지] 사서 추천 도서 파싱 완료:', librarianRecommendBooks.length, '개');
+
+    if (librarianRecommendBooks.length > 0) {
+      console.log('[메인 페이지] 첫 번째 사서 추천 도서:', librarianRecommendBooks[0]);
+    }
   } catch (error) {
-    console.error('사서 추천 도서 조회 실패:', error);
+    console.error('[메인 페이지] 사서 추천 도서 조회 실패:', error);
+    console.error('[메인 페이지] 에러 상세:', error instanceof Error ? error.message : String(error));
   }
 
   // 초기 인기 대출도서 데이터 페칭 (전국 기준)
@@ -102,10 +117,10 @@ async function BookRecommendationPage() {
     <GlobalLayout wide={true}>
       <TodaySentence initialQuoteData={initialQuoteData.data} />
       <BestsellerList books={bestsellerBooks} />
-      {librarianRecommendBooks.length > 0 && <LibrarianRecommendList books={librarianRecommendBooks} />}
-      <HotTrendBooks /> {/*  기존 대출급상승 도서 섹션 */}
-      <RegionalReadingChart /> {/*  지역별 독서량/독서율 섹션 추가 */}
+      <LibrarianRecommendList books={librarianRecommendBooks} />
+      <HotTrendBooks />
       <PopularLoanBooks initialBooks={initialPopularBooks} />
+      <RegionalReadingChart />
     </GlobalLayout>
   );
 }

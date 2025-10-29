@@ -36,7 +36,7 @@ function BestsellerList({ books }: BestsellerListProps) {
   };
 
   return (
-    <section className={styles.bestseller}>
+    <section className={styles.mainBook}>
       <h1>베스트셀러</h1>
       <div className={styles.container}>
         <button
