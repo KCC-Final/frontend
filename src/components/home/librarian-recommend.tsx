@@ -6,10 +6,6 @@ import BookCard from '@/components/common/book/book-card';
 import styles from '@/components/home/main-book.module.scss';
 import { LibrarianRecommendBook } from '@/types/nl-library';
 
-/**
- * 사서 추천 도서 리스트
- * @author uyh
- */
 interface LibrarianRecommendListProps {
   books: LibrarianRecommendBook[];
 }
@@ -46,9 +42,7 @@ function LibrarianRecommendList({ books }: LibrarianRecommendListProps) {
         <div className={styles.items} ref={scrollContainerRef}>
           {books.map((book) => (
             <div key={book.recomNo} className={styles.item}>
-              <div className={styles.ranking}>
-                <span className={styles.badge}>{book.drCodeName}</span>
-              </div>
+              <div></div>
               <BookCard
                 isbn={book.recomisbn}
                 title={book.recomtitle}

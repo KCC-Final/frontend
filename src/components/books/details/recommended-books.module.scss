@@ -1,123 +1,147 @@
+@use '@/styles/abstract/' as *;
+
 .recommended_books {
-  padding: 48px 0;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 24px 20px;
 
   .section_title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 24px;
+    font-size: $font-size-18;
+    font-weight: 600;
+    margin-bottom: 16px;
   }
 
+  // 탭 컨테이너
   .tab_container {
     display: flex;
-    gap: 12px;
-    margin-bottom: 32px;
-    border-bottom: 2px solid #e5e7eb;
-  }
+    gap: 8px;
+    margin-bottom: 16px;
 
-  .tab_button {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #6b7280;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: -2px;
-
-    &:hover {
-      color: #047857;
-    }
-
-    &.active {
-      color: #047857;
-      border-bottom-color: #047857;
-    }
-  }
-
-  /* 캐러셀 전체 컨테이너 */
-  .books_carousel {
-    position: relative;
-    width: 100%;
-    margin-top: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    /* ▶ 화살표 버튼 (공통) */
-    .arrow_left,
-    .arrow_right {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px; /* 기존 40 → 32 로 축소 */
-      height: 32px; /* 동일 */
-      border-radius: 50%;
-      background: #fff;
+    .tab_button {
+      padding: 8px 16px;
       border: none;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6b7280;
       cursor: pointer;
-      color: #047857;
-      transition: all 0.25s ease;
-      z-index: 5;
+      border-radius: 8px;
+      transition: all 0.2s;
 
       &:hover {
-        background: #f0fdfa;
-        transform: translateY(-50%) scale(1.08);
+        background-color: #f3f4f6;
       }
 
-      svg {
-        width: 18px; /* 아이콘 크기 축소 */
-        height: 18px;
-      }
-    }
-
-    .arrow_left {
-      left: -14px; /* 위치도 살짝 안쪽으로 */
-    }
-
-    .arrow_right {
-      right: -14px;
-    }
-
-    /*  책 카드 가로 스크롤 영역 */
-    .books_scroll_wrapper {
-      display: flex;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      gap: 20px;
-      padding: 1rem 2.5rem;
-      scroll-snap-type: x mandatory;
-      width: 100%;
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
-      > div {
-        flex: 0 0 auto;
-        scroll-snap-align: start;
+      &.active {
+        background-color: #2563eb;
+        color: white;
       }
     }
   }
 
-  /* 기존 그리드 제거 (더 이상 사용 X) */
-  .books_grid {
-    display: none;
-  }
-
+  // 로딩 상태
   .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    color: #6b7280;
+  }
+
+  // 버튼 기준이 될 래퍼
+  .container {
+    position: relative;
+  }
+
+  .items {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 8px 4px;
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .item {
+      position: relative;
+      flex-shrink: 0;
+      width: 160px;
+
+      .ranking {
+        position: absolute;
+        left: -8px;
+        top: -8px;
+        z-index: 10;
+        width: 48px;
+        height: 48px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        opacity: 0.8;
+
+        span {
+          font-size: 24px;
+          font-weight: 700;
+
+          &.top3 {
+            color: #ff6b6b;
+          }
+
+          &.normal {
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+
+  .navButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-size: 32px;
+    color: #333;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
-    font-size: 16px;
-    color: #6b7280;
+    transition: all 0.2s ease;
+    z-index: 10;
+
+    &:hover {
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    &.left {
+      left: -12px;
+    }
+
+    &.right {
+      right: -12px;
+    }
   }
 }
