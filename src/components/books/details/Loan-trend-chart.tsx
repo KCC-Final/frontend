@@ -42,8 +42,6 @@ export default function LoanTrendChart({ isbn13 }: LoanTrendChartProps) {
       setLoading(true);
       const res = await fetchLibrary.getBookUsageAnalysis(isbn13);
 
-      console.log('[LoanTrend] raw response:', res);
-
       const historyRoot =
         res?.response?.loanHistory ?? res?.data?.response?.loanHistory ?? res?.loanHistory ?? res;
 
@@ -55,8 +53,6 @@ export default function LoanTrendChart({ isbn13 }: LoanTrendChartProps) {
       } else if (historyRoot?.loan) {
         historyList = [historyRoot.loan];
       }
-
-      console.log('[LoanTrend] parsed historyList:', historyList);
 
       const formatted: LoanTrendData[] = historyList
         .map((item: any) => item?.loan ?? item)

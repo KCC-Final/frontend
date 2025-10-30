@@ -308,8 +308,6 @@ export const fetchLibrary = {
       }
     }
 
-    console.log('[Library API 호출 파라미터]', params);
-
     const endpoint = libCode ? '/loanItemSrchByLib' : '/loanItemSrch';
     const response = await axiosLibrary.get(endpoint, { params });
     return response.data;

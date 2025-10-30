@@ -45,7 +45,6 @@ export default function RegionalReadingChart() {
         });
 
         const results = await Promise.all(requests);
-        console.log('지역별 통계 원본:', results);
 
         // 유효 데이터만 필터링
         const validResults = results.filter((r): r is ReadingStat => !!r && typeof r.quantity === 'number');
@@ -57,7 +56,6 @@ export default function RegionalReadingChart() {
 
         // 정렬 후 상태 업데이트
         const sorted = [...validResults].sort((a, b) => b.quantity - a.quantity);
-        console.log('정렬된 데이터:', sorted);
         setStats(sorted);
       } catch (err) {
         console.error('지역별 독서 통계 불러오기 실패:', err);

@@ -7,8 +7,12 @@ import { useEffect, useState } from 'react';
 import styles from './notification.module.scss';
 
 import { fetchGroo } from '@/apis';
+import { useNotificationStore } from '@/stores/notification';
 import { Alert, NotificationType } from '@/types/notification';
 
+// ===============================
+//  Notification Item
+// ===============================
 interface NotificationItemProps {
   alert: Alert;
   onRead: (alertId: number) => void;
@@ -17,10 +21,8 @@ interface NotificationItemProps {
 function NotificationItem({ alert, onRead }: NotificationItemProps) {
   const router = useRouter();
 
-  // 타입별 아이콘 반환
   const getIcon = (type: NotificationType) => {
     const iconProps = { size: 20, className: styles.icon };
-
     switch (type) {
       case 'like':
         return <Heart {...iconProps} className={`${styles.icon} ${styles.like}`} />;
@@ -35,29 +37,41 @@ function NotificationItem({ alert, onRead }: NotificationItemProps) {
     }
   };
 
-  // 시간 포맷팅
-  const formatTime = (sendAt: string) => {
-    const now = new Date();
-    const sent = new Date(sendAt);
-    const diff = Math.floor((now.getTime() - sent.getTime()) / 1000);
+  // 날짜 포맷 안정 버전
+  const formatTime = (sendAt: string | number | Date | null | undefined) => {
+    if (!sendAt) return '';
+    let date: Date | null = null;
 
-    if (diff < 60) return '방금 전';
-    if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`;
-    if (diff < 2592000) return `${Math.floor(diff / 604800)}주 전`;
-    if (diff < 31536000) return `${Math.floor(diff / 2592000)}개월 전`;
-    return `${Math.floor(diff / 31536000)}년 전`;
+    if (sendAt instanceof Date) {
+      date = sendAt;
+    } else if (typeof sendAt === 'number') {
+      date = new Date(sendAt > 1e12 ? sendAt : sendAt * 1000);
+    } else if (typeof sendAt === 'string') {
+      let s = sendAt.trim().replace(' ', 'T');
+      if (!/[zZ]|[+\-]\d{2}:\d{2}$/.test(s)) s += '+09:00';
+      date = new Date(s);
+    }
+
+    if (!date || isNaN(date.getTime())) {
+      return '';
+    }
+
+    const diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
+
+    if (diffSec < 60) return '방금 전';
+    if (diffSec < 3600) return `${Math.floor(diffSec / 60)}분 전`;
+    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}시간 전`;
+    if (diffSec < 604800) return `${Math.floor(diffSec / 86400)}일 전`;
+    if (diffSec < 2592000) return `${Math.floor(diffSec / 604800)}주 전`;
+    if (diffSec < 31536000) return `${Math.floor(diffSec / 2592000)}개월 전`;
+    return `${Math.floor(diffSec / 31536000)}년 전`;
   };
 
-  // 알림 클릭 핸들러
   const handleClick = async () => {
-    // 읽지 않은 알림이면 읽음 처리
     if (!alert.alertsCheckStatus) {
       await onRead(alert.alertId);
     }
 
-    // 타입별 페이지 이동
     switch (alert.senderType) {
       case 'review':
         if (alert.type === 'comment' && alert.detailSenderId) {
@@ -66,25 +80,21 @@ function NotificationItem({ alert, onRead }: NotificationItemProps) {
           router.push(`/reviews/${alert.senderId}`);
         }
         break;
-
-      case 'user': // senderType이 'user'일 때
+      case 'user':
         if (alert.type === 'follow') {
-          // type이 'follow'면
-          console.log('qwer', alert.senderUserId);
-          router.push(`/users/${alert.senderUserId}`); // 팔로우한 사람 피드로
+          router.push(`/users/${alert.senderUserId}`);
         }
         break;
-
       case 'users':
         if (alert.type === 'badge') {
           router.push(`/dashboard`);
         }
         break;
-
       default:
         break;
     }
   };
+
   return (
     <div
       className={`${styles.notification_item} ${!alert.alertsCheckStatus ? styles.unread : ''}`}
@@ -92,29 +102,37 @@ function NotificationItem({ alert, onRead }: NotificationItemProps) {
       <div className={styles.icon_wrapper}>{getIcon(alert.type)}</div>
       <div className={styles.content}>
         <p className={styles.message}>{alert.content}</p>
-        <span className={styles.time}>{formatTime(alert.sendAt)}</span>
+        {/* 시간 표시 복구 */}
+        <span className={styles.time}>{formatTime(alert.sendAt || alert.sendAt)}</span>
       </div>
       {!alert.alertsCheckStatus && <div className={styles.unread_dot} />}
     </div>
   );
 }
 
+// ===============================
+//  Notification Dropdown
+// ===============================
 interface NotificationDropdownProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 알림 목록 조회
+  const { alerts, unreadCount, setUnreadCount, resetUnread, setAlerts } = useNotificationStore();
+
+  // 알림 목록 조회 + 최신순 정렬
   const fetchNotifications = async () => {
     try {
       setIsLoading(true);
       const response = await fetchGroo.notification.getNotifications();
-      setAlerts(response.data || []);
+      const list = (response.data || []).sort(
+        (a: Alert, b: Alert) =>
+          new Date(b.sendAt || b.sendAt).getTime() - new Date(a.sendAt || a.sendAt).getTime()
+      );
+      setAlerts(list);
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
     } finally {
@@ -122,7 +140,6 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
     }
   };
 
-  // 읽지 않은 알림 개수 조회
   const fetchUnreadCount = async () => {
     try {
       const response = await fetchGroo.notification.getUnreadCount();
@@ -132,57 +149,36 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
     }
   };
 
-  // 알림 읽음 처리
   const handleReadNotification = async (alertId: number) => {
     try {
       await fetchGroo.notification.updateNotificationStatus(alertId, {
         alertsCheckStatus: true
       });
-      setAlerts((prev) =>
-        prev.map((alert) => (alert.alertId === alertId ? { ...alert, alertsCheckStatus: true } : alert))
+      setAlerts(
+        alerts.map((alert) => (alert.alertId === alertId ? { ...alert, alertsCheckStatus: true } : alert))
       );
-      setUnreadCount((prev) => Math.max(0, prev - 1));
+      setUnreadCount(Math.max(0, unreadCount - 1));
     } catch (error) {
       console.error('Failed to update notification status:', error);
     }
   };
 
-  // 전체 읽음 처리
   const handleReadAll = async () => {
     try {
-      const unreadAlertIds = alerts.filter((alert) => !alert.alertsCheckStatus).map((alert) => alert.alertId);
-
-      if (unreadAlertIds.length === 0) return;
+      const unreadIds = alerts.filter((a) => !a.alertsCheckStatus).map((a) => a.alertId);
+      if (unreadIds.length === 0) return;
 
       await fetchGroo.notification.updateAllNotifications({
-        alertIdList: unreadAlertIds
+        alertIdList: unreadIds
       });
 
-      setAlerts((prev) => prev.map((alert) => ({ ...alert, alertsCheckStatus: true })));
-      setUnreadCount(0);
+      setAlerts(alerts.map((a) => ({ ...a, alertsCheckStatus: true })));
+      resetUnread();
     } catch (error) {
-      console.error('Failed to update all notifications:', error);
+      console.error('Failed to mark all notifications as read:', error);
     }
   };
 
-  // SSE 구독
-  useEffect(() => {
-    const eventSource = fetchGroo.notification.subscribe(
-      (data: Alert) => {
-        setAlerts((prev) => [data, ...prev]);
-        setUnreadCount((prev) => prev + 1);
-      },
-      (error) => {
-        console.error('SSE connection error:', error);
-      }
-    );
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
-
-  // 드롭다운 열릴 때 데이터 조회
   useEffect(() => {
     if (isOpen) {
       fetchNotifications();
@@ -194,10 +190,7 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
 
   return (
     <>
-      {/* 배경 오버레이 */}
       <div className={styles.overlay} onClick={onClose} />
-
-      {/* 알림 드롭다운 */}
       <div className={styles.dropdown}>
         <div className={styles.header}>
           <div className={styles.title_wrapper}>
@@ -219,7 +212,8 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
             <div className={styles.empty}>새로운 알림이 없습니다</div>
           ) : (
             <div className={styles.list}>
-              {alerts.slice(0, 20).map((alert) => (
+              {/* 최신순으로 정렬된 결과 표시 */}
+              {alerts.map((alert) => (
                 <NotificationItem key={alert.alertId} alert={alert} onRead={handleReadNotification} />
               ))}
             </div>

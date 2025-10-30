@@ -14,8 +14,6 @@ async function TestPopularLoanBooksPage() {
   };
 
   try {
-    console.log('API 호출 파라미터:', { startDate, endDate });
-
     const response = await fetchLibrary.getLoanItemsByLibOrRegion(
       undefined,
       undefined,

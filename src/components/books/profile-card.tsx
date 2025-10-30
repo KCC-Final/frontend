@@ -113,8 +113,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
         ISBN: bookInfo.isbn13 // 대문자 ISBN
       };
 
-      console.log('스크랩 생성 요청 데이터:', requestData);
-
       await fetchGroo.bookshelf.createBookScrap(requestData);
 
       setShowCategoryModal(false);
@@ -122,9 +120,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
       alert('스크랩되었습니다.');
     } catch (error: any) {
-      console.error('스크랩 생성 실패:', error);
-      console.error('에러 응답:', error.response?.data);
-
       if (error.response?.data?.message?.includes('already exists')) {
         alert('이미 해당 책장에 스크랩된 도서입니다.');
         await checkIfScraped();
@@ -140,7 +135,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
     // 같은 카테고리 클릭 시 무시
     if (selectedBookshelf.bookshelfId === bookshelfId) {
-      console.log('같은 카테고리입니다. 변경하지 않습니다.');
       setShowCategoryModal(false);
       return;
     }
@@ -150,12 +144,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     }
 
     try {
-      console.log('카테고리 변경 시작:', {
-        from: selectedBookshelf,
-        to: { bookshelfId, name },
-        ISBN: bookInfo.isbn13
-      });
-
       // 1단계: 기존 책장에서 삭제
       await fetchGroo.bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, bookInfo.isbn13);
 
@@ -164,7 +152,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
         bookshelfId: bookshelfId,
         ISBN: bookInfo.isbn13
       });
-      console.log('새 책장에 추가 완료, 응답:', newScrap);
 
       // 해결: 백엔드 응답을 기반으로 상태 즉시 업데이트 (DB 데이터 확정)
       setIsScraped(true);

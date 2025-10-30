@@ -63,8 +63,6 @@ export const bookshelf = {
       ISBN: data.ISBN // 반드시 대문자 ISBN
     };
 
-    console.log('[API] 스크랩 생성 요청:', requestBody);
-
     const response = await axiosGroo.post<{ data: BookScrap }>('/book/scrap', requestBody);
     return response.data.data;
   },
@@ -96,8 +94,6 @@ export const bookshelf = {
       bookshelfId: bookshelfId,
       ISBN: ISBN
     };
-
-    console.log('[API] 스크랩 삭제 요청:', requestBody);
 
     const response = await axiosGroo.delete<{ data: null }>('/book/scrap', {
       data: requestBody
