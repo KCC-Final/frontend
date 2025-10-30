@@ -3,6 +3,7 @@
 import { format } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
 
+import { fetchAladin } from '@/apis/aladin'; // 알라딘 API 추가
 import { fetchLibrary } from '@/apis/library';
 import BookCard from '@/components/common/book/book-card';
 import styles from '@/components/home/main-book.module.scss';
@@ -16,9 +17,6 @@ interface TrendDoc {
   bookImageURL?: string;
 }
 
-/**
- * 대출 급상승 도서 리스트 (BestsellerList 스타일 적용)
- */
 export default function HotTrendBooks() {
   const [books, setBooks] = useState<TrendDoc[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -35,6 +33,7 @@ export default function HotTrendBooks() {
         const seen = new Set<string>();
         const all: TrendDoc[] = [];
 
+        // 1️ 정보나루 결과에서 ISBN13 추출
         for (const r of results) {
           const docs = r?.result?.docs ?? [];
           for (const d of docs) {
@@ -45,7 +44,29 @@ export default function HotTrendBooks() {
           }
         }
 
-        setBooks(all.slice(0, 12));
+        // 2️ 알라딘 상세 정보 병합
+        const enriched = await Promise.all(
+          all.slice(0, 12).map(async (book) => {
+            try {
+              const aladinRes = await fetchAladin.getBookDetails(book.isbn13); // 재사용
+              const aladinItem = aladinRes?.item?.[0];
+              if (!aladinItem) return book;
+
+              return {
+                ...book,
+                bookname: aladinItem.title || book.bookname,
+                authors: aladinItem.author || book.authors,
+                publisher: aladinItem.publisher || book.publisher,
+                bookImageURL: aladinItem.cover || book.bookImageURL
+              };
+            } catch (error) {
+              console.warn(`[알라딘 조회 실패: ${book.isbn13}]`, error);
+              return book;
+            }
+          })
+        );
+
+        setBooks(enriched);
       } catch (err) {
         console.error('대출 급상승 도서를 불러오는 중 오류:', err);
       }
