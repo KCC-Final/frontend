@@ -3,6 +3,7 @@ import { Noto_Serif_KR } from 'next/font/google';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 
+import NotificationSubscriber from '@/components/setup/notification-subscriber';
 import StoreInitializer from '@/components/setup/store-initializer';
 import { User } from '@/types';
 import { devLogger } from '@/utils/dev-logger';
@@ -77,6 +78,7 @@ async function RootLayout({ children }: Readonly<RootLayoutProps>) {
     <html lang="ko">
       <body className={`${pretendard.variable} ${notoSerifKr.variable} ${seoulNotice.variable}`}>
         <StoreInitializer user={myInfo} />
+        <NotificationSubscriber /> {/* 앱 전역에서 알림 구독 */}
         {children}
       </body>
     </html>
