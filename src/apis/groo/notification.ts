@@ -21,7 +21,6 @@ export const notification = {
     eventSource.addEventListener('alert', (event) => {
       try {
         const raw = JSON.parse(event.data);
-        console.log(' [SSE 수신 데이터]', raw);
         // 필드명 안전 보정 (sendAt or sentAt)
         const normalized = {
           alertId: raw.alertId,
@@ -36,7 +35,6 @@ export const notification = {
           alertsCheckStatus: raw.alertsCheckStatus
         };
 
-        console.log('[SSE 정상 변환]', normalized);
         onMessage(normalized);
       } catch (error) {
         console.error('Failed to parse SSE data:', error);
@@ -55,7 +53,6 @@ export const notification = {
   // 알림 목록 조회
   getNotifications: async (): Promise<GetNotificationsResDTO> => {
     const response = await axiosGroo.get('/alarms');
-    console.log('알림 목록 응답:', response.data);
     return response.data;
   },
 

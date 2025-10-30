@@ -42,7 +42,6 @@ function Login() {
         await fetchGroo.auth.login({ userId: userId, password: password });
         alert('로그인에 성공했습니다.');
         const user = await fetchGroo.user.getMyInfo();
-        console.log(user);
         setMyInfo(user.data);
         router.push('/');
       } catch (error) {

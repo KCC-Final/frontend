@@ -36,7 +36,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             alerts: [data, ...state.alerts],
             unreadCount: state.unreadCount + 1
           }));
-          console.log('[SSE] 새 알림 수신:', data);
         },
         (error) => {
           console.error('[SSE Error]', error);

@@ -28,8 +28,6 @@ async function BookRecommendationPage() {
   const endDate = today.toISOString().split('T')[0];
   const startDate = new Date(today.setMonth(today.getMonth() - 1)).toISOString().split('T')[0];
 
-  console.log('[메인 페이지] 날짜 범위:', { startDate, endDate });
-
   // 데이터 페칭 (오늘의 한 문장, 베스트셀러)
   const [quoteData, bestsellerResponse] = await Promise.all([
     fetchGrooInServer.book.getDailyQuote(token),
@@ -39,10 +37,7 @@ async function BookRecommendationPage() {
   // 사서 추천 도서 데이터 페칭 (에러 발생 시 빈 배열)
   let librarianRecommendBooks = [];
   try {
-    console.log('[메인 페이지] 사서 추천 도서 API 호출 시작');
     const librarianRecommendResponse = await fetchNLLibrary.getLibrarianRecommendBooks(1, 16);
-
-    console.log('[메인 페이지] 사서 추천 도서 응답:', JSON.stringify(librarianRecommendResponse, null, 2));
 
     librarianRecommendBooks = Array.isArray(librarianRecommendResponse.channel?.list)
       ? librarianRecommendResponse.channel.list.map((entry: any) => entry.item)
@@ -50,10 +45,7 @@ async function BookRecommendationPage() {
         ? [librarianRecommendResponse.channel.list.item]
         : [];
 
-    console.log('[메인 페이지] 사서 추천 도서 파싱 완료:', librarianRecommendBooks.length, '개');
-
     if (librarianRecommendBooks.length > 0) {
-      console.log('[메인 페이지] 첫 번째 사서 추천 도서:', librarianRecommendBooks[0]);
     }
   } catch (error) {
     console.error('[메인 페이지] 사서 추천 도서 조회 실패:', error);
@@ -63,16 +55,12 @@ async function BookRecommendationPage() {
   // 초기 인기 대출도서 데이터 페칭 (전국 기준)
   let initialPopularBooks: Book[] = [];
   try {
-    console.log('[메인 페이지] 초기 인기 대출도서 API 호출');
-
     const response = await fetchLibrary.getPopularBooks(
       startDate,
       endDate,
       1, // pageNo
       10 // pageSize
     );
-
-    console.log('[메인 페이지] 초기 인기 대출도서 응답:', response?.response ? '성공' : '실패');
 
     if (response?.response?.docs?.doc) {
       const docs = Array.isArray(response.response.docs.doc)
@@ -95,8 +83,6 @@ async function BookRecommendationPage() {
         bookDtlUrl: doc.bookDtlUrl,
         loan_count: doc.loan_count
       }));
-
-      console.log('[메인 페이지] 초기 인기 대출도서 변환 완료:', initialPopularBooks.length, '개');
     }
   } catch (error) {
     console.error('[메인 페이지] 초기 인기 대출도서 조회 실패:', error);
@@ -105,13 +91,6 @@ async function BookRecommendationPage() {
   // 프롭으로 전달할 데이터
   const initialQuoteData = quoteData || null;
   const bestsellerBooks = bestsellerResponse.item || [];
-
-  console.log('[메인 페이지] 렌더링 준비 완료:', {
-    quote: !!initialQuoteData,
-    bestsellers: bestsellerBooks.length,
-    librarian: librarianRecommendBooks.length,
-    popular: initialPopularBooks.length
-  });
 
   return (
     <GlobalLayout wide={true}>

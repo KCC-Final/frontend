@@ -144,14 +144,6 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
         genderCode = value === 'all' ? undefined : value;
       }
 
-      console.log('[필터링 API 호출 파라미터]', {
-        category,
-        value,
-        regionCode,
-        ageCode,
-        genderCode
-      });
-
       // 한 번의 API 호출로 데이터 가져오기
       const response = await fetchLibrary.getLoanItemsByLibOrRegion(
         undefined, // libCode
@@ -177,8 +169,6 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
           docs = [raw];
         }
       }
-
-      console.log('[API 응답 도서 수]', docs.length);
 
       // 알라딘 API로 상세데이터 병합
       const enriched = await Promise.all(
