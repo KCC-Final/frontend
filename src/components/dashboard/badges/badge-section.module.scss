@@ -95,14 +95,11 @@
     border-radius: 10px;
     padding: 1.2rem;
     border: 1px solid #e0e0e0;
-    cursor: pointer;
-    transition: all 0.3s ease;
     position: relative;
 
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    }
+    // 기본 상태 - 호버 없음, 클릭 불가
+    cursor: default;
+    transition: none;
 
     &.acquired {
       background: #f0fdf9;
@@ -110,7 +107,20 @@
     }
 
     &.locked {
-      opacity: 0.7;
+      opacity: 0.5;
+      filter: grayscale(50%);
+      pointer-events: none; // 모든 마우스 이벤트 차단
+    }
+
+    // 획득한 뱃지만 클릭 가능하고 호버 효과
+    &.clickable {
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      }
     }
 
     .badgeIcon {
@@ -121,6 +131,10 @@
       position: relative;
       margin-bottom: 1rem;
 
+      .emoji {
+        font-size: 2rem;
+      }
+
       .checkMark {
         position: absolute;
         bottom: 4px;
@@ -128,6 +142,9 @@
         background: #007664;
         border-radius: 50%;
         padding: 0.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
 
@@ -157,70 +174,6 @@
           width: 78%;
         }
       }
-
-      .progressInfo {
-        font-size: 0.8rem;
-        color: #777;
-        margin-top: 0.5rem;
-
-        .miniProgressBar {
-          height: 4px;
-          background: #e5e7eb;
-          border-radius: 10px;
-          overflow: hidden;
-          margin-top: 0.2rem;
-
-          .miniProgressFill {
-            height: 100%;
-            background: #007664;
-            transition: width 0.3s ease;
-          }
-        }
-      }
-
-      .acquiredDate {
-        font-size: 0.75rem;
-        color: #007664;
-        margin-top: 0.4rem;
-      }
-    }
-
-    .badgeDetails {
-      margin-top: 1rem;
-      background: #fff;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-      padding: 0.8rem;
-      font-size: 0.85rem;
-      color: #444;
-
-      .detailItem {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.3rem;
-
-        .detailLabel {
-          color: #888;
-        }
-
-        .detailValue {
-          font-weight: 500;
-        }
-      }
-
-      .completeMessage {
-        text-align: center;
-        font-weight: 600;
-        color: #007664;
-        margin-top: 0.5rem;
-      }
-
-      .encourageMessage {
-        text-align: center;
-        font-weight: 500;
-        color: #e67e22;
-        margin-top: 0.5rem;
-      }
     }
   }
 
@@ -232,41 +185,6 @@
     svg {
       margin-bottom: 0.5rem;
       color: #aaa;
-    }
-  }
-
-  .loading,
-  .error {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px;
-    text-align: center;
-
-    .spinner {
-      border: 3px solid #e0e0e0;
-      border-top: 3px solid #007664;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 1rem;
-    }
-
-    .retryButton {
-      margin-top: 1rem;
-      background: #007664;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s;
-
-      &:hover {
-        background: #005f52;
-      }
     }
   }
 
