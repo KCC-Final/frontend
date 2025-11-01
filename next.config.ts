@@ -59,7 +59,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'image.yes24.com'
       },
-      // ✅ 국립중앙도서관 이미지 (현재 에러 원인)
+      // 국립중앙도서관 이미지 (현재 에러 원인)
       {
         protocol: 'http',
         hostname: 'www.nl.go.kr',

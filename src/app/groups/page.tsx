@@ -1,4 +1,4 @@
-import ReadingGroupList from '@/components/groups/list';
+import ReadingGroupList from '@/components/groups/list/list';
 
 function ReadingGroupListPage() {
   return <ReadingGroupList />;

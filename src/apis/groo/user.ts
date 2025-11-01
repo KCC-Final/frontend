@@ -75,5 +75,15 @@ export const user = {
   getUserFeed: async (userId: string): Promise<UserFeedResDTO> => {
     const response = await axiosGroo.get(`/users/${userId}/feed`);
     return response.data;
+  },
+
+  /**
+   * 작성자 닉네임 조회
+   * @param userId 사용자 ID
+   * @returns 닉네임 문자열
+   */
+  getUserNickname: async (userId: string): Promise<string> => {
+    const response = await axiosGroo.get(`/users/${userId}`);
+    return response.data.data; // CommonResponse의 data 필드
   }
 };
