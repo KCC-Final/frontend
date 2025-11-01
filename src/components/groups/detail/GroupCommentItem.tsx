@@ -98,8 +98,17 @@ function GroupCommentItem({ comment, depth, groupId, currentUserId, isOwner, ref
   };
 
   const handleDelete = async () => {
-    await group.deleteComment(comment.commentId);
-    await refreshComments();
+    const confirmed = window.confirm('댓글을 삭제하시겠습니까?');
+    if (!confirmed) return;
+
+    try {
+      await group.deleteComment(comment.commentId);
+      alert('댓글이 삭제되었습니다.');
+      await refreshComments();
+    } catch (error) {
+      console.error('댓글 삭제 실패:', error);
+      alert('댓글 삭제에 실패했습니다.');
+    }
   };
 
   return (
