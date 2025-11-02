@@ -20,5 +20,13 @@ export const challenge = {
   async getAcquiredBadges(userId: string): Promise<UserBadgeResponse[]> {
     const response = await axiosGroo.get(`/challenges/users/${userId}/badges`);
     return response.data;
+  },
+
+  /**
+   * 특정 사용자의 특정 뱃지 히스토리 조회 (예: 이달의 독서왕)
+   */
+  async getBadgeHistory(userId: string, badgeId: number): Promise<UserBadgeResponse[]> {
+    const response = await axiosGroo.get(`/challenges/users/${userId}/badges/${badgeId}/history`);
+    return response.data;
   }
 };

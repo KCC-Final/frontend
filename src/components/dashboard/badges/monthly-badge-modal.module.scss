@@ -1,0 +1,159 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f0f0;
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin: 0;
+    }
+
+    button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      padding: 4px 8px;
+      line-height: 1;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 14px;
+}
+
+// 히스토리 모드용 스타일
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    margin-bottom: 12px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #e9ecef;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// 일반 뱃지 상세 모드용 스타일
+.detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .acquiredInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #f0fdf9;
+    border-radius: 8px;
+    border-left: 4px solid #007664;
+
+    .label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .date {
+      font-size: 16px;
+      font-weight: 700;
+      color: #007664;
+      white-space: nowrap;
+    }
+  }
+}
+
+// 공통 date 스타일 (히스토리 모드)
+.list .date {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+  min-width: 90px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.desc {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  flex: 1;
+}
+
+// 히스토리 섹션 스타일
+.historySection {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #f0f0f0;
+
+  .historyTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 16px 0;
+  }
+}

@@ -7,8 +7,12 @@ import { useShallow } from 'zustand/shallow';
 
 import { challenge } from '@/apis/groo/challenge';
 import styles from '@/components/dashboard/badges/badge-section.module.scss';
+import MonthlyBadgeModal from '@/components/dashboard/badges/monthly-badge-modal';
 import useBoundStore from '@/stores';
 import { UserBadgeStatusResponse, BadgeCategory, BADGE_CATEGORY_MAP, BADGE_ICONS } from '@/types';
+
+// 반복 수여(히스토리형) 뱃지 목록
+const HISTORICAL_BADGES = ['이달의 독서왕'];
 
 function BadgeSection() {
   const { userId } = useBoundStore(useShallow((state) => ({ userId: state.myInfo!.userId })));
@@ -16,14 +20,16 @@ function BadgeSection() {
   const [badges, setBadges] = useState<UserBadgeStatusResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<BadgeCategory | 'all'>('all');
-  const [expandedBadge, setExpandedBadge] = useState<number | null>(null);
+
+  // 모달 관련 상태
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBadge, setSelectedBadge] = useState<UserBadgeStatusResponse | null>(null);
+  const [isHistoryMode, setIsHistoryMode] = useState(false);
 
   useEffect(() => {
     const loadUserAndBadges = async () => {
       try {
         setLoading(true);
-
-        // 해당 유저의 전체 뱃지 상태 조회
         const badgeList = await challenge.getAllBadgesWithStatus(userId);
         setBadges(badgeList);
       } catch (err: any) {
@@ -34,7 +40,7 @@ function BadgeSection() {
     };
 
     loadUserAndBadges();
-  }, []);
+  }, [userId]);
 
   const getFilteredBadges = () => {
     if (selectedCategory === 'all') return badges;
@@ -60,8 +66,14 @@ function BadgeSection() {
     };
   };
 
-  const toggleBadgeDetails = (id: number) => {
-    setExpandedBadge(expandedBadge === id ? null : id);
+  // 클릭 시 처리: 획득한 뱃지만 모달 표시
+  const handleBadgeClick = (badge: UserBadgeStatusResponse) => {
+    // 획득하지 않은 뱃지는 클릭 불가
+    if (!badge.acquired) return;
+
+    setSelectedBadge(badge);
+    setIsHistoryMode(HISTORICAL_BADGES.includes(badge.badgeName));
+    setShowModal(true);
   };
 
   // 로딩
@@ -120,8 +132,12 @@ function BadgeSection() {
         {filteredBadges.map((badge) => (
           <div
             key={badge.badgeId}
-            className={`${styles.badgeCard} ${badge.acquired ? styles.acquired : styles.locked}`}
-            onClick={() => toggleBadgeDetails(badge.badgeId)}>
+            className={clsx(styles.badgeCard, {
+              [styles.acquired]: badge.acquired,
+              [styles.locked]: !badge.acquired,
+              [styles.clickable]: badge.acquired
+            })}
+            onClick={() => handleBadgeClick(badge)}>
             <div className={styles.badgeIcon}>
               <span className={styles.emoji}>{BADGE_ICONS[badge.badgeName] || '🏅'}</span>
               {badge.acquired && (
@@ -150,6 +166,16 @@ function BadgeSection() {
           <Award size={48} />
           <p>해당 카테고리에 뱃지가 없습니다.</p>
         </div>
+      )}
+
+      {/* 뱃지 모달 (히스토리 & 일반 뱃지 모두 처리) */}
+      {showModal && selectedBadge && (
+        <MonthlyBadgeModal
+          userId={userId}
+          onClose={() => setShowModal(false)}
+          badgeId={isHistoryMode ? selectedBadge.badgeId : undefined}
+          badge={selectedBadge}
+        />
       )}
     </div>
   );

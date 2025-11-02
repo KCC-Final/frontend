@@ -12,7 +12,7 @@ export interface UserBadgeResponse {
   badgeName: string;
   badgeDescription: string;
   badgeConditions: number;
-  acquiredDate: string;
+  succeededAt: string;
 }
 
 // 사용자의 뱃지 획득 상태를 포함한 응답
@@ -26,10 +26,25 @@ export interface UserBadgeStatusResponse {
   acquiredDate: string | null;
 }
 
+// 특정 뱃지 히스토리 응답 (예: 이달의 독서왕)
+export interface BadgeHistoryResponse {
+  badgeId: number;
+  badgeName: string;
+  badgeDescription: string;
+  succeededAt: string; // 획득 일시 (YYYY-MM-DD or ISO)
+}
+
 // API 응답 타입
 export interface BadgeListResponse {
   message: string;
   data: UserBadgeResponse[];
+}
+
+// API 응답 타입 - 뱃지 히스토리
+
+export interface BadgeHistoryListResponse {
+  message: string;
+  data: BadgeHistoryResponse[];
 }
 
 export interface BadgeStatusListResponse {

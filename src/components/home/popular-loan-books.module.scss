@@ -154,7 +154,7 @@
   .bookGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 160px));
-    gap: 2rem 1.5rem;
+    gap: 24px;
     justify-content: start;
 
     @media (min-width: 640px) {
