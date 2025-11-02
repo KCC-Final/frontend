@@ -1,4 +1,4 @@
-import ReadingGroupDetails from '@/components/groups/details';
+import ReadingGroupDetails from '@/components/groups/detail/details';
 
 import type { Metadata } from 'next';
 

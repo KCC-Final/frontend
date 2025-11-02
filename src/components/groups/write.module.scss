@@ -1,0 +1,196 @@
+.groupWriteContainer {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  background: #fff;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* 상단 바 */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+  .backBtn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    height: 3.5rem;
+    padding: 0.4rem 0.8rem;
+    color: #444;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #ececec;
+    }
+  }
+
+/* 모집중 토글 */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #333;
+
+  input {
+    display: none;
+  }
+
+  .toggle {
+    position: relative;
+    width: 38px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 20px;
+    transition: 0.3s;
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+  }
+
+  input:checked + .toggle {
+    background: #84b48c;
+  }
+
+  input:checked + .toggle::before {
+    transform: translateX(18px);
+  }
+}
+
+/* 입력 폼 */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputTitle {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+}
+
+/* 도서 선택 박스 */
+.bookBox {
+  border: 2px dashed #cfd7e3;
+  border-radius: 8px;
+  background: #f8fbff;
+  padding: 1.5rem;
+  text-align: center;
+  color: #5a6d8a;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: #eef5ff;
+  }
+}
+
+/* 2행 레이아웃 */
+.metaGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr 1fr 1fr;
+  align-items: end;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-weight: 600;
+    color: #444;
+  }
+
+  input,
+  select {
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.6rem;
+
+    &:focus {
+      outline: none;
+      border-color: #9ac29c;
+    }
+  }
+}
+
+/* 라디오 버튼 */
+.radioGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #444;
+
+    input[type='radio'] {
+      accent-color: #84b48c;
+    }
+  }
+}
+
+/* 본문 입력 */
+.textareaGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-weight: 600;
+  }
+
+  textarea {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.8rem;
+    min-height: 100px;
+    resize: none;
+
+    &:focus {
+      outline: none;
+      border-color: #84b48c;
+    }
+  }
+}
+
+/* 등록 버튼 */
+.submitBtn {
+  width: 100%;
+  background: #1f8b4c;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #007664;
+  }
+}
