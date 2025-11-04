@@ -78,7 +78,7 @@ async function RootLayout({ children }: Readonly<RootLayoutProps>) {
     <html lang="ko">
       <body className={`${pretendard.variable} ${notoSerifKr.variable} ${seoulNotice.variable}`}>
         <StoreInitializer user={myInfo} />
-        <NotificationSubscriber /> {/* 앱 전역에서 알림 구독 */}
+        <NotificationSubscriber user={myInfo} /> {/* 로그인한 사용자만 알림 구독 */}
         {children}
       </body>
     </html>
