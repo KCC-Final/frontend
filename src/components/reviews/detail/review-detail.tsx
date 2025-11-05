@@ -1,7 +1,8 @@
 'use client';
 
+import { Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import BookInfo from './BookInfo';
 import CommentSection from './CommentSection';
@@ -11,9 +12,12 @@ import styles from './review-detail.module.scss';
 
 import { fetchAladin } from '@/apis';
 import { comment as commentApi } from '@/apis/groo/comment';
+import { follow as followApi } from '@/apis/groo/follow';
 import { review as reviewApi } from '@/apis/groo/review';
+import UserProfileImage from '@/components/common/profile/image';
 import { ReviewDetailResDTO, CommentData, AladinBook } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
+
 type Props = {
   reviewData: ReviewDetailResDTO['data'];
 };
@@ -25,6 +29,10 @@ export default function ReviewDetail({ reviewData }: Props) {
   const [isLiked, setIsLiked] = useState(reviewData.liked);
   const [likeCount, setLikeCount] = useState(reviewData.likeCount);
   const [comments, setComments] = useState<CommentData[]>(reviewData.comments || []);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchBookInfo = async () => {
@@ -43,11 +51,37 @@ export default function ReviewDetail({ reviewData }: Props) {
     fetchBookInfo();
   }, [reviewData.isbn]);
 
-  const handleBack = () => {
-    router.push('/reviews/feed');
-  };
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      if (reviewData.isOwner) return;
 
-  // handleLike 함수 수정
+      try {
+        const response = await followApi.getFollowInfo(reviewData.userId);
+        setIsFollowing(response.data !== null);
+      } catch (error) {
+        setIsFollowing(false);
+      }
+    };
+
+    checkFollowStatus();
+  }, [reviewData.userId, reviewData.isOwner]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
+
   const handleLike = async () => {
     const previousLiked = isLiked;
     const previousCount = likeCount;
@@ -70,16 +104,17 @@ export default function ReviewDetail({ reviewData }: Props) {
   };
 
   const handleEdit = () => {
+    setShowMenu(false);
     router.push(`/reviews/${reviewData.reviewId}/edit`);
   };
 
-  // handleDelete 함수 수정
   const handleDelete = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) {
       return;
     }
 
     try {
+      setShowMenu(false);
       await reviewApi.deleteReview(reviewData.reviewId);
       alert('독후감이 삭제되었습니다.');
       router.push('/reviews/feed');
@@ -88,7 +123,33 @@ export default function ReviewDetail({ reviewData }: Props) {
     }
   };
 
-  // handleCommentSubmit 함수 수정
+  const handleFollowToggle = async () => {
+    if (followLoading) return;
+
+    setFollowLoading(true);
+    try {
+      if (isFollowing) {
+        await followApi.deleteFollow(reviewData.userId);
+        setIsFollowing(false);
+        alert('언팔로우 했습니다.');
+      } else {
+        await followApi.createFollow(reviewData.userId);
+        setIsFollowing(true);
+        alert('팔로우 했습니다.');
+      }
+    } catch (error: any) {
+      console.error('팔로우 처리 실패:', error);
+
+      if (error?.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('팔로우 처리 중 오류가 발생했습니다.');
+      }
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
   const handleCommentSubmit = async (content: string, parentId?: number) => {
     try {
       await commentApi.createComment(reviewData.reviewId, { content, parentId });
@@ -100,7 +161,6 @@ export default function ReviewDetail({ reviewData }: Props) {
     }
   };
 
-  // handleCommentUpdate 함수 수정
   const handleCommentUpdate = async (commentId: number, content: string) => {
     try {
       await commentApi.updateComment(commentId, { content });
@@ -112,7 +172,6 @@ export default function ReviewDetail({ reviewData }: Props) {
     }
   };
 
-  // handleCommentDelete 함수 수정
   const handleCommentDelete = async (commentId: number) => {
     if (!confirm('댓글을 삭제하시겠습니까?')) {
       return;
@@ -128,41 +187,99 @@ export default function ReviewDetail({ reviewData }: Props) {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  const handleUserClick = () => {
+    router.push(`/users/${reviewData.userId}`);
+  };
+
   return (
     <div className={styles.container}>
-      <button className={styles.backButton} onClick={handleBack} aria-label="피드로 돌아가기">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        <span>뒤로가기</span>
-      </button>
-
       <div className={styles.contentWrapper}>
+        {/* 독후감 제목 섹션 */}
+        <div className={styles.titleSection}>
+          <h1 className={styles.reviewTitle}>{reviewData.reviewTitle}</h1>
+        </div>
+
+        {/* 작성자 정보 섹션 */}
+        <div className={styles.authorSection}>
+          <div className={styles.authorInfo}>
+            <div onClick={handleUserClick} style={{ cursor: 'pointer' }}>
+              <UserProfileImage
+                userId={reviewData.userId}
+                profileImage={reviewData.authorProfileImage}
+                size={40}
+              />
+            </div>
+            <div className={styles.authorDetails}>
+              <h3 className={styles.authorName} onClick={handleUserClick}>
+                {reviewData.authorNickname || reviewData.userId}
+              </h3>
+              <p className={styles.date}>{formatDate(reviewData.createdAt)}</p>
+            </div>
+          </div>
+
+          {/* 본인 글이면 점 3개 메뉴, 타인 글이면 팔로우 버튼 */}
+          {reviewData.isOwner ? (
+            <div className={styles.menuContainer} ref={menuRef}>
+              <button onClick={() => setShowMenu(!showMenu)} className={styles.menuButton} aria-label="메뉴">
+                <span className={styles.menuIcon}>⋮</span>
+              </button>
+
+              {showMenu && (
+                <div className={styles.menuDropdown}>
+                  <button onClick={handleEdit} className={styles.menuItem}>
+                    수정
+                  </button>
+                  <button onClick={handleDelete} className={styles.menuItem}>
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={handleFollowToggle}
+              className={`${styles.followButton} ${isFollowing ? styles.following : ''}`}
+              disabled={followLoading}>
+              {isFollowing ? '언팔로우' : '팔로우'}
+            </button>
+          )}
+        </div>
+
+        {/* 본문 내용 */}
+        <ReviewContent reviewData={reviewData} />
+
+        {/* 좋아요 버튼 - 본문 아래 */}
+        <div className={styles.likeSection}>
+          <button onClick={handleLike} className={`${styles.likeButton} ${isLiked ? styles.liked : ''}`}>
+            <Heart className={styles.heartIcon} fill={isLiked ? 'currentColor' : 'none'} />
+            <span className={styles.likeCount}>{likeCount}</span>
+          </button>
+        </div>
+
+        {/* 도서 정보 */}
         <BookInfo bookInfo={bookInfo} loading={loadingBook} />
 
-        <ReviewContent
-          reviewData={reviewData}
-          isLiked={isLiked}
-          likeCount={likeCount}
-          onLike={handleLike}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-
+        {/* 관련 독후감 */}
         <RelatedReviews
           isbn={reviewData.isbn}
           category={reviewData.category}
           currentReviewId={reviewData.reviewId}
         />
 
+        {/* 댓글 섹션 */}
         <CommentSection
           comments={comments}
           onSubmit={handleCommentSubmit}
