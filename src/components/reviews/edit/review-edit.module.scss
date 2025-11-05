@@ -13,7 +13,7 @@
   border-bottom: 2px solid #e5e7eb;
 
   .backButton {
-    padding: 8px 16px;
+    padding: 8px 10px;
     background: #f3f4f6;
     border: 1px solid #d1d5db;
     border-radius: 6px;
@@ -21,6 +21,9 @@
     font-size: 14px;
     transition: all 0.2s;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
       background: #e5e7eb;
@@ -49,13 +52,6 @@
   gap: 20px;
 }
 
-.bookSection {
-  padding: 20px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
 .titleSection {
   position: relative;
 
@@ -80,17 +76,24 @@
   }
 }
 
+.bookSection {
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
 .editorSection {
   position: relative;
   background: #fff;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
   overflow: hidden;
-  padding-bottom: 44px; /* charCount 영역 확보 */
+  padding-bottom: 44px;
 
   :global(.ProseMirror) {
     min-height: 400px;
-    padding: 20px 20px 48px; /* 하단 여백 추가 */
+    padding: 20px 20px 48px;
     outline: none;
 
     &:focus {
