@@ -1,13 +1,9 @@
-// 1. 외부 라이브러리 (npm)
 import { XMLParser } from 'fast-xml-parser';
 
-// 2. 내부 설정 및 타입
 import axiosNLLibrary from './config';
 
 import { GetLibrarianRecommendBooksResDTO, CategoryCode } from '@/types/nl-library';
-import { devLogger } from '@/utils/dev-logger';
 
-// 3. XML Parser 인스턴스 (fast-xml-parser 5.x 기준)
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '',

@@ -2,22 +2,14 @@
 
 import { useRef } from 'react';
 
-import styles from './main-book.module.scss';
-
 import BookCard from '@/components/common/book/book-card';
-import { AladinBestsellerItem } from '@/types/aladin/dto';
+import styles from '@/components/home/main-book.module.scss';
+import { useHomeStore } from '@/stores/home';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 
-interface BestsellerListProps {
-  books: AladinBestsellerItem[];
-}
+function BestsellerList() {
+  const { bestSellerData } = useHomeStore();
 
-/**
- * 베스트셀러 리스트 컴포넌트
- * @author uyh
- * @param {AladinBestsellerItem[]} books - 베스트셀러 도서 목록
- */
-function BestsellerList({ books }: BestsellerListProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -46,7 +38,7 @@ function BestsellerList({ books }: BestsellerListProps) {
           &#8249;
         </button>
         <div className={styles.items} ref={scrollContainerRef}>
-          {books.map((book, index) => (
+          {bestSellerData.map((book, index) => (
             <div key={book.itemId} className={styles.item}>
               <div className={styles.ranking}>
                 <span className={index < 3 ? styles.top3 : styles.normal}>{book.bestRank}</span>
