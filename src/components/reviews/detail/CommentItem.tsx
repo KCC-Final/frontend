@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import styles from './CommentItem.module.scss';
 
+import UserProfileImage from '@/components/common/profile/image';
 import { CommentData } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
-import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 type Props = {
   comment: CommentData;
@@ -14,15 +14,44 @@ type Props = {
   onDelete: (commentId: number) => Promise<void>;
   onReply: (content: string, parentId: number) => Promise<void>;
   depth?: number;
+  replyCount?: number;
+  onToggleReplies?: () => void;
+  showReplies?: boolean;
 };
 
-export default function CommentItem({ comment, onUpdate, onDelete, onReply, depth = 0 }: Props) {
+export default function CommentItem({
+  comment,
+  onUpdate,
+  onDelete,
+  onReply,
+  depth = 0,
+  replyCount = 0,
+  onToggleReplies,
+  showReplies = false
+}: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [error, setError] = useState<string>('');
-  const MAX_DEPTH = 5;
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
 
   const formatDate = (dateString: string) => {
     try {
@@ -58,6 +87,7 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
       setError('');
       await onUpdate(comment.commentId, editContent.trim());
       setIsEditing(false);
+      setShowMenu(false);
     } catch (error: any) {
       const errorMsg = getReviewErrorMessage(error);
       setError(errorMsg);
@@ -86,6 +116,7 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
   const handleDelete = async () => {
     try {
       setError('');
+      setShowMenu(false);
       await onDelete(comment.commentId);
     } catch (error: any) {
       const errorMsg = getReviewErrorMessage(error);
@@ -98,15 +129,6 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
   const displayDate = isEdited ? comment.updatedAt : comment.createdAt;
   const marginLeft = Math.min(depth, 5) * 40;
 
-  // 프로필 이미지 변환
-  const convertedProfileImage = changeImageUrlFromBase64(comment.authorProfileImage);
-
-  // 이니셜 생성
-  const getInitial = () => {
-    const name = comment.authorNickname || comment.userId;
-    return name ? name.charAt(0).toUpperCase() : 'U';
-  };
-
   return (
     <div
       className={`${styles.container} ${depth > 0 ? styles.reply : ''}`}
@@ -115,18 +137,8 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
 
       <div className={styles.header}>
         <div className={styles.authorInfo}>
-          {/* 프로필 이미지 */}
-          {convertedProfileImage ? (
-            <img
-              src={convertedProfileImage}
-              alt={comment.authorNickname || comment.userId}
-              className={styles.profileImage}
-            />
-          ) : (
-            <div className={styles.profilePlaceholder}>{getInitial()}</div>
-          )}
+          <UserProfileImage userId={comment.userId} profileImage={comment.authorProfileImage} size={32} />
 
-          {/* 작성자 정보 */}
           <div className={styles.authorDetails}>
             <span className={styles.author}>{comment.authorNickname || comment.userId}</span>
             <span className={styles.date}>
@@ -135,6 +147,30 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
             </span>
           </div>
         </div>
+
+        {comment.isOwner && (
+          <div className={styles.menuContainer} ref={menuRef}>
+            <button onClick={() => setShowMenu(!showMenu)} className={styles.menuButton} aria-label="메뉴">
+              <span className={styles.menuIcon}>⋮</span>
+            </button>
+
+            {showMenu && (
+              <div className={styles.menuDropdown}>
+                <button
+                  onClick={() => {
+                    setIsEditing(true);
+                    setShowMenu(false);
+                  }}
+                  className={styles.menuItem}>
+                  수정
+                </button>
+                <button onClick={handleDelete} className={styles.menuItem}>
+                  삭제
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {isEditing ? (
@@ -165,20 +201,17 @@ export default function CommentItem({ comment, onUpdate, onDelete, onReply, dept
           <p className={styles.content}>{comment.content}</p>
 
           <div className={styles.actions}>
-            {depth < MAX_DEPTH && (
-              <button onClick={() => setIsReplying(!isReplying)} className={styles.actionBtn}>
+            {depth === 0 && (
+              <button onClick={() => setIsReplying(!isReplying)} className={styles.replyBtn}>
                 답글
               </button>
             )}
-            {comment.isOwner && (
-              <>
-                <button onClick={() => setIsEditing(true)} className={styles.actionBtn}>
-                  수정
-                </button>
-                <button onClick={handleDelete} className={styles.actionBtn}>
-                  삭제
-                </button>
-              </>
+
+            {replyCount > 0 && onToggleReplies && (
+              <button onClick={onToggleReplies} className={styles.toggleRepliesBtn}>
+                <span className={styles.toggleIcon}>{showReplies ? '▼' : '▶'}</span>
+                답글 {replyCount}개
+              </button>
             )}
           </div>
         </>
