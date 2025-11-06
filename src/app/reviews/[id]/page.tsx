@@ -30,10 +30,8 @@ export default function ReviewDetailPage() {
           setError('독후감을 불러오는데 실패했습니다.');
         }
       } catch (error: any) {
-        // 👇 에러 핸들러 적용
         const errorMessage = getReviewErrorMessage(error);
         setError(errorMessage);
-        console.error('독후감 조회 오류:', error);
       } finally {
         setLoading(false);
       }

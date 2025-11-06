@@ -44,9 +44,7 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     try {
       const data = await fetchGroo.bookshelf.getBookshelfList();
       setBookshelves(data);
-    } catch (error) {
-      console.error('책장 목록 조회 실패:', error);
-    }
+    } catch (error) {}
   };
 
   const checkIfScraped = async () => {
@@ -73,7 +71,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
       setSelectedBookshelf(null);
       setShowScrapManagement(false);
     } catch (error) {
-      console.error('스크랩 확인 실패:', error);
       setIsScraped(false);
       setSelectedBookshelf(null);
       setShowScrapManagement(false);
@@ -96,7 +93,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
           alert('스크랩이 제거되었습니다.');
         } catch (error: any) {
-          console.error('스크랩 제거 실패:', error);
           alert(`스크랩 제거에 실패했습니다. ${error.response?.data?.message || error.message}`);
         }
       }
@@ -192,7 +188,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
       setNewBookshelfName('');
       setShowCreateInput(false);
     } catch (error) {
-      console.error('책장 생성 실패:', error);
       alert('책장 생성에 실패했습니다.');
     } finally {
       setIsCreatingBookshelf(false);

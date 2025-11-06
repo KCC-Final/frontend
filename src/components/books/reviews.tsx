@@ -55,7 +55,6 @@ function ReviewListAboutBook({ isbn, coverUrl, ref, id }: ReviewListAboutBookPro
         setReviews(fetchedReviews);
       } catch (e) {
         setError('독후감을 불러오는 데 실패했습니다.');
-        console.error(e);
       } finally {
         setIsLoading(false);
       }

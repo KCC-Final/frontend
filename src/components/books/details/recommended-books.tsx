@@ -55,7 +55,6 @@ export default function RecommendedBooks({ isbn13 }: RecommendedBooksProps) {
               const details = await fetchAladin.getBookDetails(isbn);
               return details.item[0];
             } catch (error) {
-              console.error(`마니아 추천 도서 ${isbn} 조회 실패:`, error);
               return null;
             }
           })
@@ -67,7 +66,6 @@ export default function RecommendedBooks({ isbn13 }: RecommendedBooksProps) {
               const details = await fetchAladin.getBookDetails(isbn);
               return details.item[0];
             } catch (error) {
-              console.error(`다독자 추천 도서 ${isbn} 조회 실패:`, error);
               return null;
             }
           })
@@ -77,7 +75,6 @@ export default function RecommendedBooks({ isbn13 }: RecommendedBooksProps) {
         setReaderBooks(readerDetails.filter((book) => book !== null) as AladinBookDetailsItem[]);
       }
     } catch (error) {
-      console.error('추천 도서 조회 실패:', error);
     } finally {
       setLoading(false);
     }

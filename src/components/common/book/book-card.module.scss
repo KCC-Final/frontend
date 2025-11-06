@@ -63,7 +63,7 @@
     color: #111827;
     line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1; // 2줄에서 1줄로 변경
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;

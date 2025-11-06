@@ -59,9 +59,7 @@ function MyBookshelf() {
       if (data.length > 0) {
         setSelectedBookshelf(data[0].bookshelfId);
       }
-    } catch (error) {
-      console.error('책장 목록 조회 실패:', error);
-    }
+    } catch (error) {}
   };
 
   // 선택된 책장의 도서 조회
@@ -81,7 +79,6 @@ function MyBookshelf() {
               details: details.item?.[0]
             };
           } catch (error) {
-            console.error(`도서 상세 조회 실패 (ISBN: ${scrap.ISBN}):`, error);
             return scrap;
           }
         })
@@ -89,7 +86,6 @@ function MyBookshelf() {
 
       setBooks(booksWithDetails);
     } catch (error) {
-      console.error('도서 목록 조회 실패:', error);
       setBooks([]);
     } finally {
       setIsLoading(false);
@@ -123,7 +119,6 @@ function MyBookshelf() {
               details: details.item?.[0]
             };
           } catch (error) {
-            console.error(`도서 상세 조회 실패 (ISBN: ${scrap.ISBN}):`, error);
             return scrap;
           }
         })
@@ -131,7 +126,6 @@ function MyBookshelf() {
 
       setAllBooks(booksWithDetails);
     } catch (error) {
-      console.error('전체 도서 조회 실패:', error);
       setAllBooks([]);
     } finally {
       setIsLoading(false);
@@ -157,7 +151,6 @@ function MyBookshelf() {
         await fetchGroo.bookshelf.deleteBookshelf(bookshelfId);
         await fetchBookshelves();
       } catch (error) {
-        console.error('책장 삭제 실패:', error);
         alert('책장 삭제에 실패했습니다.');
       }
     }
@@ -175,7 +168,6 @@ function MyBookshelf() {
       setIsModalOpen(false);
       await fetchBookshelves();
     } catch (error) {
-      console.error('책장 저장 실패:', error);
       alert('책장 저장에 실패했습니다.');
     }
   };

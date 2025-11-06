@@ -109,7 +109,6 @@ function ReadingGroupList() {
 
             scrapMap[g.groupId] = res.data ?? false;
           } catch (err) {
-            console.error(`스크랩 상태 조회 실패: groupId=${g.groupId}`, err);
             scrapMap[g.groupId] = false;
           }
         })
@@ -121,7 +120,6 @@ function ReadingGroupList() {
       setVisibleGroups(enrichedGroups.slice(0, ITEMS_PER_PAGE));
       setPage(1);
     } catch (err: any) {
-      console.error(err);
       setError('모임 목록을 불러오지 못했습니다.');
     } finally {
       setLoading(false);
@@ -138,9 +136,7 @@ function ReadingGroupList() {
         await groupApi.createScrap(groupId);
       }
       setScrapStatus((prev) => ({ ...prev, [groupId]: !current }));
-    } catch (err) {
-      console.error('스크랩 토글 실패:', err);
-    }
+    } catch (err) {}
   };
 
   const applyFilter = (list: GroupData[]) => {

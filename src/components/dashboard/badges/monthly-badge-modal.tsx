@@ -28,7 +28,6 @@ export default function MonthlyBadgeModal({ userId, onClose, badgeId, badge }: M
           const data = await challenge.getBadgeHistory(userId, badgeId);
           setHistory(data);
         } catch (error) {
-          console.error('독서왕 히스토리 로드 실패:', error);
         } finally {
           setLoading(false);
         }

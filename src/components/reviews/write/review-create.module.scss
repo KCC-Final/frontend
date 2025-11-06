@@ -1,14 +1,14 @@
 .container {
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin: 20px 0px;
   padding-bottom: 20px;
 
   .backButton {
@@ -61,11 +61,6 @@
 }
 
 .bookSection {
-  padding: 20px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-
   .selectBookButton {
     width: 100%;
     padding: 40px;
@@ -120,7 +115,7 @@
 .editorSection {
   position: relative;
   background: white;
-  border: 2px solid #e5e7eb;
+  outline: 1px solid #e5e7eb;
   border-radius: 8px;
   overflow: hidden;
   padding-bottom: 40px;
@@ -166,8 +161,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: #f9fafb;
+  margin: 20px 0;
   border-radius: 8px;
 
   .checkbox {
@@ -200,20 +194,20 @@
     }
 
     .saveButton {
-      background: #afb7b4;
-      color: white;
+      background-color: #f3f4f6;
+      color: black;
 
       &:hover {
-        background: #afb7b4;
+        background-color: #e5e7eb;
       }
     }
 
     .submitButton {
-      background: #3c9a17;
+      background: #333333;
       color: white;
 
       &:hover {
-        background: #27630f;
+        background: #333333;
       }
     }
   }

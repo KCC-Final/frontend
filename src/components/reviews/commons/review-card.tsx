@@ -1,3 +1,6 @@
+/**
+ * @author uyh
+ */
 import { Lock } from 'lucide-react';
 
 import styles from './review-card.module.scss';
@@ -34,6 +37,7 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
       <BookCover
         isbn={review.isbn}
         title={review.reviewTitle}
+        reviewId={review.reviewId}
         className={styles.bookCover}
         imageClassName={styles.coverImage}
         noImageClassName={styles.noImage}

@@ -41,7 +41,6 @@ function GroupDetailHeader({ groupData, isScrapped, toggleScrap, isOwner, router
         setNickname(fetchedNickname);
         nicknameCache.set(userId, fetchedNickname);
       } catch (error) {
-        console.warn('작성자 닉네임 조회 실패:', error);
         setNickname(userId); // fallback
       }
     };

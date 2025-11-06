@@ -36,9 +36,6 @@
 .titleSection {
   background: white;
   padding: 32px;
-  border-radius: 12px 12px 0 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-bottom: 1px solid #e5e7eb;
   width: 100%;
 
   @media (max-width: 768px) {
@@ -70,8 +67,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
   @media (max-width: 768px) {
     padding: 20px;
@@ -216,9 +211,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
   @media (max-width: 768px) {
     padding: 24px 20px;

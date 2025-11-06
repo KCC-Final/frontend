@@ -79,7 +79,6 @@ function ReadingGroupEdit() {
           }
         }
       } catch (err) {
-        console.error(err);
         setError('모임 정보를 불러오지 못했습니다.');
       }
     };
@@ -131,7 +130,6 @@ ${participation.trim()}
       alert('모임 정보가 수정되었습니다!');
       router.push(`/groups/${id}`);
     } catch (err) {
-      console.error(err);
       setError('수정 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);

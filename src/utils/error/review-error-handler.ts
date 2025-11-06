@@ -8,10 +8,6 @@ export const getReviewErrorMessage = (error: any): string => {
   // 에러 메시지 추출
   const backendMessage = error?.response?.data?.message || error?.message || '';
 
-  console.log('=== Error Debug ===');
-  console.log('errorCode:', errorCode);
-  console.log('backendMessage:', backendMessage);
-
   // 에러 코드로 매칭 (백엔드 ReviewErrorCode.java와 동일한 순서 및 메시지)
   switch (errorCode) {
     // === 001~099: 입력값 검증 오류 (400 Bad Request) ===

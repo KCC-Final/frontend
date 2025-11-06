@@ -39,7 +39,6 @@ function DraftListModal({ onClose, onSelect }: DraftListModalProps) {
       const drafts = await fetchGroo.review.getDrafts();
       setDrafts(drafts || []);
     } catch (error: any) {
-      console.error('임시저장 목록 조회 실패:', error);
       alert(getReviewErrorMessage(error));
     } finally {
       setIsLoading(false);
@@ -58,7 +57,6 @@ function DraftListModal({ onClose, onSelect }: DraftListModalProps) {
       alert('삭제되었습니다.');
       setDrafts(drafts.filter((draft) => draft.reviewId !== draftId));
     } catch (error: any) {
-      console.error('임시저장 글 삭제 실패:', error);
       alert(getReviewErrorMessage(error));
     }
   };

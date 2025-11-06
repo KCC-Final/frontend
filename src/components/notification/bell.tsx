@@ -21,9 +21,7 @@ export default function NotificationBell() {
       try {
         const res = await fetchGroo.notification.getUnreadCount();
         setUnreadCount(res.data || 0);
-      } catch (e) {
-        console.error('Failed to fetch unread count:', e);
-      }
+      } catch (e) {}
     })();
   }, [setUnreadCount]);
 

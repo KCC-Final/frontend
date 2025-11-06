@@ -21,12 +21,11 @@ export const notification = {
     eventSource.addEventListener('alert', (event) => {
       try {
         const raw = JSON.parse(event.data);
-        // 필드명 안전 보정 (sendAt or sentAt)
         const normalized = {
           alertId: raw.alertId,
           type: raw.type,
           content: raw.content,
-          sendAt: raw.sendAt ?? raw.sentAt ?? null, // ← 핵심
+          sendAt: raw.sendAt ?? raw.sentAt ?? null,
           senderType: raw.senderType,
           senderId: raw.senderId,
           detailSenderId: raw.detailSenderId,
@@ -34,15 +33,13 @@ export const notification = {
           senderUserId: raw.senderUserId,
           alertsCheckStatus: raw.alertsCheckStatus
         };
-
         onMessage(normalized);
-      } catch (error) {
-        console.error('Failed to parse SSE data:', error);
+      } catch {
+        /* ignore malformed event */
       }
     });
 
     eventSource.onerror = (error) => {
-      console.error('SSE connection error:', error);
       if (onError) onError(error);
       eventSource.close();
     };

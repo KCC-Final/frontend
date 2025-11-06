@@ -1,6 +1,7 @@
 /**
  * 저자 문자열에서 ' (지은이)' 부분을 기준으로 주 저자만 추출합니다.
- * @param authorString - 저자 정보 문자열 (e.g., "홍길동 (지은이), 최윤성 (옮긴이)")
+ * "지은이:", "저자:" 등의 접두어도 제거합니다.
+ * @param authorString - 저자 정보 문자열 (e.g., "홍길동 (지은이), 최윤성 (옮긴이)" 또는 "지은이: 홍길동")
  * @returns 추출된 주 저자 이름. " (지은이)"가 없으면 첫 번째 저자 또는 전체 문자열을 반환합니다.
  */
 export const formatBookAuthor = (authorString: string): string => {
@@ -9,8 +10,14 @@ export const formatBookAuthor = (authorString: string): string => {
     return '';
   }
 
+  // "지은이: " 패턴 제거
+  let cleanedAuthor = authorString.replace(/^지은이:\s*/i, '').trim();
+
+  // "저자: " 패턴도 제거
+  cleanedAuthor = cleanedAuthor.replace(/^저자:\s*/i, '').trim();
+
   // 주 저자 추출
-  const authors = authorString.split(',').map((s) => s.trim());
+  const authors = cleanedAuthor.split(',').map((s) => s.trim());
   const primaryAuthorEntry = authors.find((author) => author.includes('(지은이)'));
 
   // ' (지은이)'가 포함되어있는 경우 해당 저자 이름만 반환

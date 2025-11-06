@@ -116,7 +116,11 @@ function UserProfileCard({ userId, user, stats }: UserProfileCardProps) {
 
   return (
     <section className={styles.container}>
-      <UserProfileImage userId={myInfo.userId} profileImage={myInfo.profileImage} size={180} />
+      <UserProfileImage
+        userId={user ? user.userId : userInfo.userId}
+        profileImage={user ? user.profileImage : userInfo.profileImage}
+        size={180}
+      />
       <div className={styles.info}>
         <div className={styles.header}>
           <div className={styles.name}>

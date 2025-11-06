@@ -32,8 +32,6 @@ import styles from '@/components/reviews/write/review-create.module.scss';
 import { ReviewCreateReqBody, ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
-const MAX_CONTENT_LENGTH = 10000;
-
 const extractSecondCategory = (categoryName: string): string | null => {
   const categories = categoryName.split('>');
   if (categories.length >= 2) {
@@ -157,9 +155,7 @@ function ReviewCreatePage() {
         const extractedCategory = extractSecondCategory(bookData.categoryName);
         setCategory(extractedCategory);
       }
-    } catch (error) {
-      console.error('ISBN으로 도서 정보 불러오기 실패:', error);
-    }
+    } catch (error) {}
   };
 
   const loadDraft = async (id: number) => {

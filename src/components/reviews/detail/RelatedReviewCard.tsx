@@ -1,3 +1,6 @@
+/**
+ * @author uyh
+ */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -41,6 +44,7 @@ export default function RelatedReviewCard({ review }: Props) {
       <BookCover
         isbn={review.isbn}
         title={review.reviewTitle}
+        reviewId={review.reviewId}
         className={styles.coverSection}
         noImageClassName={styles.noCover}
       />

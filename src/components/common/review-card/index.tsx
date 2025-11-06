@@ -1,3 +1,6 @@
+/**
+ * @author uyh
+ */
 'use client';
 
 import clsx from 'clsx';
@@ -48,7 +51,6 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
           setImgFetchingError(true);
         }
       } catch (error) {
-        console.error('Failed to fetch book cover image:', error);
         setImgFetchingError(true);
       } finally {
         setImgLoading(false);
@@ -61,15 +63,16 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
   // 커버 이미지 URL 결정 (로딩 중이거나 에러 시 기본 이미지 사용)
   const finalImgSrc = !isImgLoading && !imgFetchingError && imgUrl ? imgUrl : null;
 
+  // dicebear 배경 URL 생성 (reviewId를 시드로 사용)
+  const dicebearBgUrl = `url(https://api.dicebear.com/9.x/glass/svg?seed=${review.reviewId})`;
+
   return (
     <li className={clsx(styles.container, size === 3 ? styles.size3 : styles.size4)}>
       {/* 커버 이미지 섹션 (클릭 가능) */}
       <Link href={`/reviews/${review.reviewId}`}>
         <div
           className={styles.cover_bg}
-          style={
-            finalImgSrc ? ({ '--background-image': `url(${finalImgSrc})` } as React.CSSProperties) : undefined
-          }>
+          style={{ '--background-image': dicebearBgUrl } as React.CSSProperties}>
           {/* 로딩 중 UI */}
           {isImgLoading && (
             <div className={styles.placeholder}>
