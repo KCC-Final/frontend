@@ -42,7 +42,7 @@ async function BookRecommendationPage() {
   }
 
   return (
-    <GlobalLayout wide={true}>
+    <GlobalLayout size="lg">
       <BookRecommendation initialPopularBooks={initialPopularBooks} />
     </GlobalLayout>
   );

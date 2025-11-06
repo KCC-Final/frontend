@@ -4,14 +4,14 @@ import MainLayout from '@/components/common/layout/main';
 
 interface GlobalLayoutProps {
   children: React.ReactNode;
-  wide?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
-function GlobalLayout({ children, wide = false }: GlobalLayoutProps) {
+function GlobalLayout({ children, size = 'md' }: GlobalLayoutProps) {
   return (
     <>
       <HeaderLayout />
-      <MainLayout wide={wide}>{children}</MainLayout>
+      <MainLayout size={size}>{children}</MainLayout>
       <Footer />
     </>
   );

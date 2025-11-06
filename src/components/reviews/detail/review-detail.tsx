@@ -256,6 +256,9 @@ export default function ReviewDetail({ reviewData }: Props) {
           )}
         </div>
 
+        {/* 도서 정보 */}
+        <BookInfo bookInfo={bookInfo} loading={loadingBook} />
+
         {/* 본문 내용 */}
         <ReviewContent reviewData={reviewData} />
 
@@ -266,9 +269,6 @@ export default function ReviewDetail({ reviewData }: Props) {
             <span className={styles.likeCount}>{likeCount}</span>
           </button>
         </div>
-
-        {/* 도서 정보 */}
-        <BookInfo bookInfo={bookInfo} loading={loadingBook} />
 
         {/* 관련 독후감 */}
         <RelatedReviews

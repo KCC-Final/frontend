@@ -1,6 +1,5 @@
 .container {
-  border-radius: 0 0 12px 12px;
-  padding: 32px;
+  padding: 32px 0;
 }
 
 .header {
@@ -34,7 +33,7 @@
   line-height: 1.6;
   resize: vertical;
   transition: all 0.2s;
-  margin-bottom: 12px;
+  margin: 16px 0;
 
   &:focus {
     outline: none;
@@ -79,7 +78,7 @@
 
 .empty {
   text-align: center;
-  padding: 60px 20px;
+  padding: 60px 0;
   color: #9ca3af;
   font-size: 14px;
 }
