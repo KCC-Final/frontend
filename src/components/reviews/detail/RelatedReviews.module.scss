@@ -23,9 +23,8 @@
 }
 
 .title {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 .tabs {
@@ -71,10 +70,10 @@
 
 .reviewList {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 4px;
+  padding: 8px 0;
 
   /* 스크롤바 숨기기 */
   scrollbar-width: none; /* Firefox */

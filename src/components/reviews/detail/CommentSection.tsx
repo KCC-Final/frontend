@@ -102,7 +102,7 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>댓글</h3>
+        <h2 className={styles.title}>댓글</h2>
         <span className={styles.count}>{comments.length}</span>
       </div>
 
