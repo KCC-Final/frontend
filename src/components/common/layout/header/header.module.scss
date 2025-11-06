@@ -1,10 +1,8 @@
-@use '@/styles/abstract/' as *;
-
 .container {
   display: flex;
   justify-content: center;
-  border-bottom: $devider-border;
-  height: $header-height;
+  border-bottom: 1px solid rgba(#000000, 0.2);
+  height: 64px;
   margin-bottom: 24px;
 }
 
@@ -12,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: $header-width;
+  width: 1320px;
   padding: 0 20px;
 
   .nav {
@@ -20,10 +18,10 @@
     gap: 2.4rem;
 
     .logo {
-      @include font-SeoulAlrim();
+      font-family: 'SeoulAlrim', sans-serif;
       font-size: 2.4rem;
       font-weight: 900;
-      color: $font-green;
+      color: #007664;
       padding: 8px 10px;
     }
 
@@ -36,7 +34,7 @@
         font-size: 2rem;
         font-weight: 500;
         padding: 8px 10px;
-        color: $black-3;
+        color: #333333;
       }
     }
   }
