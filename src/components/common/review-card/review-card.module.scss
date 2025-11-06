@@ -10,12 +10,61 @@
     box-shadow 0.2s ease-in-out;
   overflow: hidden;
 
-  &.size3 {
-    flex: 0 0 320px;
+  &.small {
+    flex: 0 0 260px;
+
+    .cover_bg,
+    .cover_img {
+      height: 150px;
+    }
+
+    .description {
+      height: calc(1.4rem * 1.6 * 2);
+      line-clamp: 2;
+      -webkit-line-clamp: 2;
+    }
+
+    .footer {
+      height: 40px;
+    }
   }
 
-  &.size4 {
+  &.medium {
+    flex: 0 0 320px;
+
+    .cover_bg,
+    .cover_img {
+      height: 180px;
+    }
+
+    .description {
+      height: calc(1.4rem * 1.6 * 3);
+      line-clamp: 3;
+      -webkit-line-clamp: 3;
+    }
+
+    .footer {
+      height: 50px;
+    }
+  }
+
+  &.large {
     flex: 0 0 300px;
+
+    .cover_bg,
+    .cover_img {
+      height: 180px;
+    }
+
+    .description {
+      height: calc(1.4rem * 1.6 * 3);
+      line-clamp: 3;
+      -webkit-line-clamp: 3;
+    }
+
+    .footer {
+      height: 50px;
+    }
   }
 
   &:hover {
@@ -27,7 +76,6 @@
 .cover_bg {
   position: relative;
   width: 100%;
-  height: 180px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,13 +93,23 @@
     background-image: var(--background-image);
     background-size: cover;
     background-position: center;
-    opacity: 0.85;
     z-index: 0;
+  }
+
+  &.dicebear {
+    &::before {
+      opacity: 0.85;
+    }
+  }
+
+  &.normal {
+    &::before {
+      filter: blur(25px);
+    }
   }
 
   .cover_img {
     width: auto;
-    height: 180px;
     object-fit: contain;
     z-index: 1;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -77,14 +135,11 @@
   .description {
     color: $font-black-4;
     line-height: 1.6;
-    height: calc(1.4rem * 1.6 * 3);
     margin-bottom: 16px;
 
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    line-clamp: 3;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
   }
 
@@ -105,7 +160,6 @@
 .footer {
   display: flex;
   justify-content: space-between;
-  height: 50px;
   align-items: center;
   padding: 0 16px;
   border-top: 1px solid $black-e;

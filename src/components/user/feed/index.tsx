@@ -128,7 +128,7 @@ function UserFeed({ userId }: UserFeedProps) {
 
       <ul className={styles.list}>
         {displayReviews.length > 0 ? (
-          displayReviews.map((review) => <ReviewCard key={review.reviewId} review={review} size={3} />)
+          displayReviews.map((review) => <ReviewCard key={review.reviewId} review={review} size={'md'} />)
         ) : (
           <div className={styles.empty}>
             <p>

@@ -4,8 +4,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 
 import { fetchGroo } from '@/apis';
-import ReviewCard from '@/components/books/review-card';
 import styles from '@/components/books/reviews.module.scss';
+import ReviewCard from '@/components/common/review-card';
 import { ReviewData } from '@/types';
 
 interface ReviewListAboutBookProps {
@@ -103,7 +103,7 @@ function ReviewListAboutBook({ isbn, coverUrl, ref, id }: ReviewListAboutBookPro
         <div className={styles.carousel_wrapper} ref={scrollRef}>
           <div className={styles.carousel_list}>
             {reviews.map((review) => (
-              <ReviewCard key={review.reviewId} review={review} coverUrl={coverUrl} />
+              <ReviewCard key={review.reviewId} review={review} size={'md'} useDicebearCover={true} />
             ))}
           </div>
         </div>
