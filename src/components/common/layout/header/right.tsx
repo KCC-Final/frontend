@@ -1,13 +1,13 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis';
 import styles from '@/components/common/layout/header/header.module.scss';
-import AlertModal from '@/components/common/modal/alert';
 import UserProfileImage from '@/components/common/profile/image';
 import NotificationBell from '@/components/notification/bell';
 import {
@@ -17,15 +17,123 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { useModalState } from '@/hooks/useModal';
 import useBoundStore from '@/stores';
+import { SearchResultItem } from '@/types/search';
 import { devLogger } from '@/utils/dev-logger';
+
 function RightNavigation() {
   const router = useRouter();
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const { myInfo, setMyInfo } = useBoundStore(
     useShallow((state) => ({ myInfo: state.myInfo, setMyInfo: state.setMyInfo }))
   );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      if (searchKeyword.trim()) {
+        performSearch(searchKeyword.trim());
+      } else {
+        setSearchResults([]);
+        setShowSearchResults(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delaySearch);
+  }, [searchKeyword]);
+
+  const performSearch = async (keyword: string) => {
+    try {
+      setIsSearching(true);
+      const response = await fetchGroo.search.searchAll(keyword);
+
+      if (response && response.data) {
+        setSearchResults(response.data.slice(0, 5));
+        setShowSearchResults(true);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      devLogger('검색 실패');
+      devLogger(error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchKeyword.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchKeyword.trim())}`);
+      setShowSearchResults(false);
+      setSearchKeyword('');
+    }
+  };
+
+  const handleResultClick = (item: SearchResultItem) => {
+    setShowSearchResults(false);
+    setSearchKeyword('');
+
+    switch (item.category) {
+      case 'USER':
+        router.push(`/users/${item.id}`);
+        break;
+      case 'REVIEW':
+        router.push(`/reviews/${item.id}`);
+        break;
+      case 'COMMENT':
+        router.push(`/reviews/${item.id}`);
+        break;
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchKeyword('');
+    setSearchResults([]);
+    setShowSearchResults(false);
+  };
+
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case 'USER':
+        return '사용자';
+      case 'REVIEW':
+        return '독후감';
+      case 'COMMENT':
+        return '댓글';
+      default:
+        return category;
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'USER':
+        return '#007664';
+      case 'REVIEW':
+        return '#d97706';
+      case 'COMMENT':
+        return '#7c3aed';
+      default:
+        return '#6b7280';
+    }
+  };
 
   const routePageHandler = (url: string) => () => {
     router.push(url);
@@ -44,14 +152,70 @@ function RightNavigation() {
 
   return (
     <nav className={styles.function}>
-      <Link href="/search">
-        <div className={styles.search}>
-          <div>검색어를 입력하세요.</div>
-          <span>
-            <Search size="20px" color="#333333" />
-          </span>
-        </div>
-      </Link>
+      <div className={styles.search_container} ref={searchRef}>
+        <form className={styles.search} onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            className={styles.search_input}
+            placeholder="검색어를 입력하세요"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onFocus={() => searchKeyword && setShowSearchResults(true)}
+          />
+          {searchKeyword && (
+            <button
+              type="button"
+              className={styles.search_clear}
+              onClick={clearSearch}
+              aria-label="검색어 지우기">
+              <X size={16} />
+            </button>
+          )}
+          <button type="submit" className={styles.search_button} aria-label="검색">
+            <Search size={20} color="#333333" />
+          </button>
+        </form>
+
+        {showSearchResults && (
+          <div className={styles.search_results}>
+            {isSearching && <div className={styles.search_loading}>검색 중...</div>}
+
+            {!isSearching && searchResults.length === 0 && (
+              <div className={styles.search_empty}>검색 결과가 없습니다</div>
+            )}
+
+            {!isSearching && searchResults.length > 0 && (
+              <>
+                <div className={styles.results_list}>
+                  {searchResults.map((item, index) => (
+                    <button
+                      key={`${item.category}-${item.id}-${index}`}
+                      className={styles.result_item}
+                      onClick={() => handleResultClick(item)}>
+                      <span
+                        className={styles.result_badge}
+                        style={{ backgroundColor: getCategoryColor(item.category) }}>
+                        {getCategoryLabel(item.category)}
+                      </span>
+                      <div className={styles.result_content}>
+                        <p className={styles.result_title}>{item.title}</p>
+                        {item.subtext && <p className={styles.result_subtext}>{item.subtext}</p>}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                <Link
+                  href={`/search?q=${encodeURIComponent(searchKeyword)}`}
+                  className={styles.show_all_button}
+                  onClick={() => setShowSearchResults(false)}>
+                  모든 결과 보기
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className={styles.user}>
         <NotificationBell />
         <DropdownMenu>
