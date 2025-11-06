@@ -1,16 +1,15 @@
 'use client';
 
-import { User, X } from 'lucide-react';
-import Image from 'next/image';
+import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { fetchGroo } from '@/apis/groo';
 import FollowButton from '@/components/common/button/follow';
 import styles from '@/components/common/modal/follow.module.scss';
+import UserProfileImage from '@/components/common/profile/image';
 import { FollowUserInfo } from '@/types';
 import { devLogger } from '@/utils/dev-logger';
-import { changeImageUrlFromBase64 } from '@/utils/format/base64';
 
 interface FollowListModalProps {
   isOpen: boolean;
@@ -88,16 +87,7 @@ function FollowListModal({ isOpen, closeModal, type, targetUserId }: FollowListM
                   <li key={user.followId} className={styles.userItem}>
                     <div className={styles.userInfo} onClick={() => handleUserClick(user.userId)}>
                       <div className={styles.profileImage}>
-                        {changeImageUrlFromBase64(user.profileImage) ? (
-                          <Image
-                            src={changeImageUrlFromBase64(user.profileImage)}
-                            alt="user profile image"
-                            width={48}
-                            height={48}
-                          />
-                        ) : (
-                          <User size={32} color="#333333" />
-                        )}
+                        <UserProfileImage userId={user.userId} profileImage={user.profileImage} size={48} />
                       </div>
                       <div className={styles.userDetails}>
                         <div className={styles.userNickname}>{user.nickname}</div>

@@ -39,7 +39,8 @@ function FollowButton({ targetUserId }: FollowButtonProps) {
 
   useEffect(() => {
     const checkFollowingStatus = async () => {
-      if (!targetUserId) {
+      // 자기 자신인 경우 API 호출하지 않음
+      if (myInfo.userId === targetUserId || !targetUserId) {
         setIsFollowing(false);
         return;
       }
@@ -54,8 +55,9 @@ function FollowButton({ targetUserId }: FollowButtonProps) {
     };
 
     checkFollowingStatus();
-  }, [targetUserId]);
+  }, [targetUserId, myInfo.userId]); // 의존성 배열에 myInfo.userId 추가
 
+  // 자기 자신이면 아예 렌더링하지 않음
   if (myInfo.userId === targetUserId) return null;
 
   return (
