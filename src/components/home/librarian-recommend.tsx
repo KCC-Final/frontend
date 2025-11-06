@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import BookCard from '@/components/common/book/book-card';
 import styles from '@/components/home/main-book.module.scss';
 import { useHomeStore } from '@/stores/home';
+import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 
 function LibrarianRecommendList() {
   const { librarianRecommendData, fetchLibrarianRecommendData } = useHomeStore();
@@ -46,8 +47,8 @@ function LibrarianRecommendList() {
             <div key={book.isbn13} className={styles.item}>
               <BookCard
                 isbn={book.isbn13}
-                title={book.title}
-                author={book.author}
+                title={formatBookTitle(book.title)}
+                author={formatBookAuthor(book.author)}
                 cover={book.cover}
                 publisher={book.publisher}
               />

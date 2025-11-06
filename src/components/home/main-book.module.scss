@@ -21,17 +21,12 @@
     scroll-behavior: smooth;
     padding: 8px 4px;
 
+    // 스크롤바 숨기기
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE/Edge
+
     &::-webkit-scrollbar {
-      height: 8px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: #555;
+      display: none; // Chrome, Safari, Opera
     }
 
     .item {
