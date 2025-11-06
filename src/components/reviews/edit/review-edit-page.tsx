@@ -18,6 +18,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -43,8 +44,8 @@ function ReviewEditPage() {
   const [loading, setLoading] = useState(true);
   const [reviewContent, setReviewContent] = useState('');
   const [charCount, setCharCount] = useState(0);
-  const MAX_TEXT_LENGTH = 10000; // 공백 제거 텍스트 기준
-  const MAX_HTML_LENGTH = 30000; // HTML 포함 기준
+  const MAX_TEXT_LENGTH = 10000;
+  const MAX_HTML_LENGTH = 30000;
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -67,7 +68,7 @@ function ReviewEditPage() {
       TextStyle,
       Color,
       CharacterCount.configure({
-        limit: MAX_HTML_LENGTH // HTML 포함 30,000자 기준으로 차단
+        limit: MAX_HTML_LENGTH
       }),
       TaskList,
       TaskItem.configure({
@@ -200,20 +201,15 @@ function ReviewEditPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <button onClick={() => router.back()} className={styles.backButton}>
-          뒤로가기
+        <button onClick={() => router.back()} className={styles.backButton} aria-label="뒤로가기">
+          <ArrowLeft size={20} />
         </button>
         <h1>독후감 수정</h1>
         <div className={styles.placeholder}></div>
       </div>
 
       <div className={styles.content}>
-        {selectedBook && (
-          <section className={styles.bookSection}>
-            <BookInfoCard book={selectedBook} onRemove={() => {}} readOnly />
-          </section>
-        )}
-
+        {/* 독후감 제목 - 맨 위로 */}
         <section className={styles.titleSection}>
           <input
             type="text"
@@ -224,6 +220,14 @@ function ReviewEditPage() {
           />
         </section>
 
+        {/* 도서 정보 - 제목 아래로 */}
+        {selectedBook && (
+          <section className={styles.bookSection}>
+            <BookInfoCard book={selectedBook} onRemove={() => {}} readOnly />
+          </section>
+        )}
+
+        {/* 본문 에디터 - 제일 아래 */}
         <section className={styles.editorSection}>
           {editor && <EditorToolbar editor={editor} />}
           <div className={editorStyles.editorContent}>

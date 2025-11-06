@@ -60,9 +60,5 @@ export default function ReviewDetailPage() {
     );
   }
 
-  return (
-    <div className={styles.container}>
-      <ReviewDetail reviewData={reviewData} />
-    </div>
-  );
+  return <ReviewDetail reviewData={reviewData} />;
 }

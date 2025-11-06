@@ -19,8 +19,8 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>('');
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
 
-  // handleSubmit 함수 수정
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -43,17 +43,39 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
     }
   };
 
-  // 최상위 댓글만 필터링
   const topLevelComments = comments.filter((comment) => !comment.parentId);
 
-  // 특정 댓글의 답글 가져오기
   const getReplies = (parentId: number): CommentData[] => {
     return comments.filter((comment) => comment.parentId === parentId);
   };
 
-  // 재귀적으로 댓글 렌더링
+  const getReplyCount = (parentId: number): number => {
+    const directReplies = getReplies(parentId);
+    let count = directReplies.length;
+
+    directReplies.forEach((reply) => {
+      count += getReplyCount(reply.commentId);
+    });
+
+    return count;
+  };
+
+  const toggleReplies = (commentId: number) => {
+    setExpandedComments((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(commentId)) {
+        newSet.delete(commentId);
+      } else {
+        newSet.add(commentId);
+      }
+      return newSet;
+    });
+  };
+
   const renderComment = (comment: CommentData, depth: number = 0) => {
     const replies = getReplies(comment.commentId);
+    const replyCount = getReplyCount(comment.commentId);
+    const showReplies = expandedComments.has(comment.commentId);
 
     return (
       <div key={comment.commentId}>
@@ -63,10 +85,12 @@ export default function CommentSection({ comments, onSubmit, onUpdate, onDelete 
           onDelete={onDelete}
           onReply={onSubmit}
           depth={depth}
+          replyCount={replyCount}
+          onToggleReplies={replyCount > 0 ? () => toggleReplies(comment.commentId) : undefined}
+          showReplies={showReplies}
         />
 
-        {/* 답글들을 재귀적으로 렌더링 */}
-        {replies.length > 0 && (
+        {showReplies && replies.length > 0 && (
           <div className={styles.replyContainer}>
             {replies.map((reply) => renderComment(reply, depth + 1))}
           </div>

@@ -18,6 +18,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -45,7 +46,7 @@ function ReviewCreatePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draftId');
-  const fromPath = searchParams.get('from'); // 이전 페이지 경로
+  const fromPath = searchParams.get('from');
 
   const [selectedBook, setSelectedBook] = useState<AladinBook | null>(null);
   const [category, setCategory] = useState<string | null>(null);
@@ -286,21 +287,16 @@ function ReviewCreatePage() {
     }
   };
 
-  // 뒤로가기 핸들러
   const handleBack = () => {
     if (fromPath) {
-      // from 파라미터가 있으면 해당 경로로 이동
       router.push(fromPath);
     } else {
-      // 없으면 기본 뒤로가기
       router.back();
     }
   };
 
-  // 임시저장 목록에서 선택 시 핸들러 (replace 사용)
   const handleDraftSelect = (selectedDraftId: number) => {
     setIsDraftModalOpen(false);
-    // from 파라미터를 유지하면서 draftId만 변경
     const params = new URLSearchParams();
     params.set('draftId', selectedDraftId.toString());
     if (fromPath) {
@@ -312,8 +308,8 @@ function ReviewCreatePage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <button onClick={handleBack} className={styles.backButton}>
-          뒤로가기
+        <button onClick={handleBack} className={styles.backButton} aria-label="뒤로가기">
+          <ArrowLeft size={20} />
         </button>
         <h1>독후감 작성</h1>
         <button onClick={() => setIsDraftModalOpen(true)} className={styles.draftButton}>
@@ -321,16 +317,6 @@ function ReviewCreatePage() {
         </button>
       </div>
       <div className={styles.content}>
-        <section className={styles.bookSection}>
-          {selectedBook ? (
-            <BookInfoCard book={selectedBook} onRemove={() => setIsBookModalOpen(true)} />
-          ) : (
-            <button onClick={() => setIsBookModalOpen(true)} className={styles.selectBookButton}>
-              도서 선택
-            </button>
-          )}
-        </section>
-
         <section className={styles.titleSection}>
           <input
             type="text"
@@ -339,6 +325,16 @@ function ReviewCreatePage() {
             placeholder="독후감 제목을 입력하세요"
             className={styles.titleInput}
           />
+        </section>
+
+        <section className={styles.bookSection}>
+          {selectedBook ? (
+            <BookInfoCard book={selectedBook} onRemove={() => setIsBookModalOpen(true)} />
+          ) : (
+            <button onClick={() => setIsBookModalOpen(true)} className={styles.selectBookButton}>
+              도서 선택
+            </button>
+          )}
         </section>
 
         <section className={styles.editorSection}>
@@ -350,7 +346,6 @@ function ReviewCreatePage() {
             {charCount.toLocaleString()} / {MAX_TEXT_LENGTH.toLocaleString()}자
           </div>
         </section>
-
         <section className={styles.optionsSection}>
           <label className={styles.checkbox}>
             <input type="checkbox" checked={isSecret} onChange={(e) => setIsSecret(e.target.checked)} />
