@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 
+import BookProfileCardButtons from '@/components/books/card-buttons';
 import BookDetails from '@/components/books/details';
 import LibraryInformation from '@/components/books/library';
 import BookNavigation from '@/components/books/navigation';
-import BookProfileCard from '@/components/books/profile-card';
 import ReviewListAboutBook from '@/components/books/reviews';
+import BookProfileCard from '@/components/common/book/profile-card';
+import { useBookStore } from '@/stores/book';
 import { AladinBookDetailsItem } from '@/types';
 
 interface BookInformationProps {
@@ -14,6 +16,7 @@ interface BookInformationProps {
 }
 
 function BookInformation({ bookInfo }: BookInformationProps) {
+  const { fetchBookStats } = useBookStore();
   const [activeSection, setActiveSection] = useState('details');
 
   const detailsRef = useRef<HTMLElement>(null);
@@ -70,9 +73,15 @@ function BookInformation({ bookInfo }: BookInformationProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (bookInfo.isbn13) fetchBookStats(bookInfo.isbn13);
+  }, [bookInfo.isbn13, fetchBookStats]);
+
   return (
     <>
-      <BookProfileCard bookInfo={bookInfo} />
+      <BookProfileCard bookInfo={bookInfo}>
+        <BookProfileCardButtons isbn={bookInfo.isbn13} />
+      </BookProfileCard>
       <BookNavigation onNavClick={handleNavClick} activeSection={activeSection} />
       <BookDetails bookInfo={bookInfo} ref={detailsRef} id="details" />
       <ReviewListAboutBook isbn={bookInfo.isbn13} coverUrl={bookInfo.cover} ref={reviewsRef} id="reviews" />

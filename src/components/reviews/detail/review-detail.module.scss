@@ -30,8 +30,6 @@
 }
 
 .titleSection {
-  background: white;
-  padding-bottom: 24px;
   width: 100%;
 
   @media (max-width: 768px) {
@@ -57,7 +55,7 @@
 }
 
 .authorSection {
-  padding: 24px 0;
+  padding: 36px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;

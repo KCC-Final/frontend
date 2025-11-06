@@ -1,6 +1,7 @@
 import styles from '@/components/books/details/details.module.scss';
 import LoanTrendChart from '@/components/books/details/Loan-trend-chart';
 import RecommendedBooks from '@/components/books/details/recommended-books';
+import { useBookStore } from '@/stores/book';
 import { AladinBookDetailsItem } from '@/types';
 
 interface BookDetailsProps {
@@ -10,6 +11,8 @@ interface BookDetailsProps {
 }
 
 function BookDetails({ bookInfo, ref, id }: BookDetailsProps) {
+  const { reviewCount, scrapCount } = useBookStore();
+
   const ratingPercentage = (bookInfo.customerReviewRank / 10) * 100;
 
   return (
@@ -57,9 +60,9 @@ function BookDetails({ bookInfo, ref, id }: BookDetailsProps) {
         <div className={styles.info_table}>
           <div className={styles.info_items}>
             <span className={styles.label}>작성된 독후감</span>
-            <span className={styles.value}>1,243개</span>
+            <span className={styles.value}>{reviewCount}개</span>
             <span className={styles.label}>스크랩 수</span>
-            <span className={styles.value}>512회</span>
+            <span className={styles.value}>{scrapCount}회</span>
           </div>
           <div className={styles.info_items}>
             <span className={styles.label}>알라딘 리뷰</span>

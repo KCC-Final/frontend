@@ -1,21 +1,19 @@
 'use client';
 
 import { Bookmark, BookOpen, Plus } from 'lucide-react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
 import { fetchGroo } from '@/apis';
-import styles from '@/components/books/profile-card.module.scss';
-import { AladinBookDetailsItem } from '@/types';
-import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
+import styles from '@/components/books/card-buttons.module.scss';
 
-interface BookProfileCardProps {
-  bookInfo: AladinBookDetailsItem;
+interface BookProfileCardButtonsProps {
+  isbn: string;
 }
 
-function BookProfileCard({ bookInfo }: BookProfileCardProps) {
+function BookProfileCardButtons({ isbn }: BookProfileCardButtonsProps) {
   const router = useRouter();
+
   const [isScraped, setIsScraped] = useState(false);
   const [isCheckingScrap, setIsCheckingScrap] = useState(true);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -29,12 +27,10 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
   const [isCreatingBookshelf, setIsCreatingBookshelf] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const ratingPercentage = (bookInfo.customerReviewRank / 10) * 100;
-
   useEffect(() => {
     fetchBookshelves();
     checkIfScraped();
-  }, [bookInfo.isbn13]);
+  }, [isbn]);
 
   useEffect(() => {
     if (showCreateInput) inputRef.current?.focus();
@@ -44,33 +40,30 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     try {
       const data = await fetchGroo.bookshelf.getBookshelfList();
       setBookshelves(data);
-    } catch (error) {}
+    } catch {}
   };
 
   const checkIfScraped = async () => {
     setIsCheckingScrap(true);
     try {
       const shelves = await fetchGroo.bookshelf.getBookshelfList();
-
       for (const shelf of shelves) {
         try {
-          const scrap = await fetchGroo.bookshelf.getBookScrap(shelf.bookshelfId, bookInfo.isbn13);
-
+          const scrap = await fetchGroo.bookshelf.getBookScrap(shelf.bookshelfId, isbn);
           if (scrap) {
             setIsScraped(true);
             setSelectedBookshelf(shelf);
             setShowScrapManagement(true);
             return;
           }
-        } catch (error) {
+        } catch {
           continue;
         }
       }
-
       setIsScraped(false);
       setSelectedBookshelf(null);
       setShowScrapManagement(false);
-    } catch (error) {
+    } catch {
       setIsScraped(false);
       setSelectedBookshelf(null);
       setShowScrapManagement(false);
@@ -83,9 +76,7 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     if (isScraped && selectedBookshelf) {
       if (confirm('스크랩을 제거하시겠습니까?')) {
         try {
-          const { bookshelf } = await import('@/apis/groo/bookshelf');
-
-          await fetchGroo.bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, bookInfo.isbn13);
+          await fetchGroo.bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, isbn);
 
           setIsScraped(false);
           setShowScrapManagement(false);
@@ -103,10 +94,9 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
   const handleCategorySelect = async (bookshelfId: number, name: string) => {
     try {
-      // 수정: 백엔드 DTO 형식에 맞게 대문자 ISBN 사용
       const requestData = {
         bookshelfId: bookshelfId,
-        ISBN: bookInfo.isbn13 // 대문자 ISBN
+        ISBN: isbn // 대문자 ISBN
       };
 
       await fetchGroo.bookshelf.createBookScrap(requestData);
@@ -125,7 +115,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     }
   };
 
-  // 수정: 카테고리 변경 로직 - 백엔드 응답 직접 활용
   const handleChangeCategory = async (bookshelfId: number, name: string) => {
     if (!selectedBookshelf) return;
 
@@ -140,16 +129,8 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     }
 
     try {
-      // 1단계: 기존 책장에서 삭제
-      await fetchGroo.bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, bookInfo.isbn13);
+      await fetchGroo.bookshelf.deleteBookScrap(selectedBookshelf.bookshelfId, isbn);
 
-      // 2단계: 새 책장에 추가
-      const newScrap = await fetchGroo.bookshelf.createBookScrap({
-        bookshelfId: bookshelfId,
-        ISBN: bookInfo.isbn13
-      });
-
-      // 해결: 백엔드 응답을 기반으로 상태 즉시 업데이트 (DB 데이터 확정)
       setIsScraped(true);
       setSelectedBookshelf({ bookshelfId, name });
       setShowScrapManagement(true);
@@ -163,8 +144,9 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
       await checkIfScraped();
     }
   };
+
   const handleWriteReview = () => {
-    router.push(`/reviews/write?isbn=${bookInfo.isbn13}&from=/books/${bookInfo.isbn13}`);
+    router.push(`/reviews/write?isbn=${isbn}&from=/books/${isbn}`);
   };
 
   const handleCreateBookshelf = async () => {
@@ -177,7 +159,6 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
     try {
       const newShelf = await fetchGroo.bookshelf.createBookshelf({ name: newBookshelfName.trim() });
 
-      // 새로 만든 책장에 바로 스크랩
       if (isScraped && selectedBookshelf) {
         await handleChangeCategory(newShelf.bookshelfId, newShelf.name);
       } else {
@@ -187,7 +168,7 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
       await fetchBookshelves();
       setNewBookshelfName('');
       setShowCreateInput(false);
-    } catch (error) {
+    } catch {
       alert('책장 생성에 실패했습니다.');
     } finally {
       setIsCreatingBookshelf(false);
@@ -196,82 +177,19 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
 
   return (
     <>
-      <section className={styles.book_card}>
-        <div
-          className={styles.cover}
-          style={{ '--background-image': `url(${bookInfo.cover})` } as React.CSSProperties}>
-          <Image className={styles.img} src={bookInfo.cover} alt={bookInfo.title} width={160} height={240} />
-        </div>
-        <div className={styles.info}>
-          <div className={styles.header}>
-            <div className={styles.category}>{bookInfo.categoryName}</div>
-            <div className={styles.title}>{formatBookTitle(bookInfo.title)}</div>
-          </div>
-          <div className={styles.content}>
-            <div className={styles.book}>
-              <div className={styles.author}>
-                <span>저자</span>
-                <span>{formatBookAuthor(bookInfo.author)}</span>
-              </div>
-              <div className={styles.date}>
-                <span>출간일</span>
-                <span>{bookInfo.pubDate}</span>
-              </div>
-              <div className={styles.rank}>
-                <span>평점</span>
-                <div className={styles.rating_display}>
-                  <div className={styles.stars}>
-                    <div className={styles.background}>★★★★★</div>
-                    <div className={styles.fill} style={{ width: `${ratingPercentage}%` }}>
-                      ★★★★★
-                    </div>
-                  </div>
-                  <span className={styles.score_text}>{(bookInfo.customerReviewRank / 2).toFixed(1)}</span>
-                </div>
-              </div>
-            </div>
-            <div className={styles.groo}>
-              <div className={styles.review}>
-                <span>독후감</span>
-                <span>
-                  <span>
-                    <BookOpen size="18px" color="#333333" />
-                  </span>
-                  <span>{'1,243'}</span>
-                </span>
-              </div>
-              <div className={styles.scrap}>
-                <span>스크랩</span>
-                <span>
-                  <span>
-                    <Bookmark size="18px" color="#333333" />
-                  </span>
-                  <span>{'2,287'}</span>
-                </span>
-              </div>
-            </div>
-          </div>
-          <span className={styles.divider} />
-          <div className={styles.description}>
-            <span>책소개</span>
-            <p>{bookInfo.description}</p>
-          </div>
-
-          <div className={styles.action_buttons}>
-            <button
-              onClick={handleScrap}
-              disabled={isCheckingScrap}
-              className={`${styles.action_button} ${isScraped ? styles.scraped : ''}`}>
-              <Bookmark size={18} fill={isScraped ? 'currentColor' : 'none'} />
-              {isCheckingScrap ? '확인 중...' : isScraped ? '스크랩 완료' : '스크랩하기'}
-            </button>
-            <button onClick={handleWriteReview} className={styles.action_button}>
-              <BookOpen size={18} />
-              독후감 쓰기
-            </button>
-          </div>
-        </div>
-      </section>
+      <div className={styles.action_buttons}>
+        <button
+          onClick={handleScrap}
+          disabled={isCheckingScrap}
+          className={`${styles.action_button} ${isScraped ? styles.scraped : ''}`}>
+          <Bookmark size={18} fill={isScraped ? 'currentColor' : 'none'} />
+          {isCheckingScrap ? '확인 중...' : isScraped ? '스크랩 완료' : '스크랩하기'}
+        </button>
+        <button onClick={handleWriteReview} className={styles.action_button}>
+          <BookOpen size={18} />
+          독후감 쓰기
+        </button>
+      </div>
 
       {showScrapManagement && selectedBookshelf && (
         <section className={styles.scrap_management}>
@@ -369,4 +287,4 @@ function BookProfileCard({ bookInfo }: BookProfileCardProps) {
   );
 }
 
-export default BookProfileCard;
+export default BookProfileCardButtons;

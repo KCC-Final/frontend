@@ -4,7 +4,6 @@ import { Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
-import BookInfo from './BookInfo';
 import CommentSection from './CommentSection';
 import RelatedReviews from './RelatedReviews';
 import ReviewContent from './review-content';
@@ -14,8 +13,10 @@ import { fetchAladin } from '@/apis';
 import { comment as commentApi } from '@/apis/groo/comment';
 import { follow as followApi } from '@/apis/groo/follow';
 import { review as reviewApi } from '@/apis/groo/review';
+import BookProfileCard from '@/components/common/book/profile-card';
 import UserProfileImage from '@/components/common/profile/image';
-import { ReviewDetailResDTO, CommentData, AladinBook } from '@/types/reviews';
+import { AladinBookDetailsItem } from '@/types';
+import { ReviewDetailResDTO, CommentData } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 type Props = {
@@ -24,8 +25,7 @@ type Props = {
 
 export default function ReviewDetail({ reviewData }: Props) {
   const router = useRouter();
-  const [bookInfo, setBookInfo] = useState<AladinBook | null>(null);
-  const [loadingBook, setLoadingBook] = useState(true);
+  const [bookInfo, setBookInfo] = useState<AladinBookDetailsItem | null>(null);
   const [isLiked, setIsLiked] = useState(reviewData.liked);
   const [likeCount, setLikeCount] = useState(reviewData.likeCount);
   const [comments, setComments] = useState<CommentData[]>(reviewData.comments || []);
@@ -43,8 +43,6 @@ export default function ReviewDetail({ reviewData }: Props) {
         }
       } catch {
         setBookInfo(null);
-      } finally {
-        setLoadingBook(false);
       }
     };
 
@@ -58,7 +56,7 @@ export default function ReviewDetail({ reviewData }: Props) {
       try {
         const response = await followApi.getFollowInfo(reviewData.userId);
         setIsFollowing(response.data !== null);
-      } catch (error) {
+      } catch {
         setIsFollowing(false);
       }
     };
@@ -257,7 +255,7 @@ export default function ReviewDetail({ reviewData }: Props) {
         </div>
 
         {/* 도서 정보 */}
-        <BookInfo bookInfo={bookInfo} loading={loadingBook} />
+        {bookInfo && <BookProfileCard bookInfo={bookInfo} size="sm" />}
 
         {/* 본문 내용 */}
         <ReviewContent reviewData={reviewData} />
