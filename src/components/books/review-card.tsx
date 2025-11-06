@@ -1,11 +1,15 @@
+/**
+ * @author uyh
+ */
 'use client';
 
-import { Heart, MessageCircle, User } from 'lucide-react';
+import { Heart, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import styles from '@/components/books/reviews.module.scss';
+import UserProfileImage from '@/components/common/profile/image';
 import { ReviewData } from '@/types';
 
 interface ReviewCardProps {
@@ -20,12 +24,15 @@ function ReviewCard({ review, coverUrl }: ReviewCardProps) {
     router.push(`/reviews/${review.reviewId}`);
   };
 
+  // dicebear 배경 URL 생성
+  const dicebearBgUrl = `url(https://api.dicebear.com/9.x/glass/svg?seed=${review.reviewId})`;
+
   return (
     <div className={styles.review_card}>
       {/* 커버 이미지 섹션 (클릭 가능) */}
       <div
         className={styles.card_cover}
-        style={{ '--background-image': `url(${coverUrl})` } as React.CSSProperties}
+        style={{ '--background-image': dicebearBgUrl } as React.CSSProperties}
         onClick={handleCardClick}>
         <Image
           className={styles.cover_img}
@@ -40,12 +47,10 @@ function ReviewCard({ review, coverUrl }: ReviewCardProps) {
       <div className={styles.card_content}>
         {/* 작성자 정보 */}
         <div className={styles.author_info}>
-          <div className={styles.author_avatar}>
-            <User size={24} />
-          </div>
+          <UserProfileImage userId={review.userId} profileImage={review.authorProfileImage} size={40} />
           <div className={styles.author_details}>
             <Link href={`/users/${review.userId}`} className={styles.author_nickname}>
-              {review.userId}
+              {review.authorNickname || review.userId}
             </Link>
             <span className={styles.created_at}>{new Date(review.createdAt).toLocaleDateString()}</span>
           </div>
