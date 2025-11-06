@@ -2,40 +2,13 @@
 
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
-import { fetchGroo } from '@/apis/groo';
 import styles from '@/components/home/home.module.scss';
-import { DailyQuoteData } from '@/types';
+import { useHomeStore } from '@/stores/home';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
-import { setMidnightTimer } from '@/utils/time';
 
-interface TodaySentenceProps {
-  initialQuoteData: DailyQuoteData | null;
-}
-
-function TodaySentence({ initialQuoteData }: TodaySentenceProps) {
-  const [quoteData, setQuoteData] = useState<DailyQuoteData | null>(initialQuoteData);
-
-  useEffect(() => {
-    const fetchQuote = async () => {
-      try {
-        const response = await fetchGroo.book.getDailyQuote();
-        if (response.data) {
-          setQuoteData(response.data);
-        }
-      } catch (error) {
-        console.error('오늘의 한 문장을 불러오는 데 실패했습니다.', error);
-        setQuoteData(null);
-      }
-    };
-
-    // 유틸 함수로 타이머 설정하고, cleanup 함수를 받아옴
-    const cleanup = setMidnightTimer(fetchQuote);
-
-    // 컴포넌트 언마운트 시 cleanup 실행
-    return cleanup;
-  }, []);
+function TodaySentence() {
+  const { quoteData } = useHomeStore();
 
   if (!quoteData) {
     return null;
