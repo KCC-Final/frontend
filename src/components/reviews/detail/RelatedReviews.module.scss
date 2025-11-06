@@ -2,7 +2,6 @@
   background: #ffffff;
   border-radius: 0;
   box-shadow: none;
-  border-bottom: 1px solid #e5e7eb;
   padding: 32px;
 }
 
@@ -17,9 +16,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e5e7eb;
+  margin: 24px 0px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -29,9 +26,8 @@
 }
 
 .title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
   margin: 0;
 }
 

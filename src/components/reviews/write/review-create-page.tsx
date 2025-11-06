@@ -32,8 +32,6 @@ import styles from '@/components/reviews/write/review-create.module.scss';
 import { ReviewCreateReqBody, ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
-const MAX_CONTENT_LENGTH = 10000;
-
 const extractSecondCategory = (categoryName: string): string | null => {
   const categories = categoryName.split('>');
   if (categories.length >= 2) {

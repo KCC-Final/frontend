@@ -1,6 +1,5 @@
 .container {
   border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   padding: 32px;
 }
 
@@ -8,15 +7,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e5e7eb;
+  margin: 24px 0;
 }
 
 .title {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
 }
 
 .count {
