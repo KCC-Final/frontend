@@ -1,7 +1,7 @@
-import Search from '@/components/search';
+import IntegratedSearch from '@/components/search';
 
 function SearchPage() {
-  return <Search />;
+  return <IntegratedSearch />;
 }
 
 export default SearchPage;
