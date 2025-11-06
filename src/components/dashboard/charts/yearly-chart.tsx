@@ -97,7 +97,6 @@ export default function YearlyChart() {
         }
       });
     } catch (err) {
-      console.error(err);
       setChartError('차트 렌더링 중 오류가 발생했습니다.');
     }
 

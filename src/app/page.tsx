@@ -11,6 +11,7 @@ async function BookRecommendationPage() {
 
   // 초기 인기 대출도서 데이터 페칭 (전국 기준)
   let initialPopularBooks: Book[] = [];
+
   try {
     const response = await fetchLibrary.getPopularBooks(startDate, endDate, 1, 12);
 
@@ -37,8 +38,9 @@ async function BookRecommendationPage() {
       }));
     }
   } catch (error) {
-    console.error('[메인 페이지] 초기 인기 대출도서 조회 실패:', error);
+    // 오류는 무시 (사용자에게 노출하지 않음)
   }
+
   return (
     <GlobalLayout wide={true}>
       <BookRecommendation initialPopularBooks={initialPopularBooks} />

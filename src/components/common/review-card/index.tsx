@@ -48,7 +48,6 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
           setImgFetchingError(true);
         }
       } catch (error) {
-        console.error('Failed to fetch book cover image:', error);
         setImgFetchingError(true);
       } finally {
         setImgLoading(false);

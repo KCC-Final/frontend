@@ -64,9 +64,7 @@ function GroupCommentItem({ comment, depth, groupId, currentUserId, isOwner, ref
         setNickname(userInfo.nickname);
         setProfileImage(userInfo.profileImage);
         nicknameCache.set(comment.userId, userInfo);
-      } catch (error) {
-        console.error('닉네임 조회 실패:', error);
-      }
+      } catch (error) {}
     };
 
     // 서버에서 닉네임이 내려오지 않았을 때만 요청
@@ -106,7 +104,6 @@ function GroupCommentItem({ comment, depth, groupId, currentUserId, isOwner, ref
       alert('댓글이 삭제되었습니다.');
       await refreshComments();
     } catch (error) {
-      console.error('댓글 삭제 실패:', error);
       alert('댓글 삭제에 실패했습니다.');
     }
   };

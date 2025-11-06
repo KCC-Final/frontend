@@ -38,7 +38,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
           }));
         },
         (error) => {
-          console.error('[SSE Error]', error);
           eventSource?.close();
           eventSource = null;
           // 3초 후 자동 재연결

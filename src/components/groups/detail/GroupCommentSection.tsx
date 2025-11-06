@@ -27,9 +27,7 @@ function GroupCommentSection({ comments, groupId, isOwner, currentUserId, refres
       await refreshComments();
       setNewComment('');
       setIsSecret(false);
-    } catch (e) {
-      console.error('댓글 등록 실패:', e);
-    }
+    } catch (e) {}
   };
 
   const buildTree = (list: GroupCommentData[]) => {

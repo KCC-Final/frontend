@@ -65,7 +65,6 @@ export default function LoanTrendChart({ isbn13 }: LoanTrendChartProps) {
 
       setData(formatted.slice(-12)); // 최근 12개월만 표시
     } catch (err) {
-      console.error('대출 추이 데이터 불러오기 실패:', err);
       setData([]);
     } finally {
       setLoading(false);

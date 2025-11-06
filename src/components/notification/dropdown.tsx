@@ -134,7 +134,6 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
       );
       setAlerts(list);
     } catch (error) {
-      console.error('Failed to fetch notifications:', error);
     } finally {
       setIsLoading(false);
     }
@@ -144,9 +143,7 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
     try {
       const response = await fetchGroo.notification.getUnreadCount();
       setUnreadCount(response.data || 0);
-    } catch (error) {
-      console.error('Failed to fetch unread count:', error);
-    }
+    } catch (error) {}
   };
 
   const handleReadNotification = async (alertId: number) => {
@@ -158,9 +155,7 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
         alerts.map((alert) => (alert.alertId === alertId ? { ...alert, alertsCheckStatus: true } : alert))
       );
       setUnreadCount(Math.max(0, unreadCount - 1));
-    } catch (error) {
-      console.error('Failed to update notification status:', error);
-    }
+    } catch (error) {}
   };
 
   const handleReadAll = async () => {
@@ -174,9 +169,7 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
 
       setAlerts(alerts.map((a) => ({ ...a, alertsCheckStatus: true })));
       resetUnread();
-    } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

@@ -57,9 +57,7 @@ function ReadingGroupDetail() {
           localStorage.setItem('userId', myId);
           setCurrentUserId(myId);
         }
-      } catch (e) {
-        console.error('현재 사용자 정보 조회 실패:', e);
-      }
+      } catch (e) {}
     };
     fetchUserId();
   }, []);
@@ -86,7 +84,6 @@ function ReadingGroupDetail() {
           setIsOwner(String(detail.group.userId) === String(currentUserId));
         }
       } catch (error) {
-        console.error('상세 페이지 로드 실패:', error);
       } finally {
         setLoadingBook(false);
       }
@@ -113,9 +110,7 @@ function ReadingGroupDetail() {
         const res = await group.createScrap(groupData.groupId);
         setIsScrapped(res.data ?? true);
       }
-    } catch (e) {
-      console.error('스크랩 토글 실패:', e);
-    }
+    } catch (e) {}
   };
 
   return (

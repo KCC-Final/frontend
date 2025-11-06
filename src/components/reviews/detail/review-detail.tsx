@@ -138,8 +138,6 @@ export default function ReviewDetail({ reviewData }: Props) {
         alert('팔로우 했습니다.');
       }
     } catch (error: any) {
-      console.error('팔로우 처리 실패:', error);
-
       if (error?.response?.data?.message) {
         alert(error.response.data.message);
       } else {

@@ -155,9 +155,7 @@ function ReviewCreatePage() {
         const extractedCategory = extractSecondCategory(bookData.categoryName);
         setCategory(extractedCategory);
       }
-    } catch (error) {
-      console.error('ISBN으로 도서 정보 불러오기 실패:', error);
-    }
+    } catch (error) {}
   };
 
   const loadDraft = async (id: number) => {

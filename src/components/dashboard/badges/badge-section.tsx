@@ -33,7 +33,6 @@ function BadgeSection() {
         const badgeList = await challenge.getAllBadgesWithStatus(userId);
         setBadges(badgeList);
       } catch (err: any) {
-        console.error('뱃지 조회 실패:', err);
       } finally {
         setLoading(false);
       }

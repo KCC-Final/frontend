@@ -30,7 +30,6 @@ export function formatRelativeTime(dateInput: string | Date): string {
       return format(date, 'yy년 MM월 dd일', { locale: ko });
     }
   } catch (error) {
-    console.error('Error formatting date:', error);
     return '날짜 형식 오류'; // 오류 발생 시 대체 텍스트
   }
 }
