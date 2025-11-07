@@ -1,48 +1,67 @@
 .container {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
+  min-height: 100vh;
+  background-color: #fafafa;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 2px solid #e5e7eb;
-
-  .backButton {
-    padding: 8px 10px;
-    background: #f3f4f6;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      background: #e5e7eb;
-    }
-  }
+  border-bottom: 2px solid #e0e0e0;
 
   h1 {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     font-size: 28px;
-    font-weight: bold;
-    color: #111827;
+    font-weight: 700;
+    color: #1f2937;
     margin: 0;
   }
 
-  .placeholder {
-    flex-shrink: 0;
-    width: 100px;
+  .backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    transition: all 0.2s;
+
+    &:hover {
+      color: #1f2937;
+      background: #f3f4f6;
+      border-radius: 6px;
+    }
+  }
+
+  .headerActions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .thumbnailButton {
+    padding: 8px 16px;
+    background: #007664;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #006554;
+    }
+
+    &:active {
+      background: #005544;
+    }
   }
 }
 
@@ -53,78 +72,72 @@
 }
 
 .titleSection {
-  position: relative;
-
   .titleInput {
     width: 100%;
     padding: 16px;
     font-size: 20px;
     font-weight: 600;
-    border: 2px solid #e5e7eb;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     outline: none;
     transition: all 0.2s;
 
     &:focus {
-      border-color: #3b82f6;
+      border-color: #007664;
+      box-shadow: 0 0 0 3px rgba(0, 118, 100, 0.1);
     }
 
     &::placeholder {
       color: #9ca3af;
-      font-weight: 400;
     }
+  }
+}
+
+/* 썸네일 미리보기 섹션 */
+.thumbnailPreviewSection {
+  margin: 10px 0;
+}
+
+.thumbnailPreview {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
 .bookSection {
-  padding: 20px;
-  background: #f9fafb;
+  background: white;
+  padding: 16px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e0e0e0;
 }
 
 .editorSection {
-  position: relative;
-  background: #fff;
-  border: 2px solid #e5e7eb;
+  background: white;
   border-radius: 8px;
-  overflow: hidden;
-  padding-bottom: 44px;
+  border: 1px solid #e0e0e0;
+  padding: 16px;
+}
 
-  :global(.ProseMirror) {
-    min-height: 400px;
-    padding: 20px 20px 48px;
-    outline: none;
+.characterCount {
+  text-align: right;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 8px;
 
-    &:focus {
-      outline: none;
-    }
-
-    p.is-editor-empty:first-child::before {
-      color: #adb5bd;
-      content: attr(data-placeholder);
-      float: left;
-      height: 0;
-      pointer-events: none;
-    }
-  }
-
-  .characterCount {
-    position: absolute;
-    right: 16px;
-    bottom: 10px;
-    font-size: 13px;
-    color: #6b7280;
-    background: #f9fafb;
-    border-radius: 6px;
-    padding: 3px 8px;
-    pointer-events: none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-
-    &.exceeded {
-      color: #ef4444;
-      font-weight: 500;
-    }
+  &.exceeded {
+    color: #ef4444;
+    font-weight: 600;
   }
 }
 
@@ -132,15 +145,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: #f9fafb;
+  padding: 16px;
+  background: white;
   border-radius: 8px;
+  border: 1px solid #e0e0e0;
 
   .checkbox {
     display: flex;
     align-items: center;
     gap: 8px;
-    cursor: pointer;
     font-size: 14px;
     color: #374151;
 
@@ -169,6 +182,10 @@
       &:hover {
         background: #2563eb;
       }
+
+      &:active {
+        background: #1d4ed8;
+      }
     }
   }
 }
@@ -182,28 +199,35 @@
   color: #6b7280;
 }
 
+/* 반응형 */
 @media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
   .header {
-    position: relative;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 12px;
 
     h1 {
-      position: static;
-      transform: none;
       font-size: 24px;
       width: 100%;
       text-align: center;
     }
 
-    .placeholder {
-      display: none;
+    .headerActions {
+      width: 100%;
+      justify-content: center;
     }
   }
 
   .titleSection .titleInput {
     font-size: 18px;
+    padding: 14px;
+  }
+
+  .thumbnailPreview {
+    max-width: 100%;
   }
 
   .optionsSection {

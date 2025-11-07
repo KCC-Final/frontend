@@ -25,12 +25,12 @@ function ReviewCard({ review, size = 'lg', useDicebearCover = false }: ReviewCar
 
   useEffect(() => {
     // isbn이 없으면 이미지 로딩 실패 처리
-    if (!review.isbn) {
+    if (review.customThumbnail) {
+      setImgUrl(review.customThumbnail);
       setImgLoading(false);
-      setImgFetchingError(true);
+      setImgFetchingError(false);
       return;
     }
-
     /** 이미지 URL 가져오기 함수 */
     const getCoverImageUrl = async () => {
       // 상태 초기화

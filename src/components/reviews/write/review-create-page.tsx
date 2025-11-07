@@ -29,6 +29,7 @@ import DraftListModal from '@/components/reviews/write/draft-list-modal';
 import editorStyles from '@/components/reviews/write/editor-content.module.scss';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import styles from '@/components/reviews/write/review-create.module.scss';
+import ThumbnailModal from '@/components/reviews/write/thumbnail-modal';
 import { ReviewCreateReqBody, ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
@@ -45,6 +46,7 @@ function ReviewCreatePage() {
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draftId');
   const fromPath = searchParams.get('from');
+  const [customThumbnail, setCustomThumbnail] = useState<string | null>(null);
 
   const [selectedBook, setSelectedBook] = useState<AladinBook | null>(null);
   const [category, setCategory] = useState<string | null>(null);
@@ -158,6 +160,32 @@ function ReviewCreatePage() {
     } catch (error) {}
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      alert('이미지 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCustomThumbnail(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setCustomThumbnail(null);
+  };
+
   const loadDraft = async (id: number) => {
     try {
       const draft = await fetchGroo.review.getDraft(id);
@@ -165,6 +193,9 @@ function ReviewCreatePage() {
         setTitle(draft.reviewTitle);
         editor?.commands.setContent(draft.reviewContent);
         setIsSecret(false);
+        if (draft.customThumbnail) {
+          setCustomThumbnail(draft.customThumbnail);
+        }
         if (draft.isbn) {
           await loadBookInfo(draft.isbn);
         }
@@ -212,7 +243,8 @@ function ReviewCreatePage() {
       reviewContent: editor.getHTML(),
       secret: isSecret,
       temporary: true,
-      category: category
+      category: category,
+      customThumbnail: customThumbnail || undefined
     };
     try {
       await fetchGroo.review.createReview(requestData);
@@ -261,7 +293,8 @@ function ReviewCreatePage() {
           reviewTitle: title,
           reviewContent: content,
           secret: isSecret,
-          temporary: false
+          temporary: false,
+          customThumbnail: customThumbnail || undefined
         };
         await fetchGroo.review.updateReview(Number(draftId), updateData);
         alert('독후감이 작성되었습니다.');
@@ -272,7 +305,8 @@ function ReviewCreatePage() {
           reviewContent: content,
           secret: isSecret,
           temporary: false,
-          ...(category ? { category } : {})
+          ...(category ? { category } : {}),
+          customThumbnail: customThumbnail || undefined
         };
         await fetchGroo.review.createReview(requestData);
         alert('독후감이 작성되었습니다.');
@@ -301,6 +335,7 @@ function ReviewCreatePage() {
     router.replace(`/reviews/write?${params.toString()}`);
   };
 
+  const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false); // 썸네일 모달 상태 추가
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -308,10 +343,35 @@ function ReviewCreatePage() {
           <ArrowLeft size={20} />
         </button>
         <h1>독후감 작성</h1>
-        <button onClick={() => setIsDraftModalOpen(true)} className={styles.draftButton}>
-          임시저장 목록
-        </button>
+
+        <div className={styles.headerActions}>
+          {/* 썸네일 추가 버튼 클릭 시 */}
+          <button
+            type="button"
+            className={styles.thumbnailButton}
+            onClick={() => setIsThumbnailModalOpen(true)}>
+            썸네일 추가
+          </button>
+
+          {/* 썸네일 업로드 모달 */}
+          {isThumbnailModalOpen && (
+            <ThumbnailModal
+              currentThumbnail={customThumbnail}
+              onClose={() => setIsThumbnailModalOpen(false)}
+              onConfirm={(thumb) => {
+                setCustomThumbnail(thumb);
+                setIsThumbnailModalOpen(false);
+              }}
+            />
+          )}
+
+          {/* 임시저장 버튼 */}
+          <button type="button" onClick={() => setIsDraftModalOpen(true)} className={styles.draftButton}>
+            임시저장 목록
+          </button>
+        </div>
       </div>
+
       <div className={styles.content}>
         <section className={styles.titleSection}>
           <input

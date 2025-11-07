@@ -27,6 +27,7 @@ import styles from '@/components/reviews/edit/review-edit.module.scss';
 import BookInfoCard from '@/components/reviews/write/book-info-card';
 import editorStyles from '@/components/reviews/write/editor-content.module.scss';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
+import ThumbnailModal from '@/components/reviews/write/thumbnail-modal';
 import { ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
 import { devLogger } from '@/utils/dev-logger';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
@@ -44,6 +45,8 @@ function ReviewEditPage() {
   const [loading, setLoading] = useState(true);
   const [reviewContent, setReviewContent] = useState('');
   const [charCount, setCharCount] = useState(0);
+  const [customThumbnail, setCustomThumbnail] = useState<string | null>(null);
+  const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false);
   const MAX_TEXT_LENGTH = 10000;
   const MAX_HTML_LENGTH = 30000;
 
@@ -134,6 +137,12 @@ function ReviewEditPage() {
         setTitle(review.reviewTitle);
         setIsSecret(review.secret);
         setReviewContent(review.reviewContent);
+
+        // customThumbnail 로드
+        if (review.customThumbnail) {
+          setCustomThumbnail(review.customThumbnail);
+        }
+
         if (review.isbn) {
           await loadBookInfo(review.isbn);
         }
@@ -179,7 +188,8 @@ function ReviewEditPage() {
         reviewTitle: title,
         reviewContent: content,
         secret: isSecret,
-        temporary: false
+        temporary: false,
+        customThumbnail: customThumbnail || undefined
       };
 
       await fetchGroo.review.updateReview(reviewId, updateData);
@@ -205,11 +215,20 @@ function ReviewEditPage() {
           <ArrowLeft size={20} />
         </button>
         <h1>독후감 수정</h1>
-        <div className={styles.placeholder}></div>
+
+        <div className={styles.headerActions}>
+          {/* 썸네일 추가/수정 버튼 */}
+          <button
+            type="button"
+            className={styles.thumbnailButton}
+            onClick={() => setIsThumbnailModalOpen(true)}>
+            {customThumbnail ? '썸네일 수정' : '썸네일 추가'}
+          </button>
+        </div>
       </div>
 
       <div className={styles.content}>
-        {/* 독후감 제목 - 맨 위로 */}
+        {/* 독후감 제목 */}
         <section className={styles.titleSection}>
           <input
             type="text"
@@ -220,14 +239,23 @@ function ReviewEditPage() {
           />
         </section>
 
-        {/* 도서 정보 - 제목 아래로 */}
+        {/* 썸네일 미리보기 (있는 경우) */}
+        {customThumbnail && (
+          <section className={styles.thumbnailPreviewSection}>
+            <div className={styles.thumbnailPreview}>
+              <img src={customThumbnail} alt="썸네일" />
+            </div>
+          </section>
+        )}
+
+        {/* 도서 정보 */}
         {selectedBook && (
           <section className={styles.bookSection}>
             <BookInfoCard book={selectedBook} onRemove={() => {}} readOnly />
           </section>
         )}
 
-        {/* 본문 에디터 - 제일 아래 */}
+        {/* 본문 에디터 */}
         <section className={styles.editorSection}>
           {editor && <EditorToolbar editor={editor} />}
           <div className={editorStyles.editorContent}>
@@ -251,6 +279,18 @@ function ReviewEditPage() {
           </div>
         </section>
       </div>
+
+      {/* 썸네일 모달 */}
+      {isThumbnailModalOpen && (
+        <ThumbnailModal
+          currentThumbnail={customThumbnail}
+          onClose={() => setIsThumbnailModalOpen(false)}
+          onConfirm={(thumb) => {
+            setCustomThumbnail(thumb);
+            setIsThumbnailModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }
