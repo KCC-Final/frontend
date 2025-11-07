@@ -22,50 +22,64 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
   const [isImgLoading, setImgLoading] = useState(true);
   const [imgFetchingError, setImgFetchingError] = useState(false);
   const [hasCustomThumbnail, setHasCustomThumbnail] = useState(false);
-
   useEffect(() => {
-    // customThumbnail이 있으면 사용
-    if (review.customThumbnail) {
-      setImgUrl(review.customThumbnail);
-      setHasCustomThumbnail(true);
-      setImgLoading(false);
-      setImgFetchingError(false);
-      return;
-    }
+    let isMounted = true;
 
-    // customThumbnail이 없으면 도서 표지 가져오기
-    const getCoverImageUrl = async () => {
-      setImgUrl(null);
-      setHasCustomThumbnail(false);
-      setImgLoading(true);
-      setImgFetchingError(false);
+    const loadImage = async () => {
+      // 커스텀 썸네일 우선
+      const thumb = review.customThumbnail?.trim?.();
+      if (thumb) {
+        if (isMounted) {
+          setImgUrl(thumb);
+          setHasCustomThumbnail(true);
+          setImgLoading(false);
+          setImgFetchingError(false);
+        }
+        return;
+      }
 
+      // 썸네일 없을 때만 도서 커버 불러오기
       if (!review.isbn) {
-        setImgLoading(false);
-        setImgFetchingError(true);
+        if (isMounted) {
+          setImgUrl(null);
+          setImgLoading(false);
+          setImgFetchingError(true);
+        }
         return;
       }
 
       try {
+        if (isMounted) {
+          setImgLoading(true);
+          setImgFetchingError(false);
+        }
+
         const result = await fetchAladin.getBookDetails(review.isbn);
 
-        if (result.item && result.item.length > 0 && result.item[0].cover) {
-          setImgUrl(result.item[0].cover);
-        } else {
-          setImgFetchingError(true);
+        if (isMounted) {
+          const cover = result?.item?.[0]?.cover;
+          if (cover) {
+            setImgUrl(cover);
+            setHasCustomThumbnail(false);
+          } else {
+            setImgFetchingError(true);
+          }
         }
-      } catch (error) {
-        setImgFetchingError(true);
+      } catch (err) {
+        if (isMounted) setImgFetchingError(true);
       } finally {
-        setImgLoading(false);
+        if (isMounted) setImgLoading(false);
       }
     };
 
-    getCoverImageUrl();
+    loadImage();
+    return () => {
+      isMounted = false;
+    };
   }, [review.isbn, review.customThumbnail]);
 
-  // 커버 이미지 URL 결정
-  const finalImgSrc = !isImgLoading && !imgFetchingError && imgUrl ? imgUrl : null;
+  // 썸네일 우선 렌더링
+  const finalImgSrc = imgUrl && !imgFetchingError ? imgUrl : null;
 
   return (
     <li
@@ -96,11 +110,10 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
           )}
 
           {/* 이미지 표시 */}
-          {/* 이미지 표시 */}
           {finalImgSrc && (
             <>
               {hasCustomThumbnail ? (
-                // ✅ 커스텀 썸네일 (기존 그대로)
+                // 커스텀 썸네일 (기존 그대로)
                 <Image
                   className={styles.cover_img}
                   src={finalImgSrc}
@@ -112,7 +125,7 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
                   onError={() => setImgFetchingError(true)}
                 />
               ) : (
-                // ✅ 썸네일 없을 때 — 도서 원본 비율 유지 + 블러 배경
+                // 썸네일 없을 때 — 도서 원본 비율 유지 + 블러 배경
                 <div className={styles.book_fallback_wrapper}>
                   <div
                     className={styles.book_fallback_bg}
