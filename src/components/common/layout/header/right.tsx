@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
 
-import { fetchGroo } from '@/apis';
+import { fetchAladin, fetchGroo } from '@/apis';
 import styles from '@/components/common/layout/header/header.module.scss';
 import UserProfileImage from '@/components/common/profile/image';
 import NotificationBell from '@/components/notification/bell';
@@ -60,14 +60,30 @@ function RightNavigation() {
   const performSearch = async (keyword: string) => {
     try {
       setIsSearching(true);
-      const response = await fetchGroo.search.searchAll(keyword);
 
-      if (response && response.data) {
-        setSearchResults(response.data.slice(0, 5));
-        setShowSearchResults(true);
-      } else {
-        setSearchResults([]);
-      }
+      // 동시에 두 API 요청 (Groo + Aladin)
+      const [grooRes, aladinRes] = await Promise.allSettled([
+        fetchGroo.search.searchAll(keyword),
+        fetchAladin.searchBooks(keyword, 5) // 도서 미리보기 5개만
+      ]);
+
+      const grooResults = grooRes.status === 'fulfilled' && grooRes.value?.data ? grooRes.value.data : [];
+
+      const aladinBooks =
+        aladinRes.status === 'fulfilled' && aladinRes.value?.item
+          ? aladinRes.value.item.map((book: any) => ({
+              id: book.isbn13,
+              title: book.title,
+              subtext: book.author,
+              category: 'BOOK',
+              cover: book.cover
+            }))
+          : [];
+
+      // Groo + Book 통합 (앞부분에 사용자/리뷰/댓글, 뒷부분에 도서)
+      const combined = [...grooResults.slice(0, 3), ...aladinBooks.slice(0, 2)];
+      setSearchResults(combined);
+      setShowSearchResults(true);
     } catch (error) {
       devLogger('검색 실패');
       devLogger(error);
