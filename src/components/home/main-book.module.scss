@@ -1,12 +1,12 @@
 @use '@/styles/abstract/' as *;
 
 .mainBook {
-  padding: 24px 20px;
+  padding: 24px 20px 32px;
 
   h1 {
-    font-size: $font-size-18;
+    font-size: $font-size-24;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 24px;
   }
 
   // 버튼 기준이 될 래퍼
@@ -36,21 +36,20 @@
 
       .ranking {
         position: absolute;
-        left: -8px;
-        top: -8px;
+        left: -18px;
+        top: -18px;
         z-index: 10;
-        width: 48px;
-        height: 48px;
+        width: 40px;
+        height: 40px;
         background-color: rgba(255, 255, 255, 0.95);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        opacity: 0.8;
 
         span {
-          font-size: 24px;
+          font-size: 15px;
           font-weight: 700;
 
           &.top3 {

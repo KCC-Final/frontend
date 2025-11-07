@@ -1,9 +1,7 @@
 'use client';
 
-import { format } from 'date-fns';
 import { useEffect } from 'react';
 
-import { fetchLibrary } from '@/apis';
 import PageLoading from '@/components/common/loading';
 import BestsellerList from '@/components/home/bestseller';
 import HotTrendBooks from '@/components/home/hot-trend-books';

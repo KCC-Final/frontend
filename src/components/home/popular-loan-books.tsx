@@ -6,7 +6,6 @@ import styles from './popular-loan-books.module.scss';
 
 import { fetchAladin } from '@/apis/aladin';
 import { fetchLibrary } from '@/apis/library';
-import BookCard from '@/components/common/book/book-card';
 import { Book } from '@/types';
 import { REGION_OPTIONS, AGE_OPTIONS, GENDER_OPTIONS } from '@/types/common/library_code';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
