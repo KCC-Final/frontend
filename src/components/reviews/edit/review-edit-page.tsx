@@ -239,15 +239,6 @@ function ReviewEditPage() {
           />
         </section>
 
-        {/* 썸네일 미리보기 (있는 경우) */}
-        {customThumbnail && (
-          <section className={styles.thumbnailPreviewSection}>
-            <div className={styles.thumbnailPreview}>
-              <img src={customThumbnail} alt="썸네일" />
-            </div>
-          </section>
-        )}
-
         {/* 도서 정보 */}
         {selectedBook && (
           <section className={styles.bookSection}>
