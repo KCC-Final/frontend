@@ -20,3 +20,10 @@ export type DailyQuoteData = {
 };
 // 응답 DTO
 export type GetDailyQuoteResDTO = CommonResDTO<DailyQuoteData>;
+
+export type BookInfoData = {
+  reviewCount: number;
+  scrapCount: number;
+};
+
+export type GetBookInfoResDTO = CommonResDTO<BookInfoData>;

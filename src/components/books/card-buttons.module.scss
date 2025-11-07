@@ -1,294 +1,126 @@
-@use '@/styles/abstract/' as *;
-@use '@/styles/layout/' as *;
+.action_buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
 
-@include book-details-layout();
-
-.book_card {
-  background-color: $input-bg;
-  border-radius: 8px;
-
-  .cover {
-    position: relative;
-    flex-shrink: 0;
-    width: 320px;
-    height: 320px;
+  .action_button {
+    flex: 1;
     display: flex;
-    justify-content: center;
     align-items: center;
-    overflow: hidden;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
     border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f3f4f6;
+    color: #374151;
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: var(--background-image);
-      background-size: cover;
-      background-position: center;
-      filter: blur(16px);
-      z-index: 0;
+    &:hover {
+      background-color: #e5e7eb;
     }
 
-    .img {
-      width: 160px;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-      display: block;
+    &:first-child {
+      background-color: rgba(0, 118, 100, 0.1); // 그루 메인 컬러의 10% 투명도
+      color: #007664;
+
+      &:hover {
+        background-color: rgba(0, 118, 100, 0.15);
+      }
+
+      &.scraped {
+        background-color: #007664;
+        color: white;
+
+        &:hover {
+          background-color: #006054; // 조금 더 어두운 그루 컬러
+        }
+      }
+    }
+
+    &:last-child {
+      background-color: #ebeceddc; // 회색 배경
+      color: #007664; // 그루 메인 컬러 텍스트
+
+      &:hover {
+        background-color: #e5e7eb;
+      }
+    }
+  }
+}
+/*  책장 생성 입력창 스타일 개선 */
+.create_input_group {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  align-items: stretch;
+
+  .create_input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    background-color: white;
+
+    &::placeholder {
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    &:focus {
+      border-color: #007664;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    &:disabled {
+      background-color: #f3f4f6;
+      cursor: not-allowed;
+      opacity: 0.6;
     }
   }
 
-  .info {
-    flex-grow: 1;
+  .create_button {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 20px;
+    background-color: #007664;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    min-width: 80px;
 
-    .header {
-      padding-top: 12px;
-      padding-bottom: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      .category {
-        color: $font-green;
-        font-size: $font-size-13;
-        font-weight: 500;
-      }
-
-      .title {
-        font-size: $font-size-24;
-        font-weight: 700;
-        line-height: normal;
-      }
+    &:hover:not(:disabled) {
+      background-color: #007664;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
     }
 
-    .content {
-      display: flex;
-      padding: 12px 0;
-
-      .book,
-      .groo {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .author,
-      .date,
-      .rank,
-      .review,
-      .scrap {
-        display: flex;
-        align-items: center;
-
-        > span:nth-child(1) {
-          color: $font-black-7;
-          font-weight: 500;
-          width: 70px;
-        }
-
-        > span:nth-child(2) {
-          font-weight: 500;
-        }
-      }
-
-      .review,
-      .scrap {
-        > span:nth-child(2) {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-      }
-
-      .rank {
-        .rating_display {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .stars {
-          position: relative;
-          display: inline-block;
-          font-size: 18px;
-          line-height: 1;
-
-          .background {
-            color: $star-bgcolor;
-          }
-
-          .fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            color: $star-fill-color;
-          }
-        }
-
-        .score_text {
-          font-size: $font-size-14;
-          font-weight: 500;
-        }
-      }
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
 
-    .divider {
-      width: 100%;
-      border-bottom: $devider-border;
-    }
-
-    .description {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 12px 0;
-
-      span {
-        color: $font-black-7;
-        font-weight: 500;
-        width: 70px;
-      }
-
-      p {
-        color: $font-black-4;
-        font-weight: 500;
-      }
-    }
-
-    .action_buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-
-      .action_button {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background-color: #f3f4f6;
-        color: #374151;
-
-        &:hover {
-          background-color: #e5e7eb;
-        }
-
-        &:first-child {
-          background-color: rgba(0, 118, 100, 0.1); // 그루 메인 컬러의 10% 투명도
-          color: #007664;
-
-          &:hover {
-            background-color: rgba(0, 118, 100, 0.15);
-          }
-
-          &.scraped {
-            background-color: #007664;
-            color: white;
-
-            &:hover {
-              background-color: #006054; // 조금 더 어두운 그루 컬러
-            }
-          }
-        }
-
-        &:last-child {
-          background-color: #ebeceddc; // 회색 배경
-          color: #007664; // 그루 메인 컬러 텍스트
-
-          &:hover {
-            background-color: #e5e7eb;
-          }
-        }
-      }
-    }
-    /*  책장 생성 입력창 스타일 개선 */
-    .create_input_group {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-      padding: 16px;
-      background-color: #f9fafb;
-      border-radius: 8px;
-      border: 1px solid #e5e7eb;
-      align-items: stretch;
-
-      .create_input {
-        flex: 1;
-        padding: 12px 16px;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 15px;
-        font-weight: 500;
-        outline: none;
-        transition: all 0.2s ease;
-        background-color: white;
-
-        &::placeholder {
-          color: #9ca3af;
-          font-weight: 400;
-        }
-
-        &:focus {
-          border-color: #007664;
-          box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-        }
-
-        &:disabled {
-          background-color: #f3f4f6;
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
-      }
-
-      .create_button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 12px 20px;
-        background-color: #007664;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-        min-width: 80px;
-
-        &:hover:not(:disabled) {
-          background-color: #007664;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
-        }
-
-        &:active:not(:disabled) {
-          transform: translateY(0);
-        }
-
-        &:disabled {
-          background-color: #d1d5db;
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
-      }
+    &:disabled {
+      background-color: #d1d5db;
+      cursor: not-allowed;
+      opacity: 0.6;
     }
   }
 }

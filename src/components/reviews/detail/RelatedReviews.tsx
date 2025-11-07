@@ -3,10 +3,10 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
-import RelatedReviewCard from './RelatedReviewCard';
 import styles from './RelatedReviews.module.scss';
 
 import { fetchGroo } from '@/apis/groo';
+import ReviewCard from '@/components/common/review-card';
 import { ReviewData } from '@/types/reviews';
 
 type Props = {
@@ -111,9 +111,13 @@ export default function RelatedReviews({ isbn, category, currentReviewId }: Prop
           )}
 
           <div className={styles.reviewList} ref={scrollRef}>
-            {currentReviews.map((review) => (
-              <RelatedReviewCard key={review.reviewId} review={review} />
-            ))}
+            {currentReviews.map((review) =>
+              activeTab === 'isbn' ? (
+                <ReviewCard key={review.reviewId} review={review} size={'sm'} useDicebearCover={true} />
+              ) : (
+                <ReviewCard key={review.reviewId} review={review} size={'sm'} />
+              )
+            )}
           </div>
 
           {currentReviews.length > 3 && (

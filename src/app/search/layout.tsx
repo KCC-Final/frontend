@@ -5,7 +5,7 @@ interface SearchPageLayoutProps {
 }
 
 function SearchPageLayout({ children }: SearchPageLayoutProps) {
-  return <GlobalLayout wide={true}>{children}</GlobalLayout>;
+  return <GlobalLayout size="lg">{children}</GlobalLayout>;
 }
 
 export default SearchPageLayout;

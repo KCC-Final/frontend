@@ -1,6 +1,3 @@
-/**
- * @author uyh
- */
 'use client';
 
 import clsx from 'clsx';
@@ -9,19 +6,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import UserProfileImage from '../profile/image';
-
 import { fetchAladin } from '@/apis';
+import UserProfileImage from '@/components/common/profile/image';
 import styles from '@/components/common/review-card/review-card.module.scss';
 import { ReviewData } from '@/types';
 import { formatRelativeTime } from '@/utils/format/date';
 
 interface ReviewCardProps {
   review: ReviewData;
-  size?: 3 | 4;
+  size?: 'sm' | 'md' | 'lg';
+  useDicebearCover?: boolean;
 }
 
-function ReviewCard({ review, size = 4 }: ReviewCardProps) {
+function ReviewCard({ review, size = 'lg', useDicebearCover = false }: ReviewCardProps) {
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [isImgLoading, setImgLoading] = useState(true);
   const [imgFetchingError, setImgFetchingError] = useState(false);
@@ -67,12 +64,22 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
   const dicebearBgUrl = `url(https://api.dicebear.com/9.x/glass/svg?seed=${review.reviewId})`;
 
   return (
-    <li className={clsx(styles.container, size === 3 ? styles.size3 : styles.size4)}>
+    <li
+      className={clsx(
+        styles.container,
+        size === 'sm' ? styles.small : size === 'md' ? styles.medium : styles.large
+      )}>
       {/* 커버 이미지 섹션 (클릭 가능) */}
       <Link href={`/reviews/${review.reviewId}`}>
         <div
-          className={styles.cover_bg}
-          style={{ '--background-image': dicebearBgUrl } as React.CSSProperties}>
+          className={`${styles.cover_bg} ${useDicebearCover ? styles.dicebear : styles.normal}`}
+          style={
+            useDicebearCover
+              ? ({ '--background-image': dicebearBgUrl } as React.CSSProperties)
+              : finalImgSrc
+                ? ({ '--background-image': `url(${finalImgSrc})` } as React.CSSProperties)
+                : undefined
+          }>
           {/* 로딩 중 UI */}
           {isImgLoading && (
             <div className={styles.placeholder}>
@@ -123,7 +130,11 @@ function ReviewCard({ review, size = 4 }: ReviewCardProps) {
 
       <footer className={styles.footer}>
         <Link href={`/users/${review.userId}`}>
-          <UserProfileImage userId={review.userId} profileImage={review.authorProfileImage} size={27} />
+          <UserProfileImage
+            userId={review.userId}
+            profileImage={review.authorProfileImage}
+            size={size === 'sm' ? 23 : 27}
+          />
           <span className={styles.author}>
             <span>by</span>
             <span>{review.authorNickname}</span>
