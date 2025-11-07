@@ -34,6 +34,9 @@ const LibraryInformation = ({ isbn, ref, id }: LibraryInformationProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // "대출 가능만 보기" 체크 상태
+  const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+
   // 아코디언 상태
   const [openLibraryCode, setOpenLibraryCode] = useState<string | null>(null);
 
@@ -119,6 +122,11 @@ const LibraryInformation = ({ isbn, ref, id }: LibraryInformationProps) => {
     if (dtlRegion.code) getLibraryData();
   }, [dtlRegion.code]);
 
+  // 대출 가능만 보기 필터링된 목록
+  const filteredLibraries = showAvailableOnly
+    ? libraries.filter((lib) => lib.availability?.loanAvailable === 'Y')
+    : libraries;
+
   return (
     <section className={styles.book_library} ref={ref} id={id}>
       <h2 className={styles.title}>도서 소장 도서관 정보</h2>
@@ -137,6 +145,16 @@ const LibraryInformation = ({ isbn, ref, id }: LibraryInformationProps) => {
             </option>
           ))}
         </select>
+
+        {/* 대출 가능만 보기 체크박스 */}
+        <label className={styles.checkbox_label}>
+          <input
+            type="checkbox"
+            checked={showAvailableOnly}
+            onChange={(e) => setShowAvailableOnly(e.target.checked)}
+          />
+          대출 가능만 보기
+        </label>
       </div>
       {isLoading ? (
         <div className={styles.message_box}>
@@ -146,9 +164,9 @@ const LibraryInformation = ({ isbn, ref, id }: LibraryInformationProps) => {
         <div className={styles.message_box}>
           <p>{error}</p>
         </div>
-      ) : libraries.length > 0 ? (
+      ) : filteredLibraries.length > 0 ? (
         <ul className={styles.library_list}>
-          {libraries.map((lib) => (
+          {filteredLibraries.map((lib) => (
             <li key={lib.libCode} className={styles.library_card}>
               <div className={styles.accordion_header} onClick={() => toggleAccordion(lib.libCode)}>
                 <div className={styles.header_main_content}>
@@ -210,7 +228,7 @@ const LibraryInformation = ({ isbn, ref, id }: LibraryInformationProps) => {
         </ul>
       ) : (
         <div className={styles.message_box}>
-          <p>해당 지역에 도서를 소장한 도서관이 없습니다.</p>
+          <p>해당 지역에 대출 가능한 도서관이 없습니다.</p>
         </div>
       )}
       {popup && (
