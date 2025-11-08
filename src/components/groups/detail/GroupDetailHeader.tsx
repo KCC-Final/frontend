@@ -1,123 +1,125 @@
 'use client';
 
-import { Bookmark, BookmarkCheck, ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import styles from './group-detail.module.scss';
 
 import { group } from '@/apis/groo/group';
 import { user } from '@/apis/groo/user';
-
-// 닉네임 캐시 (중복 요청 방지)
-const nicknameCache = new Map<string, string>();
+import UserProfileImage from '@/components/common/profile/image';
 
 interface Props {
   groupData: any;
-  isScrapped: boolean;
-  toggleScrap: () => void;
   isOwner: boolean;
+  currentUserId: string | null;
   router: any;
+  refreshGroup: () => Promise<void>;
 }
 
-function GroupDetailHeader({ groupData, isScrapped, toggleScrap, isOwner, router }: Props) {
+export default function GroupDetailHeader({
+  groupData,
+  isOwner,
+  currentUserId,
+  router,
+  refreshGroup
+}: Props) {
   const [nickname, setNickname] = useState(groupData.nickname || '');
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const userId = groupData.userId;
 
   /** 닉네임 가져오기 */
   useEffect(() => {
-    const loadNickname = async () => {
-      if (!userId) return;
-
-      // 이미 캐시된 닉네임이 있으면 즉시 사용
-      if (nicknameCache.has(userId)) {
-        setNickname(nicknameCache.get(userId)!);
-        return;
-      }
-
+    const fetchNickname = async () => {
       try {
         const res: any = await user.getUserNickname(userId);
-        const fetchedNickname = typeof res === 'object' ? (res.nickname ?? userId) : String(res);
-        setNickname(fetchedNickname);
-        nicknameCache.set(userId, fetchedNickname);
-      } catch (error) {
-        setNickname(userId); // fallback
+        setNickname(typeof res === 'object' ? (res.nickname ?? userId) : String(res));
+      } catch {
+        setNickname(userId);
       }
     };
+    if (!groupData.nickname) fetchNickname();
+  }, [groupData.nickname, userId]);
 
-    if (!groupData.nickname) loadNickname();
-  }, [userId, groupData.nickname]);
+  /** 외부 클릭 시 메뉴 닫기 */
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    if (showMenu) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMenu]);
+
+  /** 수정 / 삭제 */
+  const handleEdit = () => {
+    setShowMenu(false);
+    router.push(`/groups/${groupData.groupId}/edit`);
+  };
+  const handleDelete = async () => {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+    try {
+      await group.deleteGroup(groupData.groupId);
+      alert('삭제되었습니다.');
+      router.push('/groups');
+    } catch {
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  };
+
+  /** 날짜 포맷 */
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
 
   return (
-    <header className={styles.header}>
-      {/* 모집 상태 뱃지 */}
-      <div className={styles.badgeWrapper}>
-        <span className={`${styles.badge} ${groupData.status ? styles.active : styles.closed}`}>
-          {groupData.status ? '모집 중' : '모집완료'}
-        </span>
+    <header className={styles.detailHeader}>
+      {/* 제목 섹션 */}
+      <div className={styles.titleSection}>
+        <h1 className={styles.groupTitle}>{groupData.groupName}</h1>
       </div>
 
-      {/* 제목 + 북마크 + 작성자 */}
-      <div className={styles.titleRow}>
-        <div className={styles.titleGroup}>
-          <h1 className={styles.title}>{groupData.groupName}</h1>
-
-          {/* 제목 옆 북마크 + 작성자 */}
-          <div className={styles.metaInline}>
-            <button
-              className={`${styles.scrapButton} ${isScrapped ? styles.activeScrap : ''}`}
-              onClick={toggleScrap}>
-              {isScrapped ? (
-                <BookmarkCheck size={20} fill="#1f8b4c" color="#1f8b4c" />
-              ) : (
-                <Bookmark size={20} color="#444" />
-              )}
-            </button>
-
-            {/* 닉네임 표시 */}
-            <span className={styles.authorText}>
-              작성자 |{' '}
-              <Link href={`/users/${userId}`} className={styles.nicknameLink}>
-                {nickname || userId}
-              </Link>
-            </span>
+      {/* 작성자 섹션 */}
+      <div className={styles.authorSection}>
+        <div className={styles.authorInfo}>
+          <UserProfileImage userId={groupData.userId} profileImage={groupData.authorProfileImage} size={40} />
+          <div className={styles.authorDetails}>
+            <Link href={`/users/${groupData.userId}`} className={styles.authorName}>
+              {nickname || userId}
+            </Link>
+            <p className={styles.date}>{formatDate(groupData.createdAt)}</p>
           </div>
         </div>
 
-        {/* 뒤로가기 버튼 */}
-        <button type="button" className={styles.backBtn} onClick={() => router.back()}>
-          <ArrowLeft size={18} />
-          뒤로가기
-        </button>
-      </div>
+        {isOwner && (
+          <div className={styles.menuContainer} ref={menuRef}>
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className={styles.menuButton}
+              aria-label="메뉴 열기">
+              <MoreVertical size={18} />
+            </button>
 
-      {/* 수정/삭제 버튼 */}
-      {isOwner && (
-        <div className={styles.actionButtons}>
-          <button className={styles.editBtn} onClick={() => router.push(`/groups/${groupData.groupId}/edit`)}>
-            <Edit size={16} /> 수정
-          </button>
-          <button
-            className={styles.deleteBtn}
-            onClick={async () => {
-              if (confirm('정말로 이 모임을 삭제하시겠습니까?')) {
-                try {
-                  const res = await group.deleteGroup(groupData.groupId);
-                  if (res.message?.includes('성공')) {
-                    alert('모임이 삭제되었습니다.');
-                    router.push('/groups');
-                  } else alert('삭제 실패');
-                } catch {
-                  alert('삭제 중 오류 발생');
-                }
-              }
-            }}>
-            <Trash2 size={16} /> 삭제
-          </button>
-        </div>
-      )}
+            {showMenu && (
+              <div className={styles.menuDropdown}>
+                <button onClick={handleEdit}>수정</button>
+                <button onClick={handleDelete}>삭제</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </header>
   );
 }
-
-export default GroupDetailHeader;
