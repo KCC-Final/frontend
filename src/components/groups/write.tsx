@@ -94,12 +94,6 @@ ${participation.trim()}
         <button type="button" className={styles.backBtn} onClick={() => router.back()}>
           <ArrowLeft size={18} /> 뒤로가기
         </button>
-
-        <label className={styles.status}>
-          <input type="checkbox" name="status" checked={formData.status} onChange={handleChange} />
-          <span className={styles.toggle}></span>
-          모집중
-        </label>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -113,14 +107,10 @@ ${participation.trim()}
           required
         />
 
-        {/* 도서 선택 */}
-        {!selectedBook ? (
-          <div className={styles.bookBox} onClick={() => setShowBookModal(true)}>
-            도서 선택
-          </div>
-        ) : (
-          <BookInfoCard book={selectedBook} onRemove={handleRemoveBook} />
-        )}
+        {/* 도서 선택 버튼 */}
+        <div className={styles.bookSelectBtn} onClick={() => setShowBookModal(true)}>
+          {selectedBook ? `선택된 도서: ${selectedBook.title}` : '도서 선택'}
+        </div>
 
         {/* 진행방식 / 인원 / 마감일 / 지역 */}
         <div className={styles.metaGrid}>
@@ -133,28 +123,30 @@ ${participation.trim()}
             </select>
           </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="headcountMin">최소 인원</label>
-            <input
-              id="headcountMin"
-              type="number"
-              name="headcountMin"
-              value={formData.headcountMin}
-              onChange={handleChange}
-              min={1}
-            />
-          </div>
+          <div className={styles.headcountRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="headcountMin">최소 인원</label>
+              <input
+                id="headcountMin"
+                type="number"
+                name="headcountMin"
+                value={formData.headcountMin}
+                onChange={handleChange}
+                min={1}
+              />
+            </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="headcountMax">최대 인원</label>
-            <input
-              id="headcountMax"
-              type="number"
-              name="headcountMax"
-              value={formData.headcountMax}
-              onChange={handleChange}
-              min={formData.headcountMin}
-            />
+            <div className={styles.formGroup}>
+              <label htmlFor="headcountMax">최대 인원</label>
+              <input
+                id="headcountMax"
+                type="number"
+                name="headcountMax"
+                value={formData.headcountMax}
+                onChange={handleChange}
+                min={formData.headcountMin}
+              />
+            </div>
           </div>
 
           <div className={styles.formGroup}>
@@ -204,6 +196,13 @@ ${participation.trim()}
             placeholder="참여 방법을 입력해주세요."
           />
         </div>
+
+        {/* 도서 정보 카드 (축소된 버전) */}
+        {selectedBook && (
+          <div className={styles.bookInfoCompact}>
+            <BookInfoCard book={selectedBook} onRemove={handleRemoveBook} />
+          </div>
+        )}
 
         {error && <p className={styles.error}>{error}</p>}
 

@@ -179,28 +179,30 @@ ${participation.trim()}
             </select>
           </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="headcountMin">최소 인원</label>
-            <input
-              id="headcountMin"
-              type="number"
-              name="headcountMin"
-              value={formData.headcountMin}
-              onChange={handleChange}
-              min={1}
-            />
-          </div>
+          <div className={styles.headcountRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="headcountMin">최소 인원</label>
+              <input
+                id="headcountMin"
+                type="number"
+                name="headcountMin"
+                value={formData.headcountMin}
+                onChange={handleChange}
+                min={1}
+              />
+            </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="headcountMax">최대 인원</label>
-            <input
-              id="headcountMax"
-              type="number"
-              name="headcountMax"
-              value={formData.headcountMax}
-              onChange={handleChange}
-              min={formData.headcountMin}
-            />
+            <div className={styles.formGroup}>
+              <label htmlFor="headcountMax">최대 인원</label>
+              <input
+                id="headcountMax"
+                type="number"
+                name="headcountMax"
+                value={formData.headcountMax}
+                onChange={handleChange}
+                min={formData.headcountMin}
+              />
+            </div>
           </div>
 
           <div className={styles.formGroup}>
