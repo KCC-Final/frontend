@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, MessageSquare, PlusCircle, Search, Filter, Bookmark, BookmarkCheck } from 'lucide-react';
+import { PlusCircle, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
@@ -18,9 +18,8 @@ import { GroupData } from '@/types/groups';
 function ReadingGroupList() {
   const router = useRouter();
 
-  const [groups, setGroups] = useState<GroupData[]>([]);
+  // 사용하지 않던 groups, page 제거
   const [visibleGroups, setVisibleGroups] = useState<GroupData[]>([]);
-  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('');
   const [styleType, setStyleType] = useState('');
@@ -29,7 +28,7 @@ function ReadingGroupList() {
   const [error, setError] = useState<string>('');
   const [mounted, setMounted] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [sort, setSort] = useState<'latest' | 'closed'>('latest');
+  const [sort, setSort] = useState<'all' | 'recruiting'>('all');
 
   // 스크랩 상태 저장 (groupId → boolean)
   const [scrapStatus, setScrapStatus] = useState<Record<number, boolean>>({});
@@ -62,7 +61,6 @@ function ReadingGroupList() {
           if (item) {
             bookInfoMap.set(isbn, {
               title: item.title,
-              author: item.author,
               coverUrl: item.cover
             });
           }
@@ -79,12 +77,11 @@ function ReadingGroupList() {
             const nickname = await user.getUserNickname(id);
             userMap.set(id, nickname);
           } catch {
-            userMap.set(id, id); // fallback: userId
+            userMap.set(id, id); // fallback
           }
         })
       );
 
-      // region, book, nickname 병합
       const enrichedGroups = data.map((g) => {
         const book = bookInfoMap.get(g.isbn);
         const nickname = userMap.get(g.userId);
@@ -93,7 +90,6 @@ function ReadingGroupList() {
         return {
           ...g,
           bookTitle: book?.title || g.bookTitle || '제목 없음',
-          author: book?.author || '저자 미상',
           coverUrl: book?.coverUrl || `https://covers.openlibrary.org/b/isbn/${g.isbn}-M.jpg`,
           region: regionName,
           nickname
@@ -106,20 +102,16 @@ function ReadingGroupList() {
         enrichedGroups.map(async (g) => {
           try {
             const res = await groupApi.getScrapStatus(g.groupId);
-
             scrapMap[g.groupId] = res.data ?? false;
-          } catch (err) {
+          } catch {
             scrapMap[g.groupId] = false;
           }
         })
       );
 
       setScrapStatus(scrapMap);
-
-      setGroups(enrichedGroups);
       setVisibleGroups(enrichedGroups.slice(0, ITEMS_PER_PAGE));
-      setPage(1);
-    } catch (err: any) {
+    } catch {
       setError('모임 목록을 불러오지 못했습니다.');
     } finally {
       setLoading(false);
@@ -127,16 +119,22 @@ function ReadingGroupList() {
   };
 
   /** 스크랩 토글 */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleScrap = async (groupId: number) => {
     try {
       const current = scrapStatus[groupId];
-      if (current) {
-        await groupApi.deleteScrap(groupId);
-      } else {
-        await groupApi.createScrap(groupId);
-      }
+      if (current) await groupApi.deleteScrap(groupId);
+      else await groupApi.createScrap(groupId);
       setScrapStatus((prev) => ({ ...prev, [groupId]: !current }));
-    } catch (err) {}
+    } catch {}
+  };
+
+  /** 필터 초기화 */
+  const resetFilters = () => {
+    setSearch('');
+    setRegion('');
+    setStyleType('');
+    setDate('');
   };
 
   const applyFilter = (list: GroupData[]) => {
@@ -144,18 +142,24 @@ function ReadingGroupList() {
       const matchSearch =
         (g.groupName ?? '').toLowerCase().includes(search.toLowerCase()) ||
         (g.bookTitle ?? '').toLowerCase().includes(search.toLowerCase());
-
-      // name 기준으로 region id 찾아서 숫자 변환 후 비교
       const regionId = regionList.find((r) => r.name === region)?.id;
       const matchRegion = !region || (regionId && Number(g.codeId) === Number(regionId));
-
       const matchStyle = !styleType || g.style === styleType;
-      const matchDate = !date || (g.endDate && new Date(g.endDate).toISOString().slice(0, 10) === date);
+
+      let matchDate = true;
+      if (date && g.endDate) {
+        const d = new Date(g.endDate);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const endDateStr = `${year}-${month}-${day}`;
+        matchDate = endDateStr === date;
+      }
 
       return matchSearch && matchRegion && matchStyle && matchDate;
     });
 
-    if (sort === 'closed') filtered = filtered.filter((g) => !g.status);
+    if (sort === 'recruiting') filtered = filtered.filter((g) => g.status);
     return filtered;
   };
 
@@ -209,11 +213,13 @@ function ReadingGroupList() {
       {/* 상단 헤더 */}
       <header className={styles.header}>
         <div className={styles.sortButtons}>
-          <button className={clsx({ [styles.active]: sort === 'latest' })} onClick={() => setSort('latest')}>
-            최신순
+          <button className={clsx({ [styles.active]: sort === 'all' })} onClick={() => setSort('all')}>
+            전체
           </button>
-          <button className={clsx({ [styles.active]: sort === 'closed' })} onClick={() => setSort('closed')}>
-            모집완료
+          <button
+            className={clsx({ [styles.active]: sort === 'recruiting' })}
+            onClick={() => setSort('recruiting')}>
+            모집중
           </button>
         </div>
 
@@ -232,32 +238,54 @@ function ReadingGroupList() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.2 }}>
-                  <div className={styles.filterRow}>
+                  <div className={styles.filterHeader}>
+                    <span className={styles.filterTitle}>필터</span>
+                    <button className={styles.resetButton} onClick={resetFilters}>
+                      초기화
+                    </button>
+                  </div>
+
+                  {/* label과 input/select 연결 - 접근성 오류 수정 */}
+                  <div className={styles.filterSection}>
+                    <label htmlFor="region" className={styles.filterLabel}>
+                      지역
+                    </label>
                     <select
+                      id="region"
                       value={region}
                       onChange={(e) => setRegion(e.target.value)}
                       className={styles.select}>
-                      <option value="">지역 전체</option>
+                      <option value="">전체</option>
                       {regionList.map((r) => (
                         <option key={r.code} value={r.name}>
                           {r.name}
                         </option>
                       ))}
                     </select>
+                  </div>
 
+                  <div className={styles.filterSection}>
+                    <label htmlFor="styleType" className={styles.filterLabel}>
+                      진행 방식
+                    </label>
                     <select
+                      id="styleType"
                       value={styleType}
                       onChange={(e) => setStyleType(e.target.value)}
                       className={styles.select}>
-                      <option value="">형식 전체</option>
+                      <option value="">전체</option>
                       <option value="독서">독서</option>
                       <option value="토론">토론</option>
                       <option value="자유">자유</option>
                     </select>
                   </div>
 
-                  <div className={styles.filterRow}>
+                  <div className={styles.filterSection}>
+                    <label htmlFor="date" className={styles.filterLabel}>
+                      모집 마감 날짜
+                    </label>
                     <input
+                      id="date"
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
@@ -284,50 +312,44 @@ function ReadingGroupList() {
             className={styles.card}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25 }}>
-            <Link href={`/groups/${g.groupId}`} className={styles.thumb}>
-              <img
-                src={g.coverUrl || `https://covers.openlibrary.org/b/isbn/${g.isbn}-M.jpg`}
-                alt={g.bookTitle || '책 표지'}
-              />
-            </Link>
+            transition={{ duration: 0.25 }}
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (target.closest('button') || target.closest('a')) return;
+              router.push(`/groups/${g.groupId}`);
+            }}
+            role="button"
+            tabIndex={0}>
+            <div className={styles.cardContent}>
+              {/* 왼쪽 정보 영역 */}
+              <div className={styles.infoArea}>
+                <h3 className={styles.title}>{g.groupName}</h3>
 
-            <div className={styles.cardBody}>
-              {/* 제목 + 북마크 */}
-              <div className={styles.titleRow}>
-                <h3 className={styles.title}>{g.bookTitle}</h3>
-                <button
-                  className={clsx(styles.scrapButton, {
-                    [styles.active]: scrapStatus[g.groupId]
-                  })}
-                  onClick={() => toggleScrap(g.groupId)}
-                  aria-label="스크랩 토글">
-                  {scrapStatus[g.groupId] ? (
-                    <BookmarkCheck size={20} color="#00796b" fill="#00796b" />
-                  ) : (
-                    <Bookmark size={20} color="#555" />
-                  )}
-                </button>
+                <div className={styles.metaInfo}>
+                  <span>진행 방식: {g.style}</span>
+                  <span>
+                    모집 인원: {g.headcountMin}~{g.headcountMax}명
+                  </span>
+                  <span>지역: {g.region}</span>
+                  <span>마감일: {new Date(g.endDate).toLocaleDateString()}</span>
+                </div>
+
+                <div className={styles.statusRow}>
+                  <span className={`${styles.badge} ${g.status ? styles.active : styles.closed}`}>
+                    {g.status ? '모집중' : '모집완료'}
+                  </span>
+                  <Link href={`/users/${g.userId}`} className={styles.nickname}>
+                    {g.nickname}
+                  </Link>
+                </div>
               </div>
 
-              <p className={styles.author}>{g.author || '저자 미상'}</p>
-              <p className={styles.content}>{g.content}</p>
-
-              {/* 하단 정보라인 */}
-              <div className={styles.meta}>
-                <span>{g.style}</span> |
-                <span>
-                  {g.headcountMin}-{g.headcountMax}명
-                </span>{' '}
-                |<span>{g.region}</span> |<span>{new Date(g.endDate).toLocaleDateString()}</span> |
-                <span className={`${styles.badge} ${g.status ? styles.active : styles.closed}`}>
-                  {g.status ? '모집중' : '모집완료'}
-                </span>
-                |
-                <Link href={`/users/${g.userId}`} className={styles.nickname}>
-                  {g.nickname}
-                </Link>
-              </div>
+              {/* 오른쪽 도서 이미지 */}
+              {g.coverUrl && (
+                <div className={styles.imageArea}>
+                  <img src={g.coverUrl} alt={g.bookTitle} />
+                </div>
+              )}
             </div>
           </motion.li>
         ))}
