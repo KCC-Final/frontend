@@ -113,7 +113,7 @@ export default function RelatedReviews({ isbn, category, currentReviewId }: Prop
           <div className={styles.reviewList} ref={scrollRef}>
             {currentReviews.map((review) =>
               activeTab === 'isbn' ? (
-                <ReviewCard key={review.reviewId} review={review} size={'sm'} useDicebearCover={true} />
+                <ReviewCard key={review.reviewId} review={review} size={'sm'} />
               ) : (
                 <ReviewCard key={review.reviewId} review={review} size={'sm'} />
               )

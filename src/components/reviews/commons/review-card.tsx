@@ -70,25 +70,10 @@ export default function ReviewCard({ review, onClick, showSecretBadge = true }: 
 
   const convertedProfileImage = changeImageUrlFromBase64(review.authorProfileImage);
 
-  // dicebear 배경 URL
-  const dicebearUrl = review.reviewId
-    ? `https://api.dicebear.com/9.x/glass/svg?seed=${review.reviewId}`
-    : null;
-
   return (
     <article className={styles.reviewCard} onClick={() => onClick(review.reviewId)}>
       {/* 16:9 비율의 썸네일 영역 */}
       <div className={styles.thumbnailContainer}>
-        {/* dicebear 배경 */}
-        {dicebearUrl && (
-          <div
-            className={styles.dicebearBackground}
-            style={{
-              backgroundImage: `url(${dicebearUrl})`
-            }}
-          />
-        )}
-
         {/* 메인 이미지 */}
         {loading ? (
           <div className={styles.loadingState}>

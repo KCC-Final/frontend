@@ -103,7 +103,7 @@ function ReviewListAboutBook({ isbn, coverUrl, ref, id }: ReviewListAboutBookPro
         <div className={styles.carousel_wrapper} ref={scrollRef}>
           <div className={styles.carousel_list}>
             {reviews.map((review) => (
-              <ReviewCard key={review.reviewId} review={review} size={'md'} useDicebearCover={true} />
+              <ReviewCard key={review.reviewId} review={review} size={'md'} />
             ))}
           </div>
         </div>
