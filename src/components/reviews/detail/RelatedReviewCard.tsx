@@ -1,6 +1,3 @@
-/**
- * @author uyh
- */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -44,7 +41,6 @@ export default function RelatedReviewCard({ review }: Props) {
       <BookCover
         isbn={review.isbn}
         title={review.reviewTitle}
-        reviewId={review.reviewId}
         className={styles.coverSection}
         noImageClassName={styles.noCover}
       />
@@ -73,8 +69,8 @@ export default function RelatedReviewCard({ review }: Props) {
         <p className={styles.excerpt}>{review.reviewContent?.replace(/<[^>]*>/g, '').substring(0, 80)}...</p>
 
         <div className={styles.stats}>
-          <span className={styles.stat}>{review.likeCount || 0}</span>
-          <span className={styles.stat}>{review.commentCount || 0}</span>
+          <span className={styles.stat}>좋아요 {review.likeCount || 0}</span>
+          <span className={styles.stat}>댓글 {review.commentCount || 0}</span>
         </div>
       </div>
     </article>

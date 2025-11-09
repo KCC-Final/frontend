@@ -1,6 +1,3 @@
-/**
- * @author uyh
- */
 import { useEffect, useState } from 'react';
 
 import { fetchAladin } from '@/apis/aladin';
