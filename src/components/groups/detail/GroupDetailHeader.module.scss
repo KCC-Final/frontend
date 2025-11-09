@@ -1,0 +1,221 @@
+.detailHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+/* 제목 섹션 */
+.titleSection {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.groupTitle {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* 작성자 섹션 */
+.authorSection {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.authorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.authorName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #007664;
+  text-decoration: none;
+}
+
+.date {
+  font-size: 13px;
+  color: #888;
+}
+
+.menuContainer {
+  position: relative;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+}
+
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  top: 32px;
+  width: 120px;
+  background: #fff;
+  border: 1px solid #e7e7e9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 20;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+/* 메뉴 아이템 */
+.menuDropdown button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.15s ease-in-out;
+
+  &:hover {
+    background: #f5f5f7;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+/* 스크랩 버튼 중앙 정렬 */
+.scrapArea {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.scrapButton {
+  background: #fff;
+  border: 1.5px solid #007664;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #007664;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &.activeScrap {
+    background: #007664;
+    color: #fff;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+/* 모임 메타 정보 */
+.metaInfo {
+}
+
+.metaList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.metaLabel {
+  min-width: 90px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+}
+
+.metaValue {
+  color: #000000;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+
+  &.recruiting {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.closed {
+    background-color: #929292;
+    color: #ffffff;
+  }
+}
+
+/* 제목 섹션 내 statusBadge */
+.titleSection .statusBadge {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* 제목 섹션 액션 영역 */
+.titleActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 스크랩 버튼 */
+.scrapButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  color: #666;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #f5f5f5;
+    color: #007664;
+  }
+
+  &.scrapped {
+    color: #007664;
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlusCircle, Search, Filter } from 'lucide-react';
 import Link from 'next/link';
@@ -323,7 +324,12 @@ function ReadingGroupList() {
             <div className={styles.cardContent}>
               {/* 왼쪽 정보 영역 */}
               <div className={styles.infoArea}>
-                <h3 className={styles.title}>{g.groupName}</h3>
+                <div className={styles.titleRow}>
+                  <h3 className={styles.title}>{g.groupName}</h3>
+                  <span className={`${styles.badge} ${g.status ? styles.active : styles.closed}`}>
+                    {g.status ? '모집중' : '모집완료'}
+                  </span>
+                </div>
 
                 <div className={styles.metaInfo}>
                   <span>진행 방식: {g.style}</span>
@@ -331,16 +337,9 @@ function ReadingGroupList() {
                     모집 인원: {g.headcountMin}~{g.headcountMax}명
                   </span>
                   <span>지역: {g.region}</span>
-                  <span>마감일: {new Date(g.endDate).toLocaleDateString()}</span>
-                </div>
-
-                <div className={styles.statusRow}>
-                  <span className={`${styles.badge} ${g.status ? styles.active : styles.closed}`}>
-                    {g.status ? '모집중' : '모집완료'}
+                  <span className={styles.metaValue}>
+                    마감일: {format(new Date(g.endDate), 'yyyy-MM-dd')}
                   </span>
-                  <Link href={`/users/${g.userId}`} className={styles.nickname}>
-                    {g.nickname}
-                  </Link>
                 </div>
               </div>
 

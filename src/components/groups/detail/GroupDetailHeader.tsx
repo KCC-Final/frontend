@@ -1,14 +1,16 @@
 'use client';
 
-import { MoreVertical } from 'lucide-react';
+import { format } from 'date-fns';
+import { MoreVertical, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 
-import styles from './group-detail.module.scss';
+import styles from './GroupDetailHeader.module.scss';
 
 import { group } from '@/apis/groo/group';
 import { user } from '@/apis/groo/user';
 import UserProfileImage from '@/components/common/profile/image';
+import { formatRelativeTime } from '@/utils/format/date';
 
 interface Props {
   groupData: any;
@@ -16,6 +18,8 @@ interface Props {
   currentUserId: string | null;
   router: any;
   refreshGroup: () => Promise<void>;
+  isScrapped: boolean;
+  onToggleScrap: () => void;
 }
 
 export default function GroupDetailHeader({
@@ -23,14 +27,15 @@ export default function GroupDetailHeader({
   isOwner,
   currentUserId,
   router,
-  refreshGroup
+  refreshGroup,
+  isScrapped,
+  onToggleScrap
 }: Props) {
   const [nickname, setNickname] = useState(groupData.nickname || '');
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const userId = groupData.userId;
 
-  /** 닉네임 가져오기 */
   useEffect(() => {
     const fetchNickname = async () => {
       try {
@@ -43,7 +48,6 @@ export default function GroupDetailHeader({
     if (!groupData.nickname) fetchNickname();
   }, [groupData.nickname, userId]);
 
-  /** 외부 클릭 시 메뉴 닫기 */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -54,7 +58,6 @@ export default function GroupDetailHeader({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMenu]);
 
-  /** 수정 / 삭제 */
   const handleEdit = () => {
     setShowMenu(false);
     router.push(`/groups/${groupData.groupId}/edit`);
@@ -70,10 +73,20 @@ export default function GroupDetailHeader({
     }
   };
 
-  /** 날짜 포맷 */
   const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+
     try {
-      return new Date(dateString).toLocaleDateString('ko-KR', {
+      // 타임스탬프(숫자)인 경우 처리
+      const timestamp = Number(dateString);
+      const date = isNaN(timestamp) ? new Date(dateString) : new Date(timestamp);
+
+      // Invalid Date 체크
+      if (isNaN(date.getTime())) {
+        return dateString;
+      }
+
+      return date.toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -88,6 +101,17 @@ export default function GroupDetailHeader({
       {/* 제목 섹션 */}
       <div className={styles.titleSection}>
         <h1 className={styles.groupTitle}>{groupData.groupName}</h1>
+        <div className={styles.titleActions}>
+          <span className={`${styles.statusBadge} ${groupData.status ? styles.recruiting : styles.closed}`}>
+            {groupData.status ? '모집중' : '모집완료'}
+          </span>
+          <button
+            className={`${styles.scrapButton} ${isScrapped ? styles.scrapped : ''}`}
+            onClick={onToggleScrap}
+            aria-label={isScrapped ? '스크랩 취소' : '스크랩'}>
+            <Bookmark size={20} fill={isScrapped ? 'currentColor' : 'none'} />
+          </button>
+        </div>
       </div>
 
       {/* 작성자 섹션 */}
@@ -98,7 +122,7 @@ export default function GroupDetailHeader({
             <Link href={`/users/${groupData.userId}`} className={styles.authorName}>
               {nickname || userId}
             </Link>
-            <p className={styles.date}>{formatDate(groupData.createdAt)}</p>
+            <p className={styles.date}>{formatRelativeTime(groupData.createdAt)}</p>
           </div>
         </div>
 
@@ -119,6 +143,30 @@ export default function GroupDetailHeader({
             )}
           </div>
         )}
+      </div>
+
+      {/* 모임 메타 정보 */}
+      <div className={styles.metaInfo}>
+        <div className={styles.metaList}>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>진행 방식:</span>
+            <span className={styles.metaValue}>{groupData.style}</span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>모집 인원:</span>
+            <span className={styles.metaValue}>
+              {groupData.headcountMin}~{groupData.headcountMax}명
+            </span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>모집 지역:</span>
+            <span className={styles.metaValue}>{groupData.region}</span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>마감 일자:</span>
+            <span className={styles.metaValue}>{format(new Date(groupData.endDate), 'yyyy-MM-dd')}</span>
+          </div>
+        </div>
       </div>
     </header>
   );

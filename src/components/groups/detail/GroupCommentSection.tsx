@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import styles from './group-detail.module.scss';
 import GroupCommentItem from './GroupCommentItem';
+import styles from './GroupCommentSection.module.scss';
 
 import { group } from '@/apis/groo/group';
 import { GroupCommentData } from '@/types/groups';

@@ -4,7 +4,7 @@ import { Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 
-import styles from './group-comment.module.scss';
+import styles from './GroupCommentItem.module.scss';
 
 import { group } from '@/apis/groo/group';
 import { user } from '@/apis/groo/user';
@@ -119,8 +119,18 @@ export default function GroupCommentItem({
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+
     try {
-      const date = new Date(dateString);
+      // 타임스탬프(숫자)인 경우 처리
+      const timestamp = Number(dateString);
+      const date = isNaN(timestamp) ? new Date(dateString) : new Date(timestamp);
+
+      // Invalid Date 체크
+      if (isNaN(date.getTime())) {
+        return dateString;
+      }
+
       const now = new Date();
       const diffMs = now.getTime() - date.getTime();
       const diffMin = Math.floor(diffMs / 60000);
