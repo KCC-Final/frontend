@@ -23,7 +23,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import { fetchGroo, fetchAladin } from '@/apis';
-import BookInfoCard from '@/components/reviews/write/book-info-card';
+import BookInfo from '@/components/reviews/write/book-info-card';
 import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import DraftListModal from '@/components/reviews/write/draft-list-modal';
 import editorStyles from '@/components/reviews/write/editor-content.module.scss';
@@ -335,7 +335,7 @@ function ReviewCreatePage() {
     router.replace(`/reviews/write?${params.toString()}`);
   };
 
-  const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false); // 썸네일 모달 상태 추가
+  const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false);
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -345,7 +345,6 @@ function ReviewCreatePage() {
         <h1>독후감 작성</h1>
 
         <div className={styles.headerActions}>
-          {/* 썸네일 추가 버튼 클릭 시 */}
           <button
             type="button"
             className={styles.thumbnailButton}
@@ -353,7 +352,6 @@ function ReviewCreatePage() {
             썸네일 추가
           </button>
 
-          {/* 썸네일 업로드 모달 */}
           {isThumbnailModalOpen && (
             <ThumbnailModal
               currentThumbnail={customThumbnail}
@@ -365,7 +363,6 @@ function ReviewCreatePage() {
             />
           )}
 
-          {/* 임시저장 버튼 */}
           <button type="button" onClick={() => setIsDraftModalOpen(true)} className={styles.draftButton}>
             임시저장 목록
           </button>
@@ -385,7 +382,7 @@ function ReviewCreatePage() {
 
         <section className={styles.bookSection}>
           {selectedBook ? (
-            <BookInfoCard book={selectedBook} onRemove={() => setIsBookModalOpen(true)} />
+            <BookInfo bookInfo={selectedBook} loading={false} onEdit={() => setIsBookModalOpen(true)} />
           ) : (
             <button onClick={() => setIsBookModalOpen(true)} className={styles.selectBookButton}>
               도서 선택

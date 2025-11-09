@@ -8,7 +8,7 @@ import styles from './write.module.scss';
 
 import { fetchAladin } from '@/apis';
 import { group as groupApi } from '@/apis/groo/group';
-import BookInfoCard from '@/components/reviews/write/book-info-card';
+import BookInfo from '@/components/reviews/write/book-info-card';
 import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import { regionList } from '@/types/common/region';
 import { GroupRequestBody, GroupData } from '@/types/groups';
@@ -36,19 +36,16 @@ function ReadingGroupEdit() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 개별 textarea 내용 분리
   const [intro, setIntro] = useState('');
   const [keywords, setKeywords] = useState('');
   const [participation, setParticipation] = useState('');
 
-  // ===== 기존 데이터 불러오기 =====
   useEffect(() => {
     const loadGroup = async () => {
       try {
         const data = await groupApi.getGroupDetail(Number(id));
         const g: GroupData = data.group;
 
-        // 폼 데이터 세팅
         setFormData({
           groupName: g.groupName,
           bookTitle: g.bookTitle,
@@ -62,7 +59,6 @@ function ReadingGroupEdit() {
           codeId: g.codeId
         });
 
-        // 소개글 분리
         const [introPart, keywordsPart, participationPart] = g.content
           ? g.content.split(/토론 키워드|참여 방법/)
           : ['', '', ''];
@@ -70,7 +66,6 @@ function ReadingGroupEdit() {
         setKeywords(keywordsPart?.trim() || '');
         setParticipation(participationPart?.trim() || '');
 
-        // ISBN으로 알라딘에서 도서 정보 재조회
         if (g.isbn) {
           const res = await fetchAladin.getBookDetails(g.isbn);
           const book = res?.item?.[0];
@@ -86,7 +81,6 @@ function ReadingGroupEdit() {
     loadGroup();
   }, [id]);
 
-  // ===== 입력 핸들러 =====
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = e.target instanceof HTMLInputElement ? e.target.checked : undefined;
@@ -107,7 +101,6 @@ function ReadingGroupEdit() {
     setFormData((prev) => ({ ...prev, bookTitle: '', isbn: '' }));
   };
 
-  // ===== 수정 제출 =====
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -136,7 +129,6 @@ ${participation.trim()}
     }
   };
 
-  // ===== 렌더링 =====
   return (
     <main className={styles.groupWriteContainer}>
       <div className={styles.topBar}>
@@ -161,12 +153,14 @@ ${participation.trim()}
           required
         />
 
-        {!selectedBook ? (
-          <div className={styles.bookBox} onClick={() => setShowBookModal(true)}>
-            도서 선택
+        {selectedBook ? (
+          <div className={styles.bookSection}>
+            <BookInfo bookInfo={selectedBook} loading={false} onEdit={() => setShowBookModal(true)} />
           </div>
         ) : (
-          <BookInfoCard book={selectedBook} onRemove={handleRemoveBook} />
+          <button type="button" className={styles.bookSelectBtn} onClick={() => setShowBookModal(true)}>
+            도서 선택
+          </button>
         )}
 
         <div className={styles.metaGrid}>

@@ -24,7 +24,8 @@ import { useState, useEffect } from 'react';
 
 import { fetchGroo, fetchAladin } from '@/apis';
 import styles from '@/components/reviews/edit/review-edit.module.scss';
-import BookInfoCard from '@/components/reviews/write/book-info-card';
+import BookInfo from '@/components/reviews/write/book-info-card';
+import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import editorStyles from '@/components/reviews/write/editor-content.module.scss';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
 import ThumbnailModal from '@/components/reviews/write/thumbnail-modal';
@@ -47,6 +48,7 @@ function ReviewEditPage() {
   const [charCount, setCharCount] = useState(0);
   const [customThumbnail, setCustomThumbnail] = useState<string | null>(null);
   const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false);
+  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const MAX_TEXT_LENGTH = 10000;
   const MAX_HTML_LENGTH = 30000;
 
@@ -138,7 +140,6 @@ function ReviewEditPage() {
         setIsSecret(review.secret);
         setReviewContent(review.reviewContent);
 
-        // customThumbnail 로드
         if (review.customThumbnail) {
           setCustomThumbnail(review.customThumbnail);
         }
@@ -153,6 +154,11 @@ function ReviewEditPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBookSelect = async (book: AladinBook) => {
+    setSelectedBook(book);
+    setIsBookModalOpen(false);
   };
 
   const handleSubmit = async () => {
@@ -217,7 +223,6 @@ function ReviewEditPage() {
         <h1>독후감 수정</h1>
 
         <div className={styles.headerActions}>
-          {/* 썸네일 추가/수정 버튼 */}
           <button
             type="button"
             className={styles.thumbnailButton}
@@ -228,7 +233,6 @@ function ReviewEditPage() {
       </div>
 
       <div className={styles.content}>
-        {/* 독후감 제목 */}
         <section className={styles.titleSection}>
           <input
             type="text"
@@ -239,14 +243,12 @@ function ReviewEditPage() {
           />
         </section>
 
-        {/* 도서 정보 */}
         {selectedBook && (
           <section className={styles.bookSection}>
-            <BookInfoCard book={selectedBook} onRemove={() => {}} readOnly />
+            <BookInfo bookInfo={selectedBook} loading={false} onEdit={() => setIsBookModalOpen(true)} />
           </section>
         )}
 
-        {/* 본문 에디터 */}
         <section className={styles.editorSection}>
           {editor && <EditorToolbar editor={editor} />}
           <div className={editorStyles.editorContent}>
@@ -271,7 +273,6 @@ function ReviewEditPage() {
         </section>
       </div>
 
-      {/* 썸네일 모달 */}
       {isThumbnailModalOpen && (
         <ThumbnailModal
           currentThumbnail={customThumbnail}
@@ -281,6 +282,10 @@ function ReviewEditPage() {
             setIsThumbnailModalOpen(false);
           }}
         />
+      )}
+
+      {isBookModalOpen && (
+        <BookSearchModal onSelect={handleBookSelect} onClose={() => setIsBookModalOpen(false)} />
       )}
     </div>
   );

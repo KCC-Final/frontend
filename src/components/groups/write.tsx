@@ -7,7 +7,7 @@ import { useState } from 'react';
 import styles from './write.module.scss';
 
 import { group as groupApi } from '@/apis/groo/group';
-import BookInfoCard from '@/components/reviews/write/book-info-card';
+import BookInfo from '@/components/reviews/write/book-info-card';
 import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import { regionList } from '@/types/common/region';
 import { GroupRequestBody } from '@/types/groups';
@@ -89,7 +89,6 @@ ${participation.trim()}
 
   return (
     <main className={styles.groupWriteContainer}>
-      {/* 상단 바 */}
       <div className={styles.topBar}>
         <button type="button" className={styles.backBtn} onClick={() => router.back()}>
           <ArrowLeft size={18} /> 뒤로가기
@@ -97,7 +96,6 @@ ${participation.trim()}
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
-        {/* 모임명 */}
         <input
           className={styles.inputTitle}
           name="groupName"
@@ -107,12 +105,16 @@ ${participation.trim()}
           required
         />
 
-        {/* 도서 선택 버튼 */}
-        <div className={styles.bookSelectBtn} onClick={() => setShowBookModal(true)}>
-          {selectedBook ? `선택된 도서: ${selectedBook.title}` : '도서 선택'}
-        </div>
+        {selectedBook ? (
+          <div className={styles.bookSection}>
+            <BookInfo bookInfo={selectedBook} loading={false} onEdit={() => setShowBookModal(true)} />
+          </div>
+        ) : (
+          <button type="button" className={styles.bookSelectBtn} onClick={() => setShowBookModal(true)}>
+            도서 선택
+          </button>
+        )}
 
-        {/* 진행방식 / 인원 / 마감일 / 지역 */}
         <div className={styles.metaGrid}>
           <div className={styles.formGroup}>
             <label htmlFor="style">진행 방식</label>
@@ -166,7 +168,6 @@ ${participation.trim()}
           </div>
         </div>
 
-        {/* 텍스트 영역들 */}
         <div className={styles.textareaGroup}>
           <label htmlFor="intro">모임 소개</label>
           <textarea
@@ -196,13 +197,6 @@ ${participation.trim()}
             placeholder="참여 방법을 입력해주세요."
           />
         </div>
-
-        {/* 도서 정보 카드 (축소된 버전) */}
-        {selectedBook && (
-          <div className={styles.bookInfoCompact}>
-            <BookInfoCard book={selectedBook} onRemove={handleRemoveBook} />
-          </div>
-        )}
 
         {error && <p className={styles.error}>{error}</p>}
 

@@ -124,6 +124,8 @@ function ReadingGroupDetail() {
           const updated = await group.getGroupDetail(Number(id));
           setGroupData(updated.group);
         }}
+        isScrapped={isScrapped}
+        onToggleScrap={toggleScrap}
       />
 
       {/* 본문 내용 */}
@@ -143,15 +145,6 @@ function ReadingGroupDetail() {
           <p className={styles.paragraph}>{sections.howto || '등록된 안내가 없습니다.'}</p>
         </div>
       </article>
-
-      {/* 스크랩 버튼 (도서정보 위로 이동) */}
-      <div className={styles.scrapArea}>
-        <button
-          className={`${styles.scrapButton} ${isScrapped ? styles.activeScrap : ''}`}
-          onClick={toggleScrap}>
-          {isScrapped ? '스크랩 취소' : '스크랩'}
-        </button>
-      </div>
 
       {/* 도서정보 (본문 아래, 댓글 위로 이동) */}
       {groupData.isbn && <BookInfo bookInfo={bookInfo} loading={loadingBook} />}
