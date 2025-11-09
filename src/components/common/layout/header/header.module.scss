@@ -29,14 +29,48 @@
 
     .pages {
       display: flex;
-      align-items: center;
       gap: 2rem;
+      list-style: none;
+      align-items: center;
 
-      a {
+      li {
+        position: relative;
+      }
+
+      .link {
+        position: relative;
+
         font-size: 2rem;
+        color: #555;
         font-weight: 500;
-        padding: 8px 10px;
-        color: $black-3;
+        text-decoration: none;
+        padding-bottom: 4px;
+        transition: color 0.25s ease;
+
+        &:hover {
+          color: #007664;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 0%;
+          height: 3px;
+          background-color: #007664;
+          border-radius: 2px;
+          transition: width 0.3s ease;
+        }
+      }
+
+      .active {
+        color: #000;
+        font-weight: 600;
+
+        &::after {
+          width: 100%;
+        }
       }
     }
   }

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import styles from './group-detail.module.scss';
 import GroupCommentItem from './GroupCommentItem';
+import styles from './GroupCommentSection.module.scss';
 
 import { group } from '@/apis/groo/group';
 import { GroupCommentData } from '@/types/groups';
@@ -19,6 +19,7 @@ interface Props {
 function GroupCommentSection({ comments, groupId, isOwner, currentUserId, refreshComments }: Props) {
   const [newComment, setNewComment] = useState('');
   const [isSecret, setIsSecret] = useState(false);
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
@@ -40,38 +41,83 @@ function GroupCommentSection({ comments, groupId, isOwner, currentUserId, refres
     return roots;
   };
 
-  return (
-    <section className={styles.commentSection}>
-      <h3>댓글 {comments.length}</h3>
+  const getReplyCount = (commentId: number): number => {
+    const comment = comments.find((c) => c.commentId === commentId);
+    if (!comment) return 0;
 
-      <div className={styles.commentInput}>
+    const directReplies = comments.filter((c) => c.parentId === commentId);
+    let count = directReplies.length;
+
+    directReplies.forEach((reply) => {
+      count += getReplyCount(reply.commentId);
+    });
+
+    return count;
+  };
+
+  const toggleReplies = (commentId: number) => {
+    setExpandedComments((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(commentId)) {
+        newSet.delete(commentId);
+      } else {
+        newSet.add(commentId);
+      }
+      return newSet;
+    });
+  };
+
+  return (
+    <section className={styles.container}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>댓글</h2>
+        <span className={styles.count}>{comments.length}</span>
+      </div>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleCommentSubmit();
+        }}
+        className={styles.commentForm}>
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="댓글을 입력하세요"
+          className={styles.textarea}
+          rows={3}
         />
-        <div className={styles.commentOptions}>
-          <label>
+        <div className={styles.formActions}>
+          <label className={styles.secretLabel}>
             <input type="checkbox" checked={isSecret} onChange={(e) => setIsSecret(e.target.checked)} />
             비밀댓글
           </label>
-          <button onClick={handleCommentSubmit}>댓글 작성</button>
+          <button type="submit" className={styles.submitBtn} disabled={!newComment.trim()}>
+            댓글 작성
+          </button>
         </div>
-      </div>
+      </form>
 
-      <ul className={styles.commentList}>
-        {buildTree(comments).map((c) => (
-          <GroupCommentItem
-            key={c.commentId}
-            comment={c}
-            depth={0}
-            groupId={groupId}
-            currentUserId={currentUserId}
-            isOwner={isOwner}
-            refreshComments={refreshComments}
-          />
-        ))}
-      </ul>
+      <div className={styles.commentList}>
+        {comments.length === 0 ? (
+          <div className={styles.empty}>첫 번째 댓글을 작성해보세요.</div>
+        ) : (
+          buildTree(comments).map((c) => (
+            <GroupCommentItem
+              key={c.commentId}
+              comment={c}
+              depth={0}
+              groupId={groupId}
+              currentUserId={currentUserId}
+              isOwner={isOwner}
+              refreshComments={refreshComments}
+              replyCount={getReplyCount(c.commentId)}
+              showReplies={expandedComments.has(c.commentId)}
+              onToggleReplies={() => toggleReplies(c.commentId)}
+            />
+          ))
+        )}
+      </div>
     </section>
   );
 }

@@ -15,53 +15,71 @@ import { formatRelativeTime } from '@/utils/format/date';
 interface ReviewCardProps {
   review: ReviewData;
   size?: 'sm' | 'md' | 'lg';
-  useDicebearCover?: boolean;
 }
 
-function ReviewCard({ review, size = 'lg', useDicebearCover = false }: ReviewCardProps) {
+function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [isImgLoading, setImgLoading] = useState(true);
   const [imgFetchingError, setImgFetchingError] = useState(false);
-
+  const [hasCustomThumbnail, setHasCustomThumbnail] = useState(false);
   useEffect(() => {
-    // isbn이 없으면 이미지 로딩 실패 처리
-    if (!review.isbn) {
-      setImgLoading(false);
-      setImgFetchingError(true);
-      return;
-    }
+    let isMounted = true;
 
-    /** 이미지 URL 가져오기 함수 */
-    const getCoverImageUrl = async () => {
-      // 상태 초기화
-      setImgUrl(null);
-      setImgLoading(true);
-      setImgFetchingError(false);
+    const loadImage = async () => {
+      // 커스텀 썸네일 우선
+      const thumb = review.customThumbnail?.trim?.();
+      if (thumb) {
+        if (isMounted) {
+          setImgUrl(thumb);
+          setHasCustomThumbnail(true);
+          setImgLoading(false);
+          setImgFetchingError(false);
+        }
+        return;
+      }
 
-      // Aladin API로 도서 상세 정보 요청
-      try {
-        const result = await fetchAladin.getBookDetails(review.isbn);
-
-        if (result.item && result.item.length > 0 && result.item[0].cover) {
-          setImgUrl(result.item[0].cover);
-        } else {
+      // 썸네일 없을 때만 도서 커버 불러오기
+      if (!review.isbn) {
+        if (isMounted) {
+          setImgUrl(null);
+          setImgLoading(false);
           setImgFetchingError(true);
         }
-      } catch (error) {
-        setImgFetchingError(true);
+        return;
+      }
+
+      try {
+        if (isMounted) {
+          setImgLoading(true);
+          setImgFetchingError(false);
+        }
+
+        const result = await fetchAladin.getBookDetails(review.isbn);
+
+        if (isMounted) {
+          const cover = result?.item?.[0]?.cover;
+          if (cover) {
+            setImgUrl(cover);
+            setHasCustomThumbnail(false);
+          } else {
+            setImgFetchingError(true);
+          }
+        }
+      } catch (err) {
+        if (isMounted) setImgFetchingError(true);
       } finally {
-        setImgLoading(false);
+        if (isMounted) setImgLoading(false);
       }
     };
 
-    getCoverImageUrl();
-  }, [review.isbn]);
+    loadImage();
+    return () => {
+      isMounted = false;
+    };
+  }, [review.isbn, review.customThumbnail]);
 
-  // 커버 이미지 URL 결정 (로딩 중이거나 에러 시 기본 이미지 사용)
-  const finalImgSrc = !isImgLoading && !imgFetchingError && imgUrl ? imgUrl : null;
-
-  // dicebear 배경 URL 생성 (reviewId를 시드로 사용)
-  const dicebearBgUrl = `url(https://api.dicebear.com/9.x/glass/svg?seed=${review.reviewId})`;
+  // 썸네일 우선 렌더링
+  const finalImgSrc = imgUrl && !imgFetchingError ? imgUrl : null;
 
   return (
     <li
@@ -69,40 +87,59 @@ function ReviewCard({ review, size = 'lg', useDicebearCover = false }: ReviewCar
         styles.container,
         size === 'sm' ? styles.small : size === 'md' ? styles.medium : styles.large
       )}>
-      {/* 커버 이미지 섹션 (클릭 가능) */}
+      {/* 커버 이미지 섹션 */}
       <Link href={`/reviews/${review.reviewId}`}>
-        <div
-          className={`${styles.cover_bg} ${useDicebearCover ? styles.dicebear : styles.normal}`}
-          style={
-            useDicebearCover
-              ? ({ '--background-image': dicebearBgUrl } as React.CSSProperties)
-              : finalImgSrc
-                ? ({ '--background-image': `url(${finalImgSrc})` } as React.CSSProperties)
-                : undefined
-          }>
+        <div className={styles.cover_bg}>
+          {/* 도서 표지 블러 배경 (customThumbnail 없을 때만) */}
+          {!hasCustomThumbnail && finalImgSrc && (
+            <div className={styles.blur_bg} style={{ backgroundImage: `url(${finalImgSrc})` }} />
+          )}
+
           {/* 로딩 중 UI */}
           {isImgLoading && (
             <div className={styles.placeholder}>
               <div className={styles.spinner}></div>
             </div>
           )}
+
           {/* 에러 또는 이미지 없음 UI */}
           {!isImgLoading && imgFetchingError && (
             <div className={styles.placeholder}>
               <BookIcon size={60} color="#aaaaaa" />
             </div>
           )}
-          {/* 이미지 로딩 성공 UI */}
+
+          {/* 이미지 표시 */}
           {finalImgSrc && (
-            <Image
-              className={styles.cover_img}
-              src={finalImgSrc}
-              alt={review.reviewTitle}
-              fill={true}
-              sizes="120px"
-              priority={false}
-              onError={() => setImgFetchingError(true)}
-            />
+            <>
+              {hasCustomThumbnail ? (
+                // 커스텀 썸네일 (기존 그대로)
+                <Image
+                  className={styles.cover_img}
+                  src={finalImgSrc}
+                  alt={review.reviewTitle}
+                  fill={true}
+                  sizes="120px"
+                  style={{ objectFit: 'cover' }}
+                  priority={false}
+                  onError={() => setImgFetchingError(true)}
+                />
+              ) : (
+                // 썸네일 없을 때 — 도서 원본 비율 유지 + 블러 배경
+                <div className={styles.book_fallback_wrapper}>
+                  <div
+                    className={styles.book_fallback_bg}
+                    style={{ backgroundImage: `url(${finalImgSrc})` }}
+                  />
+                  <img
+                    className={styles.book_fallback_img}
+                    src={finalImgSrc}
+                    alt={review.reviewTitle}
+                    onError={() => setImgFetchingError(true)}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </Link>

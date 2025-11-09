@@ -8,6 +8,7 @@ export type ReviewCreateReqBody = {
   secret: boolean;
   temporary: boolean;
   category?: string;
+  customThumbnail?: string; // 추가: base64 이미지
 };
 export type ReviewCreateResDTO = CommonResDTO<null>;
 
@@ -17,6 +18,7 @@ export type ReviewUpdateReqBody = {
   reviewContent?: string;
   secret?: boolean;
   temporary?: boolean;
+  customThumbnail?: string; // 추가: base64 이미지
 };
 export type ReviewUpdateResDTO = CommonResDTO<null>;
 
@@ -41,6 +43,7 @@ export type ReviewDetailResDTO = CommonResDTO<{
   isOwner: boolean; // 추가
   authorNickname?: string;
   authorProfileImage?: string | null;
+  customThumbnail?: string | null; // 추가
 }>;
 
 // 독후감 목록 조회
@@ -63,6 +66,7 @@ export type ReviewData = {
   commentCount: number;
   authorNickname?: string;
   authorProfileImage?: string | null;
+  customThumbnail?: string | null; // 추가
 };
 
 // 임시저장 목록 조회
@@ -80,6 +84,7 @@ export type DraftData = {
   createdAt: string;
   updatedAt: string;
   category: string;
+  customThumbnail?: string | null; // 추가
 };
 
 // 임시저장 삭제

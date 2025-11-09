@@ -25,14 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function ReadingGroupDetailsPage({ params }: PageProps) {
-  const { id } = await params;
-
-  return (
-    <>
-      <ReadingGroupDetails />
-      {id}
-    </>
-  );
+  return <ReadingGroupDetails />;
 }
 
 export default ReadingGroupDetailsPage;

@@ -1,0 +1,153 @@
+.container {
+  padding: 32px 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.count {
+  font-size: 16px;
+  font-weight: 600;
+  color: #007664;
+}
+
+.commentForm {
+  margin-bottom: 32px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s;
+  margin: 16px 0;
+
+  &:focus {
+    outline: none;
+    border-color: #007664;
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+.submitBtn {
+  padding: 10px 24px;
+  background: #007664;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #006655;
+  }
+
+  &:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+  }
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.replyContainer {
+  // 재귀 답글 컨테이너 - 추가 스타일 불필요 (CommentItem에서 marginLeft로 처리)
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.errorMessage {
+  padding: 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.secretLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #007664;
+  }
+
+  input[type='checkbox'] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    background: #ffffff;
+
+    &:hover {
+      border-color: #007664;
+    }
+
+    &:checked {
+      background: #007664;
+      border-color: #007664;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 4px;
+        height: 8px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 118, 100, 0.1);
+    }
+  }
+}
+
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}

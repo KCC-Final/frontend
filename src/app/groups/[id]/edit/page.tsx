@@ -25,14 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function ReadingGroupEditPage({ params }: PageProps) {
-  const { id } = await params;
-
-  return (
-    <>
-      <ReadingGroupEdit />
-      {id}
-    </>
-  );
+  return <ReadingGroupEdit />;
 }
 
 export default ReadingGroupEditPage;

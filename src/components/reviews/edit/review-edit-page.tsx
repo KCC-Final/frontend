@@ -24,9 +24,11 @@ import { useState, useEffect } from 'react';
 
 import { fetchGroo, fetchAladin } from '@/apis';
 import styles from '@/components/reviews/edit/review-edit.module.scss';
-import BookInfoCard from '@/components/reviews/write/book-info-card';
+import BookInfo from '@/components/reviews/write/book-info-card';
+import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import editorStyles from '@/components/reviews/write/editor-content.module.scss';
 import EditorToolbar from '@/components/reviews/write/editor-toolbar';
+import ThumbnailModal from '@/components/reviews/write/thumbnail-modal';
 import { ReviewUpdateReqBody, AladinBook } from '@/types/reviews';
 import { devLogger } from '@/utils/dev-logger';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
@@ -44,6 +46,9 @@ function ReviewEditPage() {
   const [loading, setLoading] = useState(true);
   const [reviewContent, setReviewContent] = useState('');
   const [charCount, setCharCount] = useState(0);
+  const [customThumbnail, setCustomThumbnail] = useState<string | null>(null);
+  const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false);
+  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const MAX_TEXT_LENGTH = 10000;
   const MAX_HTML_LENGTH = 30000;
 
@@ -134,6 +139,11 @@ function ReviewEditPage() {
         setTitle(review.reviewTitle);
         setIsSecret(review.secret);
         setReviewContent(review.reviewContent);
+
+        if (review.customThumbnail) {
+          setCustomThumbnail(review.customThumbnail);
+        }
+
         if (review.isbn) {
           await loadBookInfo(review.isbn);
         }
@@ -144,6 +154,11 @@ function ReviewEditPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBookSelect = async (book: AladinBook) => {
+    setSelectedBook(book);
+    setIsBookModalOpen(false);
   };
 
   const handleSubmit = async () => {
@@ -179,7 +194,8 @@ function ReviewEditPage() {
         reviewTitle: title,
         reviewContent: content,
         secret: isSecret,
-        temporary: false
+        temporary: false,
+        customThumbnail: customThumbnail || undefined
       };
 
       await fetchGroo.review.updateReview(reviewId, updateData);
@@ -205,11 +221,18 @@ function ReviewEditPage() {
           <ArrowLeft size={20} />
         </button>
         <h1>독후감 수정</h1>
-        <div className={styles.placeholder}></div>
+
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={styles.thumbnailButton}
+            onClick={() => setIsThumbnailModalOpen(true)}>
+            {customThumbnail ? '썸네일 수정' : '썸네일 추가'}
+          </button>
+        </div>
       </div>
 
       <div className={styles.content}>
-        {/* 독후감 제목 - 맨 위로 */}
         <section className={styles.titleSection}>
           <input
             type="text"
@@ -220,14 +243,12 @@ function ReviewEditPage() {
           />
         </section>
 
-        {/* 도서 정보 - 제목 아래로 */}
         {selectedBook && (
           <section className={styles.bookSection}>
-            <BookInfoCard book={selectedBook} onRemove={() => {}} readOnly />
+            <BookInfo bookInfo={selectedBook} loading={false} onEdit={() => setIsBookModalOpen(true)} />
           </section>
         )}
 
-        {/* 본문 에디터 - 제일 아래 */}
         <section className={styles.editorSection}>
           {editor && <EditorToolbar editor={editor} />}
           <div className={editorStyles.editorContent}>
@@ -251,6 +272,21 @@ function ReviewEditPage() {
           </div>
         </section>
       </div>
+
+      {isThumbnailModalOpen && (
+        <ThumbnailModal
+          currentThumbnail={customThumbnail}
+          onClose={() => setIsThumbnailModalOpen(false)}
+          onConfirm={(thumb) => {
+            setCustomThumbnail(thumb);
+            setIsThumbnailModalOpen(false);
+          }}
+        />
+      )}
+
+      {isBookModalOpen && (
+        <BookSearchModal onSelect={handleBookSelect} onClose={() => setIsBookModalOpen(false)} />
+      )}
     </div>
   );
 }

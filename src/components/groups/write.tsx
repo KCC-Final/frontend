@@ -7,7 +7,7 @@ import { useState } from 'react';
 import styles from './write.module.scss';
 
 import { group as groupApi } from '@/apis/groo/group';
-import BookInfoCard from '@/components/reviews/write/book-info-card';
+import BookInfo from '@/components/reviews/write/book-info-card';
 import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import { regionList } from '@/types/common/region';
 import { GroupRequestBody } from '@/types/groups';
@@ -89,21 +89,13 @@ ${participation.trim()}
 
   return (
     <main className={styles.groupWriteContainer}>
-      {/* 상단 바 */}
       <div className={styles.topBar}>
         <button type="button" className={styles.backBtn} onClick={() => router.back()}>
           <ArrowLeft size={18} /> 뒤로가기
         </button>
-
-        <label className={styles.status}>
-          <input type="checkbox" name="status" checked={formData.status} onChange={handleChange} />
-          <span className={styles.toggle}></span>
-          모집중
-        </label>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
-        {/* 모임명 */}
         <input
           className={styles.inputTitle}
           name="groupName"
@@ -113,16 +105,16 @@ ${participation.trim()}
           required
         />
 
-        {/* 도서 선택 */}
-        {!selectedBook ? (
-          <div className={styles.bookBox} onClick={() => setShowBookModal(true)}>
-            도서 선택
+        {selectedBook ? (
+          <div className={styles.bookSection}>
+            <BookInfo bookInfo={selectedBook} loading={false} onEdit={() => setShowBookModal(true)} />
           </div>
         ) : (
-          <BookInfoCard book={selectedBook} onRemove={handleRemoveBook} />
+          <button type="button" className={styles.bookSelectBtn} onClick={() => setShowBookModal(true)}>
+            도서 선택
+          </button>
         )}
 
-        {/* 진행방식 / 인원 / 마감일 / 지역 */}
         <div className={styles.metaGrid}>
           <div className={styles.formGroup}>
             <label htmlFor="style">진행 방식</label>
@@ -133,28 +125,30 @@ ${participation.trim()}
             </select>
           </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="headcountMin">최소 인원</label>
-            <input
-              id="headcountMin"
-              type="number"
-              name="headcountMin"
-              value={formData.headcountMin}
-              onChange={handleChange}
-              min={1}
-            />
-          </div>
+          <div className={styles.headcountRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="headcountMin">최소 인원</label>
+              <input
+                id="headcountMin"
+                type="number"
+                name="headcountMin"
+                value={formData.headcountMin}
+                onChange={handleChange}
+                min={1}
+              />
+            </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="headcountMax">최대 인원</label>
-            <input
-              id="headcountMax"
-              type="number"
-              name="headcountMax"
-              value={formData.headcountMax}
-              onChange={handleChange}
-              min={formData.headcountMin}
-            />
+            <div className={styles.formGroup}>
+              <label htmlFor="headcountMax">최대 인원</label>
+              <input
+                id="headcountMax"
+                type="number"
+                name="headcountMax"
+                value={formData.headcountMax}
+                onChange={handleChange}
+                min={formData.headcountMin}
+              />
+            </div>
           </div>
 
           <div className={styles.formGroup}>
@@ -174,7 +168,6 @@ ${participation.trim()}
           </div>
         </div>
 
-        {/* 텍스트 영역들 */}
         <div className={styles.textareaGroup}>
           <label htmlFor="intro">모임 소개</label>
           <textarea

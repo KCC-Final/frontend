@@ -15,7 +15,6 @@ import { regionList } from '@/types/common/region';
 import { GroupData, GroupCommentData } from '@/types/groups';
 import { AladinBook } from '@/types/reviews/book-search';
 
-/** 본문 구역 추출 유틸 */
 interface GroupSections {
   intro: string;
   keywords: string;
@@ -57,7 +56,7 @@ function ReadingGroupDetail() {
           localStorage.setItem('userId', myId);
           setCurrentUserId(myId);
         }
-      } catch (e) {}
+      } catch {}
     };
     fetchUserId();
   }, []);
@@ -83,7 +82,7 @@ function ReadingGroupDetail() {
         if (currentUserId) {
           setIsOwner(String(detail.group.userId) === String(currentUserId));
         }
-      } catch (error) {
+      } catch {
       } finally {
         setLoadingBook(false);
       }
@@ -110,24 +109,26 @@ function ReadingGroupDetail() {
         const res = await group.createScrap(groupData.groupId);
         setIsScrapped(res.data ?? true);
       }
-    } catch (e) {}
+    } catch {}
   };
 
   return (
     <section className={styles.container}>
-      {/* 상단 헤더 */}
+      {/* 상단 헤더 (작성자 + 메뉴 or 팔로우 버튼) */}
       <GroupDetailHeader
         groupData={groupData}
-        isScrapped={isScrapped}
-        toggleScrap={toggleScrap}
         isOwner={isOwner}
+        currentUserId={currentUserId}
         router={router}
+        refreshGroup={async () => {
+          const updated = await group.getGroupDetail(Number(id));
+          setGroupData(updated.group);
+        }}
+        isScrapped={isScrapped}
+        onToggleScrap={toggleScrap}
       />
 
-      {/* 도서 정보 */}
-      {groupData.isbn && <BookInfo bookInfo={bookInfo} loading={loadingBook} />}
-
-      {/* 본문 (모임 소개 / 토론 키워드 / 참여 방법) */}
+      {/* 본문 내용 */}
       <article className={styles.bodySection}>
         <div className={styles.subSection}>
           <h3>모임 소개</h3>
@@ -145,7 +146,10 @@ function ReadingGroupDetail() {
         </div>
       </article>
 
-      {/* 댓글 섹션 */}
+      {/* 도서정보 (본문 아래, 댓글 위로 이동) */}
+      {groupData.isbn && <BookInfo bookInfo={bookInfo} loading={loadingBook} />}
+
+      {/* 댓글 */}
       <GroupCommentSection
         comments={comments}
         groupId={groupData.groupId}

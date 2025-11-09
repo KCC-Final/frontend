@@ -1,9 +1,13 @@
+/**
+ * @author uyh
+ */
 'use client';
 
 import { Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
+import BookInfo from './BookInfo';
 import CommentSection from './CommentSection';
 import RelatedReviews from './RelatedReviews';
 import ReviewContent from './review-content';
@@ -13,10 +17,10 @@ import { fetchAladin } from '@/apis';
 import { comment as commentApi } from '@/apis/groo/comment';
 import { follow as followApi } from '@/apis/groo/follow';
 import { review as reviewApi } from '@/apis/groo/review';
-import BookProfileCard from '@/components/common/book/profile-card';
 import UserProfileImage from '@/components/common/profile/image';
 import { AladinBookDetailsItem } from '@/types';
 import { ReviewDetailResDTO, CommentData } from '@/types/reviews';
+import { AladinBook } from '@/types/reviews/book-search';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 type Props = {
@@ -25,7 +29,8 @@ type Props = {
 
 export default function ReviewDetail({ reviewData }: Props) {
   const router = useRouter();
-  const [bookInfo, setBookInfo] = useState<AladinBookDetailsItem | null>(null);
+  const [bookInfo, setBookInfo] = useState<AladinBook | null>(null);
+  const [bookLoading, setBookLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(reviewData.liked);
   const [likeCount, setLikeCount] = useState(reviewData.likeCount);
   const [comments, setComments] = useState<CommentData[]>(reviewData.comments || []);
@@ -37,12 +42,15 @@ export default function ReviewDetail({ reviewData }: Props) {
   useEffect(() => {
     const fetchBookInfo = async () => {
       try {
+        setBookLoading(true);
         const response = await fetchAladin.getBookDetails(reviewData.isbn);
         if (response.item && response.item.length > 0) {
           setBookInfo(response.item[0]);
         }
       } catch {
         setBookInfo(null);
+      } finally {
+        setBookLoading(false);
       }
     };
 
@@ -254,19 +262,19 @@ export default function ReviewDetail({ reviewData }: Props) {
           )}
         </div>
 
-        {/* 도서 정보 */}
-        {bookInfo && <BookProfileCard bookInfo={bookInfo} size="sm" />}
-
         {/* 본문 내용 */}
         <ReviewContent reviewData={reviewData} />
 
-        {/* 좋아요 버튼 - 본문 아래 */}
+        {/* 좋아요 버튼 */}
         <div className={styles.likeSection}>
           <button onClick={handleLike} className={`${styles.likeButton} ${isLiked ? styles.liked : ''}`}>
             <Heart className={styles.heartIcon} fill={isLiked ? 'currentColor' : 'none'} />
             <span className={styles.likeCount}>{likeCount}</span>
           </button>
         </div>
+
+        {/* 도서 정보 - 좋아요 아래로 이동 */}
+        <BookInfo bookInfo={bookInfo} loading={bookLoading} />
 
         {/* 관련 독후감 */}
         <RelatedReviews
