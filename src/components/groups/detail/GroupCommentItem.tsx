@@ -17,6 +17,9 @@ interface Props {
   currentUserId: string | null;
   isOwner: boolean;
   refreshComments: () => Promise<void>;
+  replyCount?: number;
+  showReplies?: boolean;
+  onToggleReplies?: () => void;
 }
 
 const nicknameCache = new Map<string, { nickname: string; profileImage?: string }>();
@@ -27,7 +30,10 @@ export default function GroupCommentItem({
   groupId,
   currentUserId,
   isOwner,
-  refreshComments
+  refreshComments,
+  replyCount = 0,
+  showReplies = false,
+  onToggleReplies
 }: Props) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyContent, setReplyContent] = useState('');
@@ -42,14 +48,12 @@ export default function GroupCommentItem({
   const isCommentOwner = comment.userId === currentUserId;
   const canViewSecret = !comment.flag || isCommentOwner || isOwner;
 
-  /** 닉네임/프로필 캐싱 */
   useEffect(() => {
     const loadUserInfo = async () => {
       if (!comment.userId) return;
       if (nicknameCache.has(comment.userId)) {
         const cached = nicknameCache.get(comment.userId)!;
         setNickname(cached.nickname);
-        // 캐시에 profileImage가 있고 유효한 값일 때만 설정
         if (cached.profileImage) {
           setProfileImage(cached.profileImage);
         }
@@ -67,7 +71,6 @@ export default function GroupCommentItem({
             : { nickname: String(res), profileImage: null };
 
         setNickname(userInfo.nickname);
-        // profileImage가 유효한 값일 때만 state 업데이트
         if (userInfo.profileImage) {
           setProfileImage(userInfo.profileImage);
         }
@@ -78,7 +81,6 @@ export default function GroupCommentItem({
     if (!comment.authorNickname || !comment.authorProfileImage) loadUserInfo();
   }, [comment.userId, comment.authorNickname, comment.authorProfileImage]);
 
-  /** 외부 클릭시 메뉴 닫기 */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -89,7 +91,6 @@ export default function GroupCommentItem({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [menuOpen]);
 
-  /** CRUD */
   const handleReply = async () => {
     if (!replyContent.trim()) return;
     await group.createComment(groupId, {
@@ -100,6 +101,7 @@ export default function GroupCommentItem({
     await refreshComments();
     setReplyOpen(false);
     setReplyContent('');
+    setReplySecret(false);
   };
 
   const handleUpdate = async () => {
@@ -122,11 +124,9 @@ export default function GroupCommentItem({
     if (!dateString) return '';
 
     try {
-      // 타임스탬프(숫자)인 경우 처리
       const timestamp = Number(dateString);
       const date = isNaN(timestamp) ? new Date(dateString) : new Date(timestamp);
 
-      // Invalid Date 체크
       if (isNaN(date.getTime())) {
         return dateString;
       }
@@ -148,100 +148,142 @@ export default function GroupCommentItem({
     }
   };
 
-  const displayDate = comment.updatedAt || comment.createdAt;
+  const isEdited = comment.updatedAt && comment.updatedAt !== comment.createdAt;
+  const displayDate = isEdited ? comment.updatedAt : comment.createdAt;
   const marginLeft = Math.min(depth, 5) * 40;
-
+  console.log('+++', comment.createdAt, displayDate);
   return (
-    <div
-      className={`${styles.commentContainer} ${depth > 0 ? styles.reply : ''}`}
-      style={{ marginLeft: `${marginLeft}px` }}>
-      {/* 헤더 */}
-      <div className={styles.commentHeader}>
-        <div className={styles.commentUser}>
-          <UserProfileImage userId={comment.userId} profileImage={profileImage} size={36} />
+    <div>
+      <div
+        className={`${styles.container} ${depth > 0 ? styles.reply : ''}`}
+        style={{ marginLeft: `${marginLeft}px` }}>
+        <div className={styles.header}>
+          <div className={styles.authorInfo}>
+            <UserProfileImage userId={comment.userId} profileImage={profileImage} size={32} />
 
-          <div className={styles.userMeta}>
-            <Link href={`/users/${comment.userId}`} className={styles.userName}>
-              {nickname}
-            </Link>
-            <span className={styles.commentDate}>{formatDate(displayDate)}</span>
+            <div className={styles.authorDetails}>
+              <div className={styles.authorNameRow}>
+                <Link href={`/users/${comment.userId}`} className={styles.author}>
+                  {nickname}
+                </Link>
+                {comment.flag && <Lock size={14} className={styles.lockIcon} />}
+              </div>
+              <span className={styles.date}>
+                {formatDate(displayDate)}
+                {isEdited && ' (수정됨)'}
+              </span>
+            </div>
           </div>
-          {comment.flag && <Lock size={14} className={styles.lockIcon} />}
+
+          {isCommentOwner && (
+            <div className={styles.menuContainer} ref={menuRef}>
+              <button onClick={() => setMenuOpen(!menuOpen)} className={styles.menuButton} aria-label="메뉴">
+                <span className={styles.menuIcon}>⋮</span>
+              </button>
+
+              {menuOpen && (
+                <div className={styles.menuDropdown}>
+                  <button
+                    onClick={() => {
+                      setEditMode(true);
+                      setMenuOpen(false);
+                    }}
+                    className={styles.menuItem}>
+                    수정
+                  </button>
+                  <button onClick={handleDelete} className={styles.menuItem}>
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {isCommentOwner && (
-          <div className={styles.menuWrapper} ref={menuRef}>
-            <button onClick={() => setMenuOpen(!menuOpen)} className={styles.menuButton}>
-              ⋮
-            </button>
-            {menuOpen && (
-              <div className={styles.menuDropdown}>
-                <button onClick={() => setEditMode(true)}>수정</button>
-                <button onClick={handleDelete}>삭제</button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* 본문 */}
-      <div className={styles.commentBody}>
         {editMode ? (
           <div className={styles.editForm}>
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              rows={3}
               className={styles.textarea}
+              rows={3}
             />
             <div className={styles.editActions}>
-              <button onClick={handleUpdate}>저장</button>
-              <button onClick={() => setEditMode(false)}>취소</button>
+              <button onClick={handleUpdate} className={styles.saveBtn}>
+                저장
+              </button>
+              <button
+                onClick={() => {
+                  setEditMode(false);
+                  setEditContent(comment.content);
+                }}
+                className={styles.cancelBtn}>
+                취소
+              </button>
             </div>
           </div>
-        ) : canViewSecret ? (
-          <p className={styles.commentText}>{comment.content}</p>
         ) : (
-          <em className={styles.secretText}>비밀댓글입니다.</em>
-        )}
-      </div>
+          <>
+            {canViewSecret ? (
+              <p className={styles.content}>{comment.content}</p>
+            ) : (
+              <p className={styles.secretText}>비밀댓글입니다.</p>
+            )}
 
-      {/* 하단 액션 */}
-      <div className={styles.commentFooter}>
-        {depth === 0 && (
-          <button className={styles.replyBtn} onClick={() => setReplyOpen(!replyOpen)}>
-            답글
-          </button>
-        )}
-      </div>
+            <div className={styles.actions}>
+              {depth === 0 && (
+                <button onClick={() => setReplyOpen(!replyOpen)} className={styles.replyBtn}>
+                  답글
+                </button>
+              )}
 
-      {/* 답글 입력 */}
-      {replyOpen && (
-        <div className={styles.replyForm}>
-          <textarea
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            placeholder="답글을 입력하세요"
-            rows={2}
-            className={styles.textarea}
-          />
-          <div className={styles.replyActions}>
-            <label>
-              <input
-                type="checkbox"
-                checked={replySecret}
-                onChange={(e) => setReplySecret(e.target.checked)}
-              />{' '}
-              비밀댓글
-            </label>
-            <button onClick={handleReply}>등록</button>
+              {replyCount > 0 && onToggleReplies && (
+                <button onClick={onToggleReplies} className={styles.toggleRepliesBtn}>
+                  <span className={styles.toggleIcon}>{showReplies ? '▼' : '▶'}</span>
+                  답글 {replyCount}개
+                </button>
+              )}
+            </div>
+          </>
+        )}
+
+        {replyOpen && (
+          <div className={styles.replyForm}>
+            <textarea
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              placeholder="답글을 입력하세요"
+              className={styles.textarea}
+              rows={2}
+            />
+            <div className={styles.replyActions}>
+              <label className={styles.secretLabel}>
+                <input
+                  type="checkbox"
+                  checked={replySecret}
+                  onChange={(e) => setReplySecret(e.target.checked)}
+                />
+                비밀댓글
+              </label>
+              <button onClick={handleReply} className={styles.submitBtn}>
+                답글 작성
+              </button>
+              <button
+                onClick={() => {
+                  setReplyOpen(false);
+                  setReplyContent('');
+                  setReplySecret(false);
+                }}
+                className={styles.cancelBtn}>
+                취소
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* 대댓글 */}
-      {comment.replies?.length > 0 && (
-        <div className={styles.replyList}>
+      {showReplies && comment.replies?.length > 0 && (
+        <div className={styles.replyContainer}>
           {comment.replies.map((r: any) => (
             <GroupCommentItem
               key={r.commentId}
