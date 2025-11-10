@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import styles from './page.module.scss';
 
 import { review as reviewApi } from '@/apis/groo/review';
+import GlobalLayout from '@/components/common/layout';
 import ReviewDetail from '@/components/reviews/detail/review-detail';
 import { ReviewDetailResDTO } from '@/types/reviews';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
@@ -58,5 +59,9 @@ export default function ReviewDetailPage() {
     );
   }
 
-  return <ReviewDetail reviewData={reviewData} />;
+  return (
+    <GlobalLayout size="sm">
+      <ReviewDetail reviewData={reviewData} />
+    </GlobalLayout>
+  );
 }

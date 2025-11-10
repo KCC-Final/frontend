@@ -1,3 +1,4 @@
+import GlobalLayout from '@/components/common/layout';
 import ReviewEdit from '@/components/reviews/edit/edit';
 
 import type { Metadata } from 'next';
@@ -24,14 +25,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-async function ReviewEditPage({ params }: PageProps) {
-  const { id } = await params;
-
+async function ReviewEditPage() {
   return (
-    <>
+    <GlobalLayout>
       <ReviewEdit />
-      {id}
-    </>
+    </GlobalLayout>
   );
 }
 
