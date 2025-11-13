@@ -1,4 +1,3 @@
-// review.ts
 import axiosGroo from '@/apis/groo/config';
 import {
   ReviewCreateReqBody,

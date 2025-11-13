@@ -1,6 +1,3 @@
-/**
- * @author uyh
- */
 'use client';
 
 import { Heart } from 'lucide-react';
@@ -13,64 +10,29 @@ import RelatedReviews from './RelatedReviews';
 import ReviewContent from './review-content';
 import styles from './review-detail.module.scss';
 
-import { fetchAladin } from '@/apis';
 import { comment as commentApi } from '@/apis/groo/comment';
 import { follow as followApi } from '@/apis/groo/follow';
 import { review as reviewApi } from '@/apis/groo/review';
 import UserProfileImage from '@/components/common/profile/image';
 import { AladinBookDetailsItem } from '@/types';
 import { ReviewDetailResDTO, CommentData } from '@/types/reviews';
-import { AladinBook } from '@/types/reviews/book-search';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
 type Props = {
   reviewData: ReviewDetailResDTO['data'];
+  bookInfo: AladinBookDetailsItem | null;
+  initialIsFollowing: boolean;
 };
 
-export default function ReviewDetail({ reviewData }: Props) {
+export default function ReviewDetail({ reviewData, bookInfo, initialIsFollowing }: Props) {
   const router = useRouter();
-  const [bookInfo, setBookInfo] = useState<AladinBook | null>(null);
-  const [bookLoading, setBookLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(reviewData.liked);
   const [likeCount, setLikeCount] = useState(reviewData.likeCount);
   const [comments, setComments] = useState<CommentData[]>(reviewData.comments || []);
   const [showMenu, setShowMenu] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [followLoading, setFollowLoading] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const fetchBookInfo = async () => {
-      try {
-        setBookLoading(true);
-        const response = await fetchAladin.getBookDetails(reviewData.isbn);
-        if (response.item && response.item.length > 0) {
-          setBookInfo(response.item[0]);
-        }
-      } catch {
-        setBookInfo(null);
-      } finally {
-        setBookLoading(false);
-      }
-    };
-
-    fetchBookInfo();
-  }, [reviewData.isbn]);
-
-  useEffect(() => {
-    const checkFollowStatus = async () => {
-      if (reviewData.isOwner) return;
-
-      try {
-        const response = await followApi.getFollowInfo(reviewData.userId);
-        setIsFollowing(response.data !== null);
-      } catch {
-        setIsFollowing(false);
-      }
-    };
-
-    checkFollowStatus();
-  }, [reviewData.userId, reviewData.isOwner]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -274,7 +236,7 @@ export default function ReviewDetail({ reviewData }: Props) {
         </div>
 
         {/* 도서 정보 - 좋아요 아래로 이동 */}
-        <BookInfo bookInfo={bookInfo} loading={bookLoading} />
+        <BookInfo bookInfo={bookInfo} loading={false} />
 
         {/* 관련 독후감 */}
         <RelatedReviews

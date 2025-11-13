@@ -1,67 +1,95 @@
-'use client';
-
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Metadata } from 'next';
+import { cookies } from 'next/headers';
 
 import styles from './page.module.scss';
 
-import { review as reviewApi } from '@/apis/groo/review';
+import { fetchAladin, fetchGrooInServer } from '@/apis';
 import GlobalLayout from '@/components/common/layout';
 import ReviewDetail from '@/components/reviews/detail/review-detail';
-import { ReviewDetailResDTO } from '@/types/reviews';
+import { getTokenInCookie } from '@/utils/cookie';
 import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 
-export default function ReviewDetailPage() {
-  const params = useParams();
-  const reviewId = Number(params.id);
-  const [reviewData, setReviewData] = useState<ReviewDetailResDTO['data'] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface ReviewDetailPageProps {
+  params: Promise<{ id: string }>;
+}
 
-  useEffect(() => {
-    const fetchReviewDetail = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await reviewApi.getReview(reviewId);
+export async function generateMetadata({ params }: ReviewDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const reviewId = Number(id);
 
-        if (response && response.reviewId) {
-          setReviewData(response);
-        } else {
-          setError('독후감을 불러오는데 실패했습니다.');
-        }
-      } catch (error: any) {
-        const errorMessage = getReviewErrorMessage(error);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
+  const token = getTokenInCookie(await cookies());
+
+  try {
+    const review = await fetchGrooInServer.review.getReview(token, reviewId);
+
+    if (!review) {
+      return {
+        title: '독후감을 찾을 수 없음',
+        description: '요청하신 독후감을 찾을 수 없습니다.'
+      };
+    }
+
+    const description = review.reviewContent
+      ? review.reviewContent.substring(0, 150)
+      : '독후감 내용이 없습니다.';
+
+    return {
+      title: `그루 | ${review.reviewTitle}`,
+      description,
+      openGraph: {
+        title: `그루 | ${review.reviewTitle}`,
+        description
       }
     };
-
-    if (reviewId) {
-      fetchReviewDetail();
-    }
-  }, [reviewId]);
-
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>독후감을 불러오는 중...</div>
-      </div>
-    );
+  } catch (error) {
+    return {
+      title: '오류',
+      description: '독후감 정보를 가져오는 데 실패했습니다.'
+    };
   }
-
-  if (error || !reviewData) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.error}>{error || '독후감을 찾을 수 없습니다.'}</div>
-      </div>
-    );
-  }
-
-  return (
-    <GlobalLayout size="sm">
-      <ReviewDetail reviewData={reviewData} />
-    </GlobalLayout>
-  );
 }
+
+async function ReviewDetailPage({ params }: ReviewDetailPageProps) {
+  const { id } = await params;
+  const reviewId = Number(id);
+
+  const token = getTokenInCookie(await cookies());
+
+  try {
+    const reviewData = await fetchGrooInServer.review.getReview(token, reviewId);
+
+    if (!reviewData || !reviewData.reviewId) {
+      return (
+        <div className={styles.container}>
+          <div className={styles.error}>독후감을 찾을 수 없습니다.</div>
+        </div>
+      );
+    }
+
+    // 추가 데이터를 병렬로 가져옵니다.
+    const [bookInfoResponse, followInfoResponse] = await Promise.all([
+      fetchAladin.getBookDetails(reviewData.isbn),
+      reviewData.isOwner
+        ? Promise.resolve(null)
+        : fetchGrooInServer.review.getFollowInfo(token, reviewData.userId)
+    ]);
+
+    const bookInfo = bookInfoResponse?.item?.[0] || null;
+    const initialIsFollowing = !!followInfoResponse?.data;
+
+    return (
+      <GlobalLayout size="sm">
+        <ReviewDetail reviewData={reviewData} bookInfo={bookInfo} initialIsFollowing={initialIsFollowing} />
+      </GlobalLayout>
+    );
+  } catch (error: any) {
+    const errorMessage = getReviewErrorMessage(error);
+    return (
+      <div className={styles.container}>
+        <div className={styles.error}>{errorMessage}</div>
+      </div>
+    );
+  }
+}
+
+export default ReviewDetailPage;
