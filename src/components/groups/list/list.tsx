@@ -3,8 +3,7 @@
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlusCircle, Search, Filter } from 'lucide-react';
-import Link from 'next/link';
+import { PlusCircle, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 
@@ -19,8 +18,9 @@ import { GroupData } from '@/types/groups';
 function ReadingGroupList() {
   const router = useRouter();
 
-  // 사용하지 않던 groups, page 제거
-  const [visibleGroups, setVisibleGroups] = useState<GroupData[]>([]);
+  const [groups, setGroups] = useState<GroupData[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('');
   const [styleType, setStyleType] = useState('');
@@ -31,26 +31,30 @@ function ReadingGroupList() {
   const [showFilter, setShowFilter] = useState(false);
   const [sort, setSort] = useState<'all' | 'recruiting'>('all');
 
-  // 스크랩 상태 저장 (groupId → boolean)
   const [scrapStatus, setScrapStatus] = useState<Record<number, boolean>>({});
 
   const filterRef = useRef<HTMLDivElement | null>(null);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
-  const ITEMS_PER_PAGE = 6;
 
   useEffect(() => {
     setMounted(true);
-    loadGroups();
+    loadGroups(1);
   }, []);
 
-  /** 모임 목록 + 도서 + 지역 + 작성자 닉네임 매핑 */
-  const loadGroups = async () => {
+  /** 특정 페이지 데이터 로드 */
+  const loadGroups = async (page: number) => {
     try {
       setLoading(true);
-      const response = await groupApi.getAllGroups({ page: 1 });
+      const response = await groupApi.getAllGroups({ page });
       const data = response?.groups || [];
 
-      // ISBN 중복 제거 후 도서정보 캐시
+      // totalPages 계산 (백엔드에서 totalCount 보내주는 경우)
+      if (response?.count) {
+        setTotalPages(Math.ceil(response.count / 6));
+      } else {
+        // totalCount 없으면 데이터 길이로 추정
+        setTotalPages(data.length < 6 ? page : page + 1);
+      }
+
       const uniqueISBNs = [...new Set(data.map((g) => g.isbn))];
       const bookInfoMap = new Map();
 
@@ -68,7 +72,6 @@ function ReadingGroupList() {
         })
       );
 
-      // 작성자 정보 캐싱 (userId → nickname)
       const uniqueUserIds = [...new Set(data.map((g) => g.userId))];
       const userMap = new Map();
 
@@ -78,7 +81,7 @@ function ReadingGroupList() {
             const nickname = await user.getUserNickname(id);
             userMap.set(id, nickname);
           } catch {
-            userMap.set(id, id); // fallback
+            userMap.set(id, id);
           }
         })
       );
@@ -97,7 +100,6 @@ function ReadingGroupList() {
         };
       });
 
-      // 스크랩 상태 병렬로 가져오기
       const scrapMap: Record<number, boolean> = {};
       await Promise.all(
         enrichedGroups.map(async (g) => {
@@ -111,7 +113,8 @@ function ReadingGroupList() {
       );
 
       setScrapStatus(scrapMap);
-      setVisibleGroups(enrichedGroups.slice(0, ITEMS_PER_PAGE));
+      setGroups(enrichedGroups);
+      setCurrentPage(page);
     } catch {
       setError('모임 목록을 불러오지 못했습니다.');
     } finally {
@@ -119,8 +122,13 @@ function ReadingGroupList() {
     }
   };
 
-  /** 스크랩 토글 */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  /** 페이지 변경 핸들러 */
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    loadGroups(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const toggleScrap = async (groupId: number) => {
     try {
       const current = scrapStatus[groupId];
@@ -130,7 +138,6 @@ function ReadingGroupList() {
     } catch {}
   };
 
-  /** 필터 초기화 */
   const resetFilters = () => {
     setSearch('');
     setRegion('');
@@ -164,7 +171,6 @@ function ReadingGroupList() {
     return filtered;
   };
 
-  // 필터 팝업 외부 클릭 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
@@ -189,11 +195,43 @@ function ReadingGroupList() {
     return (
       <div className={styles.state}>
         <p>{error}</p>
-        <button onClick={loadGroups}>다시 시도</button>
+        <button onClick={() => loadGroups(currentPage)}>다시 시도</button>
       </div>
     );
 
-  const filteredGroups = applyFilter(visibleGroups);
+  const filteredGroups = applyFilter(groups);
+
+  /** 페이지 번호 배열 생성 */
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 5; // 보여줄 최대 페이지 번호 개수
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        pages.push(currentPage - 1);
+        pages.push(currentPage);
+        pages.push(currentPage + 1);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
 
   return (
     <section className={styles.container}>
@@ -246,7 +284,6 @@ function ReadingGroupList() {
                     </button>
                   </div>
 
-                  {/* label과 input/select 연결 - 접근성 오류 수정 */}
                   <div className={styles.filterSection}>
                     <label htmlFor="region" className={styles.filterLabel}>
                       지역
@@ -322,7 +359,6 @@ function ReadingGroupList() {
             role="button"
             tabIndex={0}>
             <div className={styles.cardContent}>
-              {/* 왼쪽 정보 영역 */}
               <div className={styles.infoArea}>
                 <div className={styles.titleRow}>
                   <h3 className={styles.title}>{g.groupName}</h3>
@@ -343,7 +379,6 @@ function ReadingGroupList() {
                 </div>
               </div>
 
-              {/* 오른쪽 도서 이미지 */}
               {g.coverUrl && (
                 <div className={styles.imageArea}>
                   <img src={g.coverUrl} alt={g.bookTitle} />
@@ -354,7 +389,37 @@ function ReadingGroupList() {
         ))}
       </ul>
 
-      <div ref={loaderRef} style={{ height: '60px' }} />
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.pageButton}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}>
+            <ChevronLeft size={18} />
+          </button>
+
+          {getPageNumbers().map((page, idx) => (
+            <button
+              key={idx}
+              className={clsx(styles.pageNumber, {
+                [styles.active]: page === currentPage,
+                [styles.dots]: page === '...'
+              })}
+              onClick={() => typeof page === 'number' && handlePageChange(page)}
+              disabled={page === '...'}>
+              {page}
+            </button>
+          ))}
+
+          <button
+            className={styles.pageButton}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}>
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      )}
     </section>
   );
 }
