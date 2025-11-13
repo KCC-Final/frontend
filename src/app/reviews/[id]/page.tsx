@@ -39,6 +39,9 @@ export async function generateMetadata({ params }: ReviewDetailPageProps): Promi
       openGraph: {
         title: `그루 | ${review.reviewTitle}`,
         description
+      },
+      alternates: {
+        canonical: `https://www.groo.com/reviews/${id}`
       }
     };
   } catch (error) {
