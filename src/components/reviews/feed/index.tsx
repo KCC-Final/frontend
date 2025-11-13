@@ -23,7 +23,7 @@ function ReviewFeed() {
   const [mounted, setMounted] = useState(false);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const ITEMS_PER_PAGE = 15; // 3개씩 5줄
+  const ITEMS_PER_PAGE = 16;
 
   useEffect(() => {
     setMounted(true);
@@ -76,14 +76,14 @@ function ReviewFeed() {
       (entries) => {
         const target = entries[0];
         if (target.isIntersecting && !loading) {
-          const nextPage = page + 1;
-          const start = nextPage * ITEMS_PER_PAGE;
+          // 현재 표시된 아이템 수를 기준으로 계산
+          const start = visibleReviews.length;
           const end = start + ITEMS_PER_PAGE;
           const nextItems = reviews.slice(start, end);
 
           if (nextItems.length > 0) {
             setVisibleReviews((prev) => [...prev, ...nextItems]);
-            setPage(nextPage);
+            setPage((prevPage) => prevPage + 1);
           }
         }
       },
@@ -93,9 +93,11 @@ function ReviewFeed() {
     observer.observe(loaderRef.current);
 
     return () => {
-      if (loaderRef.current) observer.unobserve(loaderRef.current);
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current);
+      }
     };
-  }, [reviews, page, loading]);
+  }, [reviews, visibleReviews.length, loading]);
 
   if (!mounted || loading) {
     return (
