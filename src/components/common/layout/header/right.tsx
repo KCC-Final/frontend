@@ -271,11 +271,6 @@ function RightNavigation() {
               onClick={routePageHandler('/my-bookshelf')}>
               내 책장
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-[1.4rem] px-[1rem] py-[0.8rem]"
-              onClick={routePageHandler('/my-activities')}>
-              내 활동
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-[1.4rem] px-[1rem] py-[0.8rem]"
@@ -283,8 +278,8 @@ function RightNavigation() {
               계정 설정
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]">
-              <button onClick={logoutHandler}>로그아웃</button>
+            <DropdownMenuItem className="text-[1.4rem] px-[1rem] py-[0.8rem]" onSelect={logoutHandler}>
+              <button>로그아웃</button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
