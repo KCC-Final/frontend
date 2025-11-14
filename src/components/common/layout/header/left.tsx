@@ -10,7 +10,7 @@ function LeftNavigation() {
 
   const navItems = [
     { name: '도서 추천', href: '/' },
-    { name: '피드', href: '/reviews/feed' },
+    { name: '독후감 피드', href: '/reviews/feed' },
     { name: '독서 모임', href: '/groups' },
     { name: '대시보드', href: '/dashboard' }
   ];
