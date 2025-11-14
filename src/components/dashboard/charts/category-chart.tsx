@@ -37,9 +37,16 @@ export default function CategoryChart() {
   const chartInstance = useRef<Chart | null>(null);
   const [expanded, setExpanded] = useState(false);
 
+  // 데이터 있는지 여부
+  const showOverlay = !Array.isArray(categoryStats) || categoryStats.length === 0;
+
   useEffect(() => {
+    // 데이터가 없으면 차트 생성하지 않음
+    if (showOverlay) return;
+
     if (!chartRef.current) return;
 
+    // 기존 차트 제거
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
@@ -47,11 +54,8 @@ export default function CategoryChart() {
     const ctx = chartRef.current.getContext('2d');
     if (!ctx) return;
 
-    // 데이터 처리 로직
-    const hasData = Array.isArray(categoryStats) && categoryStats.length > 0;
-    const validData = hasData ? categoryStats : [{ category: '데이터 없음', count: 1 }];
-
-    const sortedData = [...validData].sort((a, b) => b.count - a.count);
+    // 데이터 처리
+    const sortedData = [...categoryStats].sort((a, b) => b.count - a.count);
 
     const topFive = sortedData.slice(0, 5);
     const others = sortedData.slice(5);
@@ -85,8 +89,8 @@ export default function CategoryChart() {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: hasData },
-          tooltip: { enabled: hasData }
+          legend: { display: true },
+          tooltip: { enabled: true }
         },
         cutout: '65%',
         radius: '85%'
@@ -96,18 +100,19 @@ export default function CategoryChart() {
     return () => {
       chartInstance.current?.destroy();
     };
-  }, [categoryStats, expanded]);
-
-  // 오버레이 표시 조건
-  const showOverlay = !Array.isArray(categoryStats) || categoryStats.length === 0;
+  }, [categoryStats, expanded, showOverlay]);
 
   return (
     <div className={styles.chartCard}>
       <div className={styles.chartHeader}>
         <h3 className={styles.chartTitle}>분야별 독서 통계</h3>
       </div>
+
       <div className={styles.chartContainer}>
-        <canvas ref={chartRef}></canvas>
+        {/* 데이터가 있을 때만 차트 렌더링 */}
+        {!showOverlay && <canvas ref={chartRef}></canvas>}
+
+        {/* 데이터가 없을 때 중앙 메시지 표시 */}
         {showOverlay && (
           <div className={styles.chartOverlay}>
             <p>
