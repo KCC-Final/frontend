@@ -116,6 +116,14 @@ function RightNavigation() {
       case 'COMMENT':
         router.push(`/reviews/${item.id}`);
         break;
+
+      // 도서 상세 이동 추가
+      case 'BOOK':
+        router.push(`/books/${item.id}`);
+        break;
+
+      default:
+        break;
     }
   };
 

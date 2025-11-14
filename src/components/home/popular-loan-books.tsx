@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation'; // 라우터 추가
 import { useState, useCallback, useEffect } from 'react';
 
 import styles from './popular-loan-books.module.scss';
@@ -34,6 +35,7 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
 
   // 페이지 로드시 자동 데이터 로드
   useEffect(() => {
@@ -272,17 +274,21 @@ function PopularLoanBooks({ initialBooks }: PopularLoanBooksProps) {
         <div className={styles.bookGrid}>
           {books.length > 0 ? (
             books.map((book, i) => (
-              <div key={book.isbn13 || i} className={styles.bookItem}>
+              <div
+                key={book.isbn13 || i}
+                className={styles.bookItem}
+                onClick={() => router.push(`/books/${book.isbn13}`)} // 클릭 시 이동
+                style={{ cursor: 'pointer' }} // 클릭 가능한 느낌
+              >
+                {' '}
                 {/* 순위 표시 */}
                 <div className={styles.ranking}>
                   <span className={i < 3 ? styles.top3 : styles.normal}>{i + 1}</span>
                 </div>
-
                 {/* 책 표지 이미지 */}
                 <div className={styles.bookCover}>
                   <img src={book.bookImageURL || '/images/no-image.png'} alt={book.bookname || '책 표지'} />
                 </div>
-
                 {/* 책 정보 */}
                 <div className={styles.bookInfo}>
                   <h3 className={styles.bookTitle}>{formatBookTitle(book.bookname || '제목 없음')}</h3>
