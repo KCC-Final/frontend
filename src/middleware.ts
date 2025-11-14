@@ -28,50 +28,19 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup');
   if (isAuthPage) {
     if (accessToken) {
-      // accessToken이 유효한지 검증
-      try {
-        await fetchGrooInServer.user.getMyInfo({
-          accessToken: accessToken ? accessToken : '',
-          refreshToken: refreshToken ? refreshToken : ''
-        });
-        // 유효하다면 홈으로 리다이렉트
-        devLogger(`[Front MiddleWare] 로그인된 사용자의 접속 시도: ${pathname}`);
-        devLogger('[Front MiddleWare] 메인페이지로 리다이렉트');
-        return NextResponse.redirect(homeUrl);
-      } catch (error) {
-        // 유효하지 않다면 페이지 진입 허용
-        devLogger(`[Front MiddleWare] 비로그인 사용자의 접속 시도: ${pathname}\n`);
-        return NextResponse.next();
-      }
+      devLogger(`[Front MiddleWare] 토큰 보유중인 사용자의 접속 시도: ${pathname}`);
+      devLogger('[Front MiddleWare] 메인페이지로 리다이렉트');
+      return NextResponse.redirect(homeUrl);
     }
     // 토큰이 없으면 페이지 진입 허용
-    devLogger(`[Front MiddleWare] 비로그인 사용자의 접속 시도: ${pathname}\n`);
+    devLogger(`[Front MiddleWare] 토큰 없는 사용자의 접속 시도: ${pathname}\n`);
     return NextResponse.next();
   }
 
   // accessToken이 있는 경우 통과
   if (accessToken) {
-    try {
-      const myInfo = await fetchGrooInServer.user.getMyInfo({
-        accessToken: accessToken ? accessToken : '',
-        refreshToken: refreshToken ? refreshToken : ''
-      });
-      // 토큰이 유효하므로 요청 헤더에 유저 정보를 담아 요청 계속 진행
-      devLogger(`[Front MiddleWare] 로그인된 사용자의 접속 시도: ${pathname}`);
-      const requestHeaders = new Headers(request.headers);
-
-      devLogger(`접속한 유저 아이디: ${myInfo.data.userId}, 닉네임: ${myInfo.data.nickname}\n`);
-      const encodedUserInfo = Buffer.from(JSON.stringify(myInfo.data)).toString('base64');
-      requestHeaders.set('x-user-info', encodedUserInfo);
-      return NextResponse.next({
-        request: {
-          headers: requestHeaders
-        }
-      });
-    } catch (error) {
-      // 토큰이 유효하지 않음. 아래 리프레시 로직으로 넘어감.
-      devLogger('[Front MiddleWare] 유효하지 않은 엑세스토큰 보유중. 재발급 시도');
-    }
+    devLogger(`토큰 보유중인 유저 접속 시도: ${pathname}}\n`);
+    return NextResponse.next();
   }
 
   // accessToken이 없거나 유효하지 않으며, refreshToken은 있는 경우

@@ -1,11 +1,13 @@
 import { Metadata } from 'next';
 import { Noto_Serif_KR } from 'next/font/google';
 import localFont from 'next/font/local';
-import { headers } from 'next/headers';
+import { cookies } from 'next/headers';
 
+import { fetchGrooInServer } from '@/apis';
 import NotificationSubscriber from '@/components/setup/notification-subscriber';
 import StoreInitializer from '@/components/setup/store-initializer';
-import { User } from '@/types';
+import { Token, User } from '@/types';
+import { getTokenInCookie } from '@/utils/cookie';
 import { devLogger } from '@/utils/dev-logger';
 
 import '@/styles/tailwind.css';
@@ -59,20 +61,22 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-async function RootLayout({ children }: Readonly<RootLayoutProps>) {
-  const headersList = await headers();
-  const userInfoHeader = headersList.get('x-user-info');
-
-  let myInfo: User | null = null;
-  if (userInfoHeader) {
-    try {
-      const decodedUserInfo = Buffer.from(userInfoHeader, 'base64').toString('utf-8');
-      myInfo = JSON.parse(decodedUserInfo);
-    } catch (error) {
-      devLogger('내 정보 디코딩 또는 파싱에 실패했습니다.', true);
-      devLogger(error, true);
-    }
+async function getMyInfo(token: Token): Promise<User | null> {
+  if (!token.accessToken) return null; // 토큰 없으면 요청 안 함
+  try {
+    const myInfo = await fetchGrooInServer.user.getMyInfo(token);
+    return myInfo.data;
+  } catch (error) {
+    devLogger('getMyInfo 실패', true);
+    return null;
   }
+}
+
+async function RootLayout({ children }: Readonly<RootLayoutProps>) {
+  const cookieStore = await cookies();
+  const token = getTokenInCookie(cookieStore);
+
+  const myInfo = await getMyInfo(token);
 
   return (
     <html lang="ko">
