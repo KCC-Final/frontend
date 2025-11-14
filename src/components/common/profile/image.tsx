@@ -43,9 +43,9 @@ function UserProfileImage({ userId, profileImage, size = 27 }: UserProfileImageP
   }, [profileImage, userId, size]); // 의존성 배열
 
   return (
-    <div className={`${styles.image} size-${size}`}>
+    <div className={styles.image} style={{ width: size, height: size }}>
       {imageSrc ? (
-        <Image src={imageSrc} alt={`${userId} 프로필 이미지`} width={size} height={size} />
+        <Image src={imageSrc} alt="프로필 이미지" width={size} height={size} />
       ) : (
         <User size={(size * 2) / 3} color="#333333" />
       )}

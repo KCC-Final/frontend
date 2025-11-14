@@ -11,7 +11,7 @@ function LoginLayout({ children }: LoginLayoutProps) {
   return (
     <div className={styles.container}>
       <section className={styles.image}>
-        <Image src={treeImage} alt="tree image" fill />
+        <Image src={treeImage} alt="tree image" sizes="70vw" fill priority />
       </section>
       <main className={styles.main}>{children}</main>
     </div>
