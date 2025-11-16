@@ -7,7 +7,8 @@ import {
   UpdateAllNotificationsReqBody,
   UpdateAllNotificationsResDTO,
   SendNotificationReqBody,
-  SendNotificationResDTO
+  SendNotificationResDTO,
+  DeleteNotificationResDTO
 } from '@/types/notification';
 
 export const notification = {
@@ -79,6 +80,12 @@ export const notification = {
   // 알림 전송 (테스트용)
   sendNotification: async (data: SendNotificationReqBody): Promise<SendNotificationResDTO> => {
     const response = await axiosGroo.post('/alarms/send', data);
+    return response.data;
+  },
+
+  // 알림 삭제 (소프트 삭제)
+  deleteNotification: async (alertId: number): Promise<DeleteNotificationResDTO> => {
+    const response = await axiosGroo.delete(`/alarms/${alertId}`);
     return response.data;
   }
 };

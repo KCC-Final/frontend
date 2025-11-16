@@ -1,8 +1,8 @@
 'use client';
 
-import { Bell, Heart, MessageCircle, UserPlus, Award, Check } from 'lucide-react';
+import { Bell, Heart, MessageCircle, UserPlus, Award, Check, MoreVertical } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import styles from './notification.module.scss';
 
@@ -15,11 +15,34 @@ import { Alert, NotificationType } from '@/types/notification';
 // ===============================
 interface NotificationItemProps {
   alert: Alert;
+  index: number;
+  total: number;
   onRead: (alertId: number) => void;
+  onDelete: (alertId: number) => void;
 }
 
-function NotificationItem({ alert, onRead }: NotificationItemProps) {
+function NotificationItem({ alert, index, total, onRead, onDelete }: NotificationItemProps) {
   const router = useRouter();
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
 
   const getIcon = (type: NotificationType) => {
     const iconProps = { size: 20, className: styles.icon };
@@ -37,7 +60,6 @@ function NotificationItem({ alert, onRead }: NotificationItemProps) {
     }
   };
 
-  // 날짜 포맷 안정 버전
   const formatTime = (sendAt: string | number | Date | null | undefined) => {
     if (!sendAt) return '';
     let date: Date | null = null;
@@ -67,11 +89,7 @@ function NotificationItem({ alert, onRead }: NotificationItemProps) {
     return `${Math.floor(diffSec / 31536000)}년 전`;
   };
 
-  const handleClick = async () => {
-    if (!alert.alertsCheckStatus) {
-      await onRead(alert.alertId);
-    }
-
+  const handleContentClick = () => {
     switch (alert.senderType) {
       case 'review':
         if (alert.type === 'comment' && alert.detailSenderId) {
@@ -95,17 +113,72 @@ function NotificationItem({ alert, onRead }: NotificationItemProps) {
     }
   };
 
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const menuWidth = 140;
+
+      setMenuPosition({
+        top: rect.bottom + 4,
+        left: rect.right - menuWidth
+      });
+    }
+
+    setShowMenu(!showMenu);
+  };
+
+  const handleMarkAsRead = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!alert.alertsCheckStatus) {
+      await onRead(alert.alertId);
+    }
+    setShowMenu(false);
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await onDelete(alert.alertId);
+    setShowMenu(false);
+  };
+
   return (
-    <div
-      className={`${styles.notification_item} ${!alert.alertsCheckStatus ? styles.unread : ''}`}
-      onClick={handleClick}>
-      <div className={styles.icon_wrapper}>{getIcon(alert.type)}</div>
-      <div className={styles.content}>
-        <p className={styles.message}>{alert.content}</p>
-        {/* 시간 표시 복구 */}
-        <span className={styles.time}>{formatTime(alert.sendAt || alert.sendAt)}</span>
+    <div className={`${styles.notification_item} ${!alert.alertsCheckStatus ? styles.unread : ''}`}>
+      <div className={styles.clickable_area} onClick={handleContentClick}>
+        <div className={styles.icon_wrapper}>{getIcon(alert.type)}</div>
+        <div className={styles.content}>
+          <p className={styles.message}>{alert.content}</p>
+          <span className={styles.time}>{formatTime(alert.sendAt || alert.sendAt)}</span>
+        </div>
+        {!alert.alertsCheckStatus && <div className={styles.unread_dot} />}
       </div>
-      {!alert.alertsCheckStatus && <div className={styles.unread_dot} />}
+
+      <div className={styles.menu_wrapper} ref={menuRef}>
+        <button ref={buttonRef} className={styles.menu_button} onClick={handleMenuClick} aria-label="메뉴">
+          <MoreVertical size={18} />
+        </button>
+
+        {showMenu && (
+          <div
+            className={styles.menu_dropdown_modal}
+            style={{
+              position: 'fixed',
+              top: `${menuPosition.top}px`,
+              left: `${menuPosition.left}px`,
+              zIndex: 9999
+            }}>
+            {!alert.alertsCheckStatus && (
+              <button className={styles.menu_item} onClick={handleMarkAsRead}>
+                읽음 처리
+              </button>
+            )}
+            <button className={styles.menu_item} onClick={handleDelete}>
+              삭제
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -123,7 +196,6 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
 
   const { alerts, unreadCount, setUnreadCount, resetUnread, setAlerts } = useNotificationStore();
 
-  // 알림 목록 조회 + 최신순 정렬
   const fetchNotifications = async () => {
     try {
       setIsLoading(true);
@@ -155,6 +227,19 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
         alerts.map((alert) => (alert.alertId === alertId ? { ...alert, alertsCheckStatus: true } : alert))
       );
       setUnreadCount(Math.max(0, unreadCount - 1));
+    } catch (error) {}
+  };
+
+  const handleDeleteNotification = async (alertId: number) => {
+    try {
+      await fetchGroo.notification.deleteNotification(alertId);
+
+      const deletedAlert = alerts.find((a) => a.alertId === alertId);
+      setAlerts(alerts.filter((alert) => alert.alertId !== alertId));
+
+      if (deletedAlert && !deletedAlert.alertsCheckStatus) {
+        setUnreadCount(Math.max(0, unreadCount - 1));
+      }
     } catch (error) {}
   };
 
@@ -205,9 +290,15 @@ function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
             <div className={styles.empty}>새로운 알림이 없습니다</div>
           ) : (
             <div className={styles.list}>
-              {/* 최신순으로 정렬된 결과 표시 */}
-              {alerts.map((alert) => (
-                <NotificationItem key={alert.alertId} alert={alert} onRead={handleReadNotification} />
+              {alerts.map((alert, index) => (
+                <NotificationItem
+                  key={alert.alertId}
+                  alert={alert}
+                  index={index}
+                  total={alerts.length}
+                  onRead={handleReadNotification}
+                  onDelete={handleDeleteNotification}
+                />
               ))}
             </div>
           )}

@@ -4,7 +4,7 @@ import { CommonResDTO } from '@/types';
 export type NotificationType = 'follow' | 'like' | 'comment' | 'badge';
 
 // 발신자 타입
-export type SenderType = 'review' | 'follow' | 'likes' | 'users' | 'user'; // 'user' 추가
+export type SenderType = 'review' | 'follow' | 'likes' | 'users' | 'user';
 
 // 알림 데이터
 export interface Alert {
@@ -18,6 +18,7 @@ export interface Alert {
   userId: string;
   senderUserId: string;
   alertsCheckStatus: boolean;
+  isDeleted?: boolean;
 }
 
 // 알림 목록 조회 응답
@@ -55,3 +56,6 @@ export type SendNotificationReqBody = {
 
 // 알림 전송 응답
 export type SendNotificationResDTO = CommonResDTO<null>;
+
+// 알림 삭제 응답
+export type DeleteNotificationResDTO = CommonResDTO<null>;
