@@ -22,11 +22,14 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
   const [isImgLoading, setImgLoading] = useState(true);
   const [imgFetchingError, setImgFetchingError] = useState(false);
   const [hasCustomThumbnail, setHasCustomThumbnail] = useState(false);
+
+  const [bookCoverUrl, setBookCoverUrl] = useState<string | null>(null);
+  const [isBookCoverLoading, setIsBookCoverLoading] = useState(false);
+
   useEffect(() => {
     let isMounted = true;
 
     const loadImage = async () => {
-      // 커스텀 썸네일 우선
       const thumb = review.customThumbnail?.trim?.();
       if (thumb) {
         if (isMounted) {
@@ -34,11 +37,27 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
           setHasCustomThumbnail(true);
           setImgLoading(false);
           setImgFetchingError(false);
+
+          if (review.isbn) {
+            setIsBookCoverLoading(true);
+            try {
+              const result = await fetchAladin.getBookDetails(review.isbn);
+              const cover = result?.item?.[0]?.cover;
+              if (cover && isMounted) {
+                setBookCoverUrl(cover);
+              }
+            } catch (err) {
+              console.error('Failed to load book cover:', err);
+            } finally {
+              if (isMounted) {
+                setIsBookCoverLoading(false);
+              }
+            }
+          }
         }
         return;
       }
 
-      // 썸네일 없을 때만 도서 커버 불러오기
       if (!review.isbn) {
         if (isMounted) {
           setImgUrl(null);
@@ -78,7 +97,6 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
     };
   }, [review.isbn, review.customThumbnail]);
 
-  // 썸네일 우선 렌더링
   const finalImgSrc = imgUrl && !imgFetchingError ? imgUrl : null;
 
   return (
@@ -87,33 +105,27 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
         styles.container,
         size === 'sm' ? styles.small : size === 'md' ? styles.medium : styles.large
       )}>
-      {/* 커버 이미지 섹션 */}
       <Link href={`/reviews/${review.reviewId}`}>
         <div className={styles.cover_bg}>
-          {/* 도서 표지 블러 배경 (customThumbnail 없을 때만) */}
           {!hasCustomThumbnail && finalImgSrc && (
             <div className={styles.blur_bg} style={{ backgroundImage: `url(${finalImgSrc})` }} />
           )}
 
-          {/* 로딩 중 UI */}
           {isImgLoading && (
             <div className={styles.placeholder}>
               <div className={styles.spinner}></div>
             </div>
           )}
 
-          {/* 에러 또는 이미지 없음 UI */}
           {!isImgLoading && imgFetchingError && (
             <div className={styles.placeholder}>
               <BookIcon size={60} color="#aaaaaa" />
             </div>
           )}
 
-          {/* 이미지 표시 */}
           {finalImgSrc && (
             <>
               {hasCustomThumbnail ? (
-                // 커스텀 썸네일 (기존 그대로)
                 <Image
                   className={styles.cover_img}
                   src={finalImgSrc}
@@ -125,7 +137,6 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
                   onError={() => setImgFetchingError(true)}
                 />
               ) : (
-                // 썸네일 없을 때 — 도서 원본 비율 유지 + 블러 배경
                 <div className={styles.book_fallback_wrapper}>
                   <div
                     className={styles.book_fallback_bg}
@@ -141,10 +152,22 @@ function ReviewCard({ review, size = 'lg' }: ReviewCardProps) {
               )}
             </>
           )}
+
+          {hasCustomThumbnail && bookCoverUrl && (
+            <div className={styles.book_overlay}>
+              <img
+                src={bookCoverUrl}
+                alt="도서 표지"
+                className={styles.book_overlay_img}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
         </div>
       </Link>
 
-      {/* 카드 콘텐츠 섹션 */}
       <div className={styles.info}>
         <Link href={`/reviews/${review.reviewId}`}>
           <h4 className={styles.title}>{review.reviewTitle}</h4>

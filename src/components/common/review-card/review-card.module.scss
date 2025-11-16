@@ -26,6 +26,11 @@
     .footer {
       height: 40px;
     }
+
+    .book_overlay {
+      width: 60px;
+      height: 90px;
+    }
   }
 
   &.medium {
@@ -44,6 +49,11 @@
     .footer {
       height: 50px;
     }
+
+    .book_overlay {
+      width: 70px;
+      height: 105px;
+    }
   }
 
   &.large {
@@ -61,6 +71,11 @@
 
     .footer {
       height: 50px;
+    }
+
+    .book_overlay {
+      width: 70px;
+      height: 105px;
     }
   }
 
@@ -118,6 +133,18 @@
   }
 }
 
+.blur_bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(25px);
+  z-index: 0;
+}
+
 .placeholder {
   display: flex;
   justify-content: center;
@@ -142,6 +169,58 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.book_fallback_wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 0.75rem;
+
+  .book_fallback_bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) brightness(0.8);
+    transform: scale(1.1);
+  }
+
+  .book_fallback_img {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    z-index: 2;
+  }
+}
+
+.book_overlay {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 70px;
+  height: 105px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  z-index: 10;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  .book_overlay_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 }
 
@@ -187,32 +266,6 @@
 
   .created_at {
     font-size: $font-size-13;
-  }
-}
-.book_fallback_wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: 0.75rem;
-
-  .book_fallback_bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    filter: blur(8px) brightness(0.8);
-    transform: scale(1.1);
-  }
-
-  .book_fallback_img {
-    position: relative;
-    display: block;
-    margin: 0 auto;
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    z-index: 2;
   }
 }
 

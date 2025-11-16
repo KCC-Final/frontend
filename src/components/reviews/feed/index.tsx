@@ -164,9 +164,6 @@ function ReviewFeed() {
           {filter === 'following' ? (
             <>
               <p>팔로잉한 유저가 없습니다.</p>
-              <button className={styles.emptyButton} onClick={() => filterHandler('latest')}>
-                전체 피드 보기
-              </button>
             </>
           ) : (
             <>
