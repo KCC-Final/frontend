@@ -294,7 +294,7 @@
   display: block !important;
   align-items: center;
   justify-content: flex-start;
-  width: 100%;
+  width: 100% !important;
   min-height: 4.4rem;
   padding: 1.2rem 1.6rem;
   font-size: 1.4rem;
@@ -308,7 +308,7 @@
   user-select: none;
 
   &:hover {
-    background-color: #f3f4f6;
+    background-color: #dedede !important;
   }
 
   &:active {
