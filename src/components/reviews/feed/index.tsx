@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import { fetchGroo } from '@/apis';
 import BasicButton from '@/components/common/button/basic';
+import PageLoading from '@/components/common/loading';
 import ReviewCard from '@/components/common/review-card';
 import styles from '@/components/reviews/feed/feed.module.scss';
 import { ReviewData } from '@/types';
@@ -100,11 +101,7 @@ function ReviewFeed() {
   }, [reviews, visibleReviews.length, loading]);
 
   if (!mounted || loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>로딩 중...</div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (error) {

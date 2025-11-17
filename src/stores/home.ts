@@ -30,7 +30,7 @@ export const useHomeStore = create<HomeState & HomeActions>((set) => ({
   bestSellerData: [],
   librarianRecommendData: [],
   hotTrendBooksData: [],
-  loading: false,
+  loading: true,
   error: '',
   /** 오늘의 한 문장, 베스트 셀러 도서 목록 조회 */
   fetchTopHomeData: async () => {
