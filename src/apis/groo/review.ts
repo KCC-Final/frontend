@@ -140,5 +140,15 @@ export const review = {
   getLikedReviewsByUserId: async (userId: string): Promise<ReviewListResDTO> => {
     const response = await axiosGroo.get<ReviewListResDTO>(`/reviews/user/${userId}/likes`);
     return response.data;
+  },
+
+  // 전체 리뷰 커서 기반 조회 추가
+  getAllReviewsWithCursor: async (cursorId?: number, limit: number = 16): Promise<ReviewData[]> => {
+    const params: any = { limit };
+    if (cursorId !== undefined) {
+      params.cursorId = cursorId;
+    }
+    const response = await axiosGroo.get<ReviewData[]>('/reviews/cursor', { params });
+    return response.data;
   }
 };
