@@ -6,7 +6,7 @@ interface PageLoadingProps {
   isLoading?: boolean;
 }
 
-function PageLoading({ isLoading }: PageLoadingProps) {
+function PageLoading({ isLoading = true }: PageLoadingProps) {
   return (
     <section className={clsx(styles.loading, { [styles.hidden]: !isLoading })}>
       <div className={styles.spinner} />
