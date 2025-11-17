@@ -16,41 +16,47 @@ import { getReviewErrorMessage } from '@/utils/error/review-error-handler';
 function ReviewFeed() {
   const router = useRouter();
   const [reviews, setReviews] = useState<ReviewData[]>([]);
-  const [visibleReviews, setVisibleReviews] = useState<ReviewData[]>([]);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [filter, setFilter] = useState<'latest' | 'popular' | 'following'>('latest');
   const [mounted, setMounted] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const ITEMS_PER_PAGE = 16;
 
   useEffect(() => {
     setMounted(true);
-    loadReviews('latest');
+    loadInitialReviews('latest');
   }, []);
 
-  const loadReviews = async (filterType: 'latest' | 'popular' | 'following') => {
+  // 처음 로드
+  const loadInitialReviews = async (filterType: 'latest' | 'popular' | 'following') => {
     try {
       setLoading(true);
       setError('');
-      let response;
+      let reviewsData: ReviewData[] = [];
 
       if (filterType === 'popular') {
-        response = await fetchGroo.review.getAllReviewsOrderByLikes();
+        // TODO: 백엔드에 popular/cursor 엔드포인트 추가되면 사용
+        // reviewsData = await fetchGroo.review.getAllReviewsOrderByLikesWithCursor(undefined, ITEMS_PER_PAGE);
+        const response = await fetchGroo.review.getAllReviewsOrderByLikes();
+        reviewsData = (Array.isArray(response) ? response : response.data || []).slice(0, ITEMS_PER_PAGE);
       } else if (filterType === 'following') {
-        response = await fetchGroo.review.getReviewsByFollowing();
+        // TODO: 백엔드에 following/cursor 엔드포인트 추가되면 사용
+        // reviewsData = await fetchGroo.review.getReviewsByFollowingWithCursor(undefined, ITEMS_PER_PAGE);
+        const response = await fetchGroo.review.getReviewsByFollowing();
+        reviewsData = (Array.isArray(response) ? response : response.data || []).slice(0, ITEMS_PER_PAGE);
       } else {
-        response = await fetchGroo.review.getAllReviews();
+        // latest는 커서 방식 사용
+        reviewsData = await fetchGroo.review.getAllReviewsWithCursor(undefined, ITEMS_PER_PAGE);
       }
 
-      let reviewsData = Array.isArray(response) ? response : response.data || [];
       reviewsData = reviewsData.filter((review: ReviewData) => !review.secret);
 
       setReviews(reviewsData);
-      setVisibleReviews(reviewsData.slice(0, ITEMS_PER_PAGE));
-      setPage(1);
+      setHasMore(reviewsData.length === ITEMS_PER_PAGE);
     } catch (error: any) {
       const errorMessage = getReviewErrorMessage(error);
       setError(errorMessage);
@@ -60,32 +66,61 @@ function ReviewFeed() {
     }
   };
 
-  const filterHandler = (filter: 'latest' | 'popular' | 'following') => () => {
-    setFilter(filter);
-    loadReviews(filter);
+  // 추가 로드 (무한 스크롤)
+  const loadMoreReviews = async () => {
+    if (!hasMore || isLoadingMore || reviews.length === 0) return;
+
+    try {
+      setIsLoadingMore(true);
+      const lastReviewId = reviews[reviews.length - 1].reviewId;
+      let newReviews: ReviewData[] = [];
+
+      if (filter === 'popular') {
+        // TODO: 백엔드에 popular/cursor 엔드포인트 추가되면 사용
+        return;
+      } else if (filter === 'following') {
+        // TODO: 백엔드에 following/cursor 엔드포인트 추가되면 사용
+        return;
+      } else {
+        // latest는 커서 방식 사용
+        newReviews = await fetchGroo.review.getAllReviewsWithCursor(lastReviewId, ITEMS_PER_PAGE);
+      }
+
+      newReviews = newReviews.filter((review: ReviewData) => !review.secret);
+
+      if (newReviews.length > 0) {
+        setReviews((prev) => [...prev, ...newReviews]);
+        setHasMore(newReviews.length === ITEMS_PER_PAGE);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error: any) {
+      console.error('Failed to load more reviews:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
+  const filterHandler = (newFilter: 'latest' | 'popular' | 'following') => () => {
+    setFilter(newFilter);
+    setReviews([]);
+    setHasMore(true);
+    loadInitialReviews(newFilter);
   };
 
   const writeReviewHandler = () => {
     router.push('/reviews/write?from=/reviews/feed');
   };
 
-  // IntersectionObserver로 무한 스크롤 구현
+  // IntersectionObserver로 무한 스크롤
   useEffect(() => {
     if (!loaderRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
-        if (target.isIntersecting && !loading) {
-          // 현재 표시된 아이템 수를 기준으로 계산
-          const start = visibleReviews.length;
-          const end = start + ITEMS_PER_PAGE;
-          const nextItems = reviews.slice(start, end);
-
-          if (nextItems.length > 0) {
-            setVisibleReviews((prev) => [...prev, ...nextItems]);
-            setPage((prevPage) => prevPage + 1);
-          }
+        if (target.isIntersecting && hasMore && !isLoadingMore) {
+          loadMoreReviews();
         }
       },
       { threshold: 0.5 }
@@ -98,7 +133,7 @@ function ReviewFeed() {
         observer.unobserve(loaderRef.current);
       }
     };
-  }, [reviews, visibleReviews.length, loading]);
+  }, [hasMore, isLoadingMore, reviews.length, filter]);
 
   if (!mounted || loading) {
     return <PageLoading />;
@@ -108,7 +143,7 @@ function ReviewFeed() {
     return (
       <div className={styles.container}>
         <div className={styles.error}>{error}</div>
-        <button onClick={() => loadReviews(filter)} className={styles.retryButton}>
+        <button onClick={() => loadInitialReviews(filter)} className={styles.retryButton}>
           다시 시도
         </button>
       </div>
@@ -148,15 +183,17 @@ function ReviewFeed() {
       </header>
 
       <ul className={styles.list}>
-        {visibleReviews.map((review) => (
+        {reviews.map((review) => (
           <ReviewCard key={review.reviewId} review={review} />
         ))}
       </ul>
 
       {/* 로딩 트리거용 div */}
-      <div ref={loaderRef} style={{ height: '60px' }} />
+      {hasMore && <div ref={loaderRef} style={{ height: '60px' }} />}
 
-      {visibleReviews.length === 0 && (
+      {isLoadingMore && <div style={{ textAlign: 'center', padding: '20px' }}>로딩 중...</div>}
+
+      {reviews.length === 0 && (
         <div className={styles.empty}>
           {filter === 'following' ? (
             <>

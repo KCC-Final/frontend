@@ -7,6 +7,7 @@ import BestsellerList from '@/components/home/bestseller';
 import HotTrendBooks from '@/components/home/hot-trend-books';
 import LibrarianRecommendList from '@/components/home/librarian-recommend';
 import PopularLoanBooks from '@/components/home/popular-loan-books';
+import RecommendationSection from '@/components/home/RecommendationSection';
 import TodaySentence from '@/components/home/today-sentence';
 import { useHomeStore } from '@/stores/home';
 import { Book } from '@/types';
@@ -33,6 +34,7 @@ function BookRecommendation({ initialPopularBooks }: BookRecommendationProps) {
       <LibrarianRecommendList />
       <PopularLoanBooks initialBooks={initialPopularBooks} />
       <HotTrendBooks />
+      <RecommendationSection limit={20} />
     </>
   );
 }
