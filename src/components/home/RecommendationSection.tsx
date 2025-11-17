@@ -25,37 +25,33 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 2
     fetchRecommendations();
   }, [limit]);
 
+  /**
+   * 추천 ISBN → 알라딘 상세정보 조회 로직
+   */
   const fetchRecommendations = async () => {
     try {
-      console.log('=== [추천도서] fetchRecommendations() 호출 ===');
-
       setIsLoading(true);
       setError(null);
 
+      // 1) 추천 ISBN 조회
       const recommendationData = await getRecommendations(limit);
-
-      console.log('>>> [백엔드 결과] recommendationData =', recommendationData);
-
       setRecommendations(recommendationData);
 
       if (recommendationData.length === 0) {
-        console.warn('!!! 추천 데이터가 0개입니다.');
         setIsLoading(false);
         return;
       }
 
+      // 2) ISBN 리스트 뽑기
       const isbnList = recommendationData.map((rec) => rec.isbn);
-      console.log('>>> [ISBN 리스트] isbnList =', isbnList);
 
+      // 3) 알라딘 API 상세정보 조회
       const books = await getBookDetailsListByIsbn(isbnList);
 
-      console.log('>>> [Aladin 응답] books =', books);
-
+      // 4) 응답 순서 보장 X → ISBN 순서대로 재정렬
       const sortedBooks = isbnList
         .map((isbn) => books.find((book) => book.isbn13 === isbn))
         .filter((book): book is AladinBookDetailsItem => book !== undefined);
-
-      console.log('>>> [정렬된 Aladin 결과] sortedBooks =', sortedBooks);
 
       setBookDetails(sortedBooks);
     } catch (err) {
@@ -66,21 +62,27 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 2
     }
   };
 
+  /**
+   * 좌/우 스크롤
+   */
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const scrollAmount = 400;
-      const newScrollPosition =
+      const next =
         direction === 'left'
           ? scrollContainerRef.current.scrollLeft - scrollAmount
           : scrollContainerRef.current.scrollLeft + scrollAmount;
 
       scrollContainerRef.current.scrollTo({
-        left: newScrollPosition,
+        left: next,
         behavior: 'smooth'
       });
     }
   };
 
+  /**
+   * 로딩 상태
+   */
   if (isLoading) {
     return (
       <section className={styles.mainBook}>
@@ -93,6 +95,9 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 2
     );
   }
 
+  /**
+   * 에러 상태
+   */
   if (error) {
     return (
       <section className={styles.mainBook}>
@@ -102,6 +107,9 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 2
     );
   }
 
+  /**
+   * 결과 없음
+   */
   if (bookDetails.length === 0) {
     return (
       <section className={styles.mainBook}>
@@ -113,35 +121,43 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 2
     );
   }
 
+  /**
+   * 정상 렌더링
+   */
   return (
     <section className={styles.mainBook}>
       <h1>회원님을 위한 추천 도서</h1>
+
       <div className={styles.container}>
+        {/* 왼쪽 이동 버튼 */}
         <button
           className={`${styles.navButton} ${styles.left}`}
           onClick={() => scroll('left')}
           aria-label="이전 도서">
           &#8249;
         </button>
+
+        {/* 도서 리스트 */}
         <div className={styles.items} ref={scrollContainerRef}>
-          {bookDetails.map((book) => {
-            const recommendation = recommendations.find((rec) => rec.isbn === book.isbn13);
-            return (
-              <div key={book.itemId} className={styles.item}>
-                <div className={styles.ranking}>
-                  <span className={styles.badge}>{recommendation?.reason || '추천'}</span>
-                </div>
-                <BookCard
-                  isbn={book.isbn13}
-                  title={formatBookTitle(book.title)}
-                  author={formatBookAuthor(book.author)}
-                  cover={book.cover}
-                  publisher={book.publisher}
-                />
+          {bookDetails.map((book, index) => (
+            <div key={book.itemId} className={styles.item}>
+              {/* 순위 배지 (PopularBooks 방식) */}
+              <div className={styles.ranking}>
+                <span className={index < 3 ? styles.top3 : styles.normal}>{index + 1}</span>
               </div>
-            );
-          })}
+
+              <BookCard
+                isbn={book.isbn13}
+                title={formatBookTitle(book.title)}
+                author={formatBookAuthor(book.author)}
+                cover={book.cover}
+                publisher={book.publisher}
+              />
+            </div>
+          ))}
         </div>
+
+        {/* 오른쪽 이동 버튼 */}
         <button
           className={`${styles.navButton} ${styles.right}`}
           onClick={() => scroll('right')}

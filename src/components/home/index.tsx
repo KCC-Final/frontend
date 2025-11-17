@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import PopularBooks from './PopularBooks';
+
 import PageLoading from '@/components/common/loading';
 import BestsellerList from '@/components/home/bestseller';
 import HotTrendBooks from '@/components/home/hot-trend-books';
@@ -35,6 +37,7 @@ function BookRecommendation({ initialPopularBooks }: BookRecommendationProps) {
       <PopularLoanBooks initialBooks={initialPopularBooks} />
       <HotTrendBooks />
       <RecommendationSection limit={20} />
+      <PopularBooks />
     </>
   );
 }

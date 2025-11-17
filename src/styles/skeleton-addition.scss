@@ -1,0 +1,22 @@
+// main-book.module.scss에 추가할 스타일
+
+// 스켈레톤 로딩 스타일
+.skeleton {
+  width: 160px;
+  height: 280px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// 기존 main-book.module.scss 파일에 위 코드를 추가하세요
