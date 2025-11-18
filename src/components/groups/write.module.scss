@@ -2,91 +2,26 @@
   max-width: 860px;
   margin: 0 auto;
   padding: 2.5rem 2rem;
-  background: #fff;
-  font-family: 'Pretendard', sans-serif;
-}
-
-/* 상단 바 */
-.topBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.backBtn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  height: 3.5rem;
-  padding: 0.4rem 0.8rem;
-  color: #444;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease;
-
-  &:hover {
-    background: #ececec;
-  }
-}
-
-/* 모집중 토글 */
-.status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #333;
-
-  input {
-    display: none;
-  }
-
-  .toggle {
-    position: relative;
-    width: 38px;
-    height: 20px;
-    background: #ccc;
-    border-radius: 20px;
-    transition: 0.3s;
-    cursor: pointer;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 16px;
-      height: 16px;
-      background: #fff;
-      border-radius: 50%;
-      transition: 0.3s;
-    }
-  }
-
-  input:checked + .toggle {
-    background: #84b48c;
-  }
-
-  input:checked + .toggle::before {
-    transform: translateX(18px);
-  }
 }
 
 /* 입력 폼 */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 3rem;
 }
 
 .inputTitle {
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.8rem 1rem;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  height: 45px;
+  font-size: 1.6rem;
+
+  &:focus {
+    outline: 1.5px solid #555555;
+  }
 }
 
 /* 도서 선택 버튼 */
@@ -224,21 +159,12 @@
 /* 등록 버튼 */
 .submitBtn {
   width: 100%;
-  background: #1f8b4c;
-  color: #fff;
+  background: #333333;
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  height: 40px;
   padding: 1rem;
   font-weight: 600;
   cursor: pointer;
-
-  &:hover {
-    background: #007664;
-  }
-}
-
-.error {
-  color: #d32f2f;
-  font-size: 0.9rem;
-  text-align: center;
 }

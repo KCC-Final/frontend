@@ -41,14 +41,12 @@ function Login() {
       try {
         await fetchGroo.auth.login({ userId: userId, password: password });
         alert('로그인에 성공했습니다.');
-        const user = await fetchGroo.user.getMyInfo();
-        setMyInfo(user.data);
         router.push('/');
       } catch (error) {
         if (error instanceof ApiError) {
           alert(error.message);
         } else {
-          alert('이메일 인증에 실패하였습니다.');
+          alert('로그인에 실패했습니다..');
         }
       }
     }

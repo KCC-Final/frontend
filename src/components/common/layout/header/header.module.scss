@@ -17,7 +17,7 @@
 
   .nav {
     display: flex;
-    gap: 2.4rem;
+    gap: 3.2rem;
 
     .logo {
       @include font-SeoulAlrim();
@@ -41,14 +41,14 @@
         position: relative;
 
         font-size: 2rem;
-        color: #555;
+        color: #444444;
         font-weight: 500;
         text-decoration: none;
         padding-bottom: 4px;
         transition: color 0.25s ease;
 
         &:hover {
-          color: #007664;
+          color: #111111;
         }
 
         &::after {

@@ -1,8 +1,7 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import styles from './write.module.scss';
 
@@ -12,9 +11,12 @@ import BookSearchModal from '@/components/reviews/write/book-search-modal';
 import { regionList } from '@/types/common/region';
 import { GroupRequestBody } from '@/types/groups';
 import { AladinBook } from '@/types/reviews';
+import { devLogger } from '@/utils/dev-logger';
 
 function ReadingGroupWrite() {
   const router = useRouter();
+
+  const endDateInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<GroupRequestBody>({
     groupName: '',
@@ -26,7 +28,7 @@ function ReadingGroupWrite() {
     style: '독서',
     status: true,
     endDate: '',
-    codeId: 11
+    codeId: 1
   });
 
   const [selectedBook, setSelectedBook] = useState<AladinBook | null>(null);
@@ -53,11 +55,6 @@ function ReadingGroupWrite() {
     setShowBookModal(false);
   };
 
-  const handleRemoveBook = () => {
-    setSelectedBook(null);
-    setFormData((prev) => ({ ...prev, bookTitle: '', isbn: '' }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -80,21 +77,24 @@ ${participation.trim()}
       alert('독서모임이 등록되었습니다!');
       router.push('/groups');
     } catch (err) {
-      console.error(err);
+      alert('독서모임 등록에 실패했습니다. 다시 시도해주세요.');
+      devLogger(err, true);
       setError('등록 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
   };
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <main className={styles.groupWriteContainer}>
-      <div className={styles.topBar}>
-        <button type="button" className={styles.backBtn} onClick={() => router.back()}>
-          <ArrowLeft size={18} /> 뒤로가기
-        </button>
-      </div>
-
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
           className={styles.inputTitle}
@@ -153,7 +153,20 @@ ${participation.trim()}
 
           <div className={styles.formGroup}>
             <label htmlFor="endDate">모집 마감일</label>
-            <input id="endDate" type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
+            <input
+              id="endDate"
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              ref={endDateInputRef}
+              onFocus={() => {
+                if (endDateInputRef.current && typeof endDateInputRef.current.showPicker === 'function') {
+                  endDateInputRef.current.showPicker();
+                }
+              }}
+              min={getTodayDate()}
+            />
           </div>
 
           <div className={styles.formGroup}>
@@ -198,9 +211,7 @@ ${participation.trim()}
           />
         </div>
 
-        {error && <p className={styles.error}>{error}</p>}
-
-        <button type="submit" className={styles.submitBtn} disabled={loading}>
+        <button type="submit" className={styles.submitBtn} disabled={loading || !formData.endDate}>
           {loading ? '등록 중...' : '등록하기'}
         </button>
       </form>

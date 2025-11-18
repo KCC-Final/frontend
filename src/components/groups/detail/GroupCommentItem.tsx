@@ -151,7 +151,7 @@ export default function GroupCommentItem({
   const isEdited = comment.updatedAt && comment.updatedAt !== comment.createdAt;
   const displayDate = isEdited ? comment.updatedAt : comment.createdAt;
   const marginLeft = Math.min(depth, 5) * 40;
-  console.log('+++', comment.createdAt, displayDate);
+
   return (
     <div>
       <div

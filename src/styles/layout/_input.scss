@@ -27,12 +27,12 @@
 
   &:focus-within {
     outline: $input-focus-border;
-    outline-offset: -1px;
+    outline-offset: -0.5px;
   }
 
   &.error {
     outline: $input-error-border;
-    outline-offset: -1px;
+    outline-offset: -0.5px;
   }
 }
 

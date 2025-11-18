@@ -136,7 +136,40 @@ function ReviewFeed() {
   }, [hasMore, isLoadingMore, reviews.length, filter]);
 
   if (!mounted || loading) {
-    return <PageLoading />;
+    return (
+      <section className={styles.container}>
+        <header className={styles.header}>
+          <nav className={styles.filter}>
+            <button
+              className={clsx({ [styles.active]: filter === 'latest' })}
+              onClick={filterHandler('latest')}>
+              최신
+            </button>
+            <button
+              className={clsx({ [styles.active]: filter === 'popular' })}
+              onClick={filterHandler('popular')}>
+              인기
+            </button>
+            <button
+              className={clsx({ [styles.active]: filter === 'following' })}
+              onClick={filterHandler('following')}>
+              팔로잉
+            </button>
+          </nav>
+          <BasicButton
+            name={
+              <>
+                <PenSquare size={18} />
+                <span>글쓰기</span>
+              </>
+            }
+            handler={writeReviewHandler}
+            height="36"
+          />
+        </header>
+        <PageLoading />
+      </section>
+    );
   }
 
   if (error) {

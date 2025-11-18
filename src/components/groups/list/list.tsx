@@ -12,6 +12,7 @@ import styles from './list.module.scss';
 import { fetchAladin } from '@/apis/aladin';
 import { group as groupApi } from '@/apis/groo/group';
 import { user } from '@/apis/groo/user';
+import PageLoading from '@/components/common/loading';
 import { regionList } from '@/types/common/region';
 import { GroupData } from '@/types/groups';
 
@@ -190,7 +191,119 @@ function ReadingGroupList() {
     };
   }, [showFilter]);
 
-  if (!mounted || loading) return <div className={styles.state}>불러오는 중...</div>;
+  if (!mounted || loading)
+    return (
+      <section className={styles.container}>
+        {/* 검색창 */}
+        <div className={styles.searchBox}>
+          <div className={styles.searchWrapper}>
+            <input
+              type="text"
+              placeholder="지금 바로 독서 모임에 참여해보세요!"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+            <Search size={18} className={styles.searchIcon} />
+          </div>
+        </div>
+
+        {/* 상단 헤더 */}
+        <header className={styles.header}>
+          <div className={styles.sortButtons}>
+            <button className={clsx({ [styles.active]: sort === 'all' })} onClick={() => setSort('all')}>
+              전체
+            </button>
+            <button
+              className={clsx({ [styles.active]: sort === 'recruiting' })}
+              onClick={() => setSort('recruiting')}>
+              모집중
+            </button>
+          </div>
+
+          <div className={styles.rightArea}>
+            <div className={styles.filterWrapper} ref={filterRef}>
+              <button className={styles.filterButton} onClick={() => setShowFilter((p) => !p)}>
+                <Filter size={18} />
+                <span>필터</span>
+              </button>
+
+              <AnimatePresence>
+                {showFilter && (
+                  <motion.div
+                    className={styles.filterPopup}
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.2 }}>
+                    <div className={styles.filterHeader}>
+                      <span className={styles.filterTitle}>필터</span>
+                      <button className={styles.resetButton} onClick={resetFilters}>
+                        초기화
+                      </button>
+                    </div>
+
+                    <div className={styles.filterSection}>
+                      <label htmlFor="region" className={styles.filterLabel}>
+                        지역
+                      </label>
+                      <select
+                        id="region"
+                        value={region}
+                        onChange={(e) => setRegion(e.target.value)}
+                        className={styles.select}>
+                        <option value="">전체</option>
+                        {regionList.map((r) => (
+                          <option key={r.code} value={r.name}>
+                            {r.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className={styles.filterSection}>
+                      <label htmlFor="styleType" className={styles.filterLabel}>
+                        진행 방식
+                      </label>
+                      <select
+                        id="styleType"
+                        value={styleType}
+                        onChange={(e) => setStyleType(e.target.value)}
+                        className={styles.select}>
+                        <option value="">전체</option>
+                        <option value="독서">독서</option>
+                        <option value="토론">토론</option>
+                        <option value="자유">자유</option>
+                      </select>
+                    </div>
+
+                    <div className={styles.filterSection}>
+                      <label htmlFor="date" className={styles.filterLabel}>
+                        모집 마감 날짜
+                      </label>
+                      <input
+                        id="date"
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className={styles.dateInput}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <button className={styles.writeButton} onClick={() => router.push('/groups/write')}>
+              <PlusCircle size={18} />
+              <span>모임 만들기</span>
+            </button>
+          </div>
+        </header>
+        <PageLoading />
+      </section>
+    );
+
   if (error)
     return (
       <div className={styles.state}>
@@ -407,7 +520,7 @@ function ReadingGroupList() {
                 [styles.dots]: page === '...'
               })}
               onClick={() => typeof page === 'number' && handlePageChange(page)}
-              disabled={page === '...'}>
+              disabled={page === '...' || page === currentPage}>
               {page}
             </button>
           ))}

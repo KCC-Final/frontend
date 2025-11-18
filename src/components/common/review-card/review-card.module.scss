@@ -80,8 +80,7 @@
   }
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -177,7 +176,8 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 0.75rem;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 
   .book_fallback_bg {
     position: absolute;

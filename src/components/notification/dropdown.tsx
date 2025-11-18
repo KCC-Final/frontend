@@ -151,7 +151,6 @@ function NotificationItem({ alert, index, total, onRead, onDelete }: Notificatio
           <p className={styles.message}>{alert.content}</p>
           <span className={styles.time}>{formatTime(alert.sendAt || alert.sendAt)}</span>
         </div>
-        {!alert.alertsCheckStatus && <div className={styles.unread_dot} />}
       </div>
 
       <div className={styles.menu_wrapper} ref={menuRef}>

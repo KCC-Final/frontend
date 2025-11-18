@@ -131,18 +131,6 @@ ${participation.trim()}
 
   return (
     <main className={styles.groupWriteContainer}>
-      <div className={styles.topBar}>
-        <button type="button" className={styles.backBtn} onClick={() => router.back()}>
-          <ArrowLeft size={18} /> 뒤로가기
-        </button>
-
-        <label className={styles.status}>
-          <input type="checkbox" name="status" checked={formData.status} onChange={handleChange} />
-          <span className={styles.toggle}></span>
-          모집중
-        </label>
-      </div>
-
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
           className={styles.inputTitle}

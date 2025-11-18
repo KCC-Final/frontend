@@ -27,9 +27,9 @@
 .textarea {
   width: 100%;
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #dddddd;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 1.4rem;
   line-height: 1.6;
   resize: vertical;
   transition: all 0.2s;
@@ -37,7 +37,7 @@
 
   &:focus {
     outline: none;
-    border-color: #007664;
+    outline: 1.5px solid #555555;
   }
 
   &::placeholder {
