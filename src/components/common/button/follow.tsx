@@ -13,7 +13,7 @@ interface FollowButtonProps {
 }
 
 function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
-  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo! })));
+  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo })));
   const [isFollowing, setIsFollowing] = useState(false);
 
   const followHandler = async () => {
@@ -42,6 +42,10 @@ function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
 
   useEffect(() => {
     const checkFollowingStatus = async () => {
+      if (!myInfo) {
+        return;
+      }
+
       // 자기 자신인 경우 API 호출하지 않음
       if (myInfo.userId === targetUserId || !targetUserId) {
         setIsFollowing(false);
@@ -58,10 +62,10 @@ function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
     };
 
     checkFollowingStatus();
-  }, [targetUserId, myInfo.userId]); // 의존성 배열에 myInfo.userId 추가
+  }, [targetUserId, myInfo]); // 의존성 배열에 myInfo.userId 추가
 
   // 자기 자신이면 아예 렌더링하지 않음
-  if (myInfo.userId === targetUserId) return null;
+  if (!myInfo || myInfo.userId === targetUserId) return null;
 
   return (
     <>

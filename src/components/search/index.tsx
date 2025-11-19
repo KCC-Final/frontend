@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-import styles from './search.module.scss';
-
 import { fetchAladin, fetchGroo } from '@/apis';
+import PageLoading from '@/components/common/loading';
 import UserProfileImage from '@/components/common/profile/image';
+import styles from '@/components/search/search.module.scss';
 import { AladinBookDetailsItem } from '@/types/aladin';
 import { SearchResultItem } from '@/types/search';
 import { getSearchErrorMessage } from '@/utils/error/search-error-handler';
@@ -256,11 +256,7 @@ export default function IntegratedSearch() {
       </div>
 
       {/* 로딩 */}
-      {loading && (
-        <div className={styles.loading}>
-          <p>검색 중입니다...</p>
-        </div>
-      )}
+      {loading && <PageLoading />}
 
       {/* 에러 */}
       {error && !loading && (

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 
 import { fetchGroo } from '@/apis/groo';
+import PageLoading from '@/components/common/loading';
 import UserProfileCard from '@/components/common/profile/card';
 import ReviewCard from '@/components/common/review-card';
 import styles from '@/components/user/feed/user-feed.module.scss';
@@ -19,7 +20,7 @@ interface UserFeedProps {
 }
 
 function UserFeed({ userId }: UserFeedProps) {
-  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo! })));
+  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo })));
 
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('myReviews');
@@ -62,23 +63,27 @@ function UserFeed({ userId }: UserFeedProps) {
           ? likedReviewsResponse
           : likedReviewsResponse?.data || [];
 
-        const feedData = {
-          user: {
-            userId: myInfo.userId,
-            nickname: myInfo.nickname,
-            profileImage: myInfo.profileImage,
-            introduction: myInfo.introduction
-          },
-          stats: {
-            reviewCount: myReviewsData.length,
-            followerCount: followerCountResponse.data,
-            followingCount: followingCountResponse.data
-          },
-          reviews: myReviewsData,
-          likedReviews: likedReviewsData
-        };
+        if (!myInfo) {
+          setFeedData(null);
+        } else {
+          const feedData = {
+            user: {
+              userId: myInfo.userId,
+              nickname: myInfo.nickname,
+              profileImage: myInfo.profileImage,
+              introduction: myInfo.introduction
+            },
+            stats: {
+              reviewCount: myReviewsData.length,
+              followerCount: followerCountResponse.data,
+              followingCount: followingCountResponse.data
+            },
+            reviews: myReviewsData,
+            likedReviews: likedReviewsData
+          };
 
-        setFeedData(feedData);
+          setFeedData(feedData);
+        }
       } else {
         const feedResponse = await fetchGroo.user.getUserFeed(userId);
         setFeedData(feedResponse);
@@ -101,11 +106,7 @@ function UserFeed({ userId }: UserFeedProps) {
   };
 
   if (!mounted || loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>로딩 중...</div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (error || !feedData) {

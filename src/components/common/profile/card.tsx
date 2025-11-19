@@ -32,7 +32,7 @@ interface UserProfileCardProps {
 }
 
 function UserProfileCard({ userId, user, stats, onFollowChange }: UserProfileCardProps) {
-  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo! })));
+  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo })));
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
     userId,
@@ -59,7 +59,7 @@ function UserProfileCard({ userId, user, stats, onFollowChange }: UserProfileCar
   };
 
   useEffect(() => {
-    if (!user && myInfo.userId === userId) {
+    if (myInfo && !user && myInfo.userId === userId) {
       setUserInfo({
         userId: myInfo.userId,
         nickname: myInfo.nickname,
@@ -67,10 +67,10 @@ function UserProfileCard({ userId, user, stats, onFollowChange }: UserProfileCar
         introduction: myInfo.introduction
       });
     }
-  }, [myInfo.introduction, myInfo.nickname, myInfo.profileImage, myInfo.userId, user, userId]);
+  }, [myInfo, user, userId]);
 
   useEffect(() => {
-    if (!stats && myInfo.userId === userId) {
+    if (!stats && myInfo && myInfo.userId === userId) {
       const loadFollowCountData = async () => {
         const [followerCountResponse, followingCountResponse] = await Promise.all([
           fetchGroo.follow.getFollowerCount(),
@@ -84,10 +84,10 @@ function UserProfileCard({ userId, user, stats, onFollowChange }: UserProfileCar
       };
       loadFollowCountData();
     }
-  }, [myInfo.userId, stats, userId]);
+  }, [myInfo, stats, userId]);
 
   useEffect(() => {
-    if ((!user || !stats) && myInfo.userId !== userId) {
+    if ((!user || !stats) && myInfo && myInfo.userId !== userId) {
       const fetchUserFeedData = async () => {
         try {
           const feedResponse = await fetchGroo.user.getUserFeed(userId);
@@ -109,7 +109,7 @@ function UserProfileCard({ userId, user, stats, onFollowChange }: UserProfileCar
 
       fetchUserFeedData();
     }
-  }, [myInfo.userId, stats, user, userId]);
+  }, [myInfo, stats, user, userId]);
 
   return (
     <section className={styles.container}>

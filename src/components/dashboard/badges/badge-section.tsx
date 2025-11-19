@@ -15,7 +15,7 @@ import { UserBadgeStatusResponse, BadgeCategory, BADGE_CATEGORY_MAP, BADGE_ICONS
 const HISTORICAL_BADGES = ['이달의 독서왕'];
 
 function BadgeSection() {
-  const { userId } = useBoundStore(useShallow((state) => ({ userId: state.myInfo!.userId })));
+  const { userId } = useBoundStore(useShallow((state) => ({ userId: state.myInfo?.userId })));
 
   const [badges, setBadges] = useState<UserBadgeStatusResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +28,8 @@ function BadgeSection() {
 
   useEffect(() => {
     const loadUserAndBadges = async () => {
+      if (!userId) return;
+
       try {
         setLoading(true);
         const badgeList = await challenge.getAllBadgesWithStatus(userId);
@@ -170,7 +172,7 @@ function BadgeSection() {
       {/* 뱃지 모달 (히스토리 & 일반 뱃지 모두 처리) */}
       {showModal && selectedBadge && (
         <MonthlyBadgeModal
-          userId={userId}
+          userId={userId ? userId : ''}
           onClose={() => setShowModal(false)}
           badgeId={isHistoryMode ? selectedBadge.badgeId : undefined}
           badge={selectedBadge}
