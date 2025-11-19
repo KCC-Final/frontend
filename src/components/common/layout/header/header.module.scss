@@ -13,11 +13,11 @@
   justify-content: space-between;
   align-items: center;
   width: $header-width;
-  padding: 0 20px;
+  padding: 0;
 
   .nav {
     display: flex;
-    gap: 3.2rem;
+    gap: 4rem;
 
     .logo {
       @include font-SeoulAlrim();
@@ -29,7 +29,7 @@
 
     .pages {
       display: flex;
-      gap: 2rem;
+      gap: 2.4rem;
       list-style: none;
       align-items: center;
 

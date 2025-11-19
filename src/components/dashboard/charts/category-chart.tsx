@@ -89,7 +89,7 @@ export default function CategoryChart() {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: true },
+          legend: { display: true, position: 'right' },
           tooltip: { enabled: true }
         },
         cutout: '65%',
@@ -111,6 +111,14 @@ export default function CategoryChart() {
       <div className={styles.chartContainer}>
         {/* 데이터가 있을 때만 차트 렌더링 */}
         {!showOverlay && <canvas ref={chartRef}></canvas>}
+        {/* 전체보기 버튼 */}
+        {/* {categoryStats.length > 5 && (
+          <div className={styles.chartFooter}>
+            <button className={styles.expandButton} onClick={() => setExpanded((prev) => !prev)}>
+              {expanded ? '간략히 보기' : '전체 보기'}
+            </button>
+          </div>
+        )} */}
 
         {/* 데이터가 없을 때 중앙 메시지 표시 */}
         {showOverlay && (

@@ -9,9 +9,10 @@ import { devLogger } from '@/utils/dev-logger';
 
 interface FollowButtonProps {
   targetUserId: string;
+  onFollowChange?: (isFollow: boolean) => void;
 }
 
-function FollowButton({ targetUserId }: FollowButtonProps) {
+function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
   const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo! })));
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -19,6 +20,7 @@ function FollowButton({ targetUserId }: FollowButtonProps) {
     try {
       await fetchGroo.follow.createFollow(targetUserId);
       setIsFollowing(true);
+      onFollowChange?.(true);
     } catch (error) {
       alert('팔로우에 실패했습니다.');
       devLogger(error, true);
@@ -30,6 +32,7 @@ function FollowButton({ targetUserId }: FollowButtonProps) {
     try {
       await fetchGroo.follow.deleteFollow(targetUserId);
       setIsFollowing(false);
+      onFollowChange?.(false);
     } catch (error) {
       alert('언팔로우에 실패했습니다.');
       devLogger(error, true);

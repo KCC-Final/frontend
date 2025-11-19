@@ -183,7 +183,7 @@ function BookProfileCardButtons({ isbn }: BookProfileCardButtonsProps) {
           disabled={isCheckingScrap}
           className={`${styles.action_button} ${isScraped ? styles.scraped : ''}`}>
           <Bookmark size={18} fill={isScraped ? 'currentColor' : 'none'} />
-          {isCheckingScrap ? '확인 중...' : isScraped ? '스크랩 완료' : '스크랩하기'}
+          {isCheckingScrap ? '확인 중...' : isScraped ? '스크랩 취소' : '스크랩하기'}
         </button>
         <button onClick={handleWriteReview} className={styles.action_button}>
           <BookOpen size={18} />
@@ -191,7 +191,7 @@ function BookProfileCardButtons({ isbn }: BookProfileCardButtonsProps) {
         </button>
       </div>
 
-      {showScrapManagement && selectedBookshelf && (
+      {/* {showScrapManagement && selectedBookshelf && (
         <section className={styles.scrap_management}>
           <div className={styles.scrap_info}>
             <Bookmark size={18} color="#007664" fill="#007664" />
@@ -204,7 +204,7 @@ function BookProfileCardButtons({ isbn }: BookProfileCardButtonsProps) {
             </button>
           </div>
         </section>
-      )}
+      )} */}
 
       {showCategoryModal && (
         <div className={styles.modal_overlay} onClick={() => setShowCategoryModal(false)}>

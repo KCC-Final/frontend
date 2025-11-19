@@ -34,10 +34,10 @@ function BookRecommendation({ initialPopularBooks }: BookRecommendationProps) {
       <TodaySentence />
       <BestsellerList />
       <LibrarianRecommendList />
-      <PopularLoanBooks initialBooks={initialPopularBooks} />
-      <HotTrendBooks />
       <RecommendationSection limit={20} />
       <PopularBooks />
+      <PopularLoanBooks initialBooks={initialPopularBooks} />
+      <HotTrendBooks />
     </>
   );
 }

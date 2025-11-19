@@ -94,7 +94,7 @@ function PopularBooks() {
 
   return (
     <section className={styles.mainBook}>
-      <h1>지금 인기있는 도서</h1>
+      <h1>그루의 인기 도서</h1>
       <div className={styles.container}>
         {/* 왼쪽 이동 버튼 */}
         <button

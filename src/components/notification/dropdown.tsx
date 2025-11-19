@@ -90,6 +90,10 @@ function NotificationItem({ alert, index, total, onRead, onDelete }: Notificatio
   };
 
   const handleContentClick = () => {
+    if (!alert.alertsCheckStatus) {
+      onRead(alert.alertId);
+    }
+    setShowMenu(false);
     switch (alert.senderType) {
       case 'review':
         if (alert.type === 'comment' && alert.detailSenderId) {

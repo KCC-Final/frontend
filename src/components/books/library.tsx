@@ -21,9 +21,9 @@ const LibraryInformation = ({ isbn, ref, id }: LibraryInformationProps) => {
   // 선택된 지역과 세부 지역 상태
   const [region, setRegion] = useState<Region>({ code: '11', name: '서울특별시' });
   const [dtlRegion, setDtlRegion] = useState<DtlRegion>({
-    code: '11030',
+    code: '11010',
     regionName: '서울특별시',
-    dtlRegionName: '용산구'
+    dtlRegionName: '종로구'
   });
 
   // 선택할 수 있는 세부 지역 옵션

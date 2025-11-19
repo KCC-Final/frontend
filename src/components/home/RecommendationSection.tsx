@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 
 import { getRecommendations, RecommendationResponse } from '@/apis/groo/recommendation';
 import BookCard from '@/components/common/book/book-card';
 import styles from '@/components/home/main-book.module.scss';
 import { getBookDetailsListByIsbn } from '@/hooks/fetch/home';
+import useBoundStore from '@/stores';
 import { AladinBookDetailsItem } from '@/types';
 import { formatBookAuthor, formatBookTitle } from '@/utils/format/string';
 
@@ -14,6 +16,8 @@ interface RecommendationSectionProps {
 }
 
 const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 20 }) => {
+  const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo })));
+
   const [recommendations, setRecommendations] = useState<RecommendationResponse[]>([]);
   const [bookDetails, setBookDetails] = useState<AladinBookDetailsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,44 +85,10 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 2
   };
 
   /**
-   * 로딩 상태
-   */
-  if (isLoading) {
-    return (
-      <section className={styles.mainBook}>
-        <h1>회원님을 위한 추천 도서</h1>
-        <div className="flex justify-center items-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          <span className="ml-3 text-gray-600">추천 도서를 찾고 있습니다...</span>
-        </div>
-      </section>
-    );
-  }
-
-  /**
-   * 에러 상태
-   */
-  if (error) {
-    return (
-      <section className={styles.mainBook}>
-        <h1>회원님을 위한 추천 도서</h1>
-        <div className="text-center text-red-600 py-8">{error}</div>
-      </section>
-    );
-  }
-
-  /**
    * 결과 없음
    */
   if (bookDetails.length === 0) {
-    return (
-      <section className={styles.mainBook}>
-        <h1>회원님을 위한 추천 도서</h1>
-        <div className="text-center text-gray-600 py-8">
-          추천할 도서가 없습니다. 더 많은 책을 읽고 리뷰를 작성해보세요!
-        </div>
-      </section>
-    );
+    return null;
   }
 
   /**
@@ -126,8 +96,7 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({ limit = 2
    */
   return (
     <section className={styles.mainBook}>
-      <h1>회원님을 위한 추천 도서</h1>
-
+      {myInfo?.nickname ? <h1>{myInfo.nickname}님을 위한 추천 도서</h1> : <h1>회원님을 위한 추천 도서</h1>}
       <div className={styles.container}>
         {/* 왼쪽 이동 버튼 */}
         <button
