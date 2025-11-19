@@ -28,9 +28,10 @@ interface UserProfileCardProps {
   userId: string;
   user?: UserInfo;
   stats?: UserStats;
+  onFollowChange?: (amount: number) => void;
 }
 
-function UserProfileCard({ userId, user, stats }: UserProfileCardProps) {
+function UserProfileCard({ userId, user, stats, onFollowChange }: UserProfileCardProps) {
   const { myInfo } = useBoundStore(useShallow((state) => ({ myInfo: state.myInfo! })));
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -110,13 +111,6 @@ function UserProfileCard({ userId, user, stats }: UserProfileCardProps) {
     }
   }, [myInfo.userId, stats, user, userId]);
 
-  const handleFollowChange = (isFollow: boolean) => {
-    setUserStats((prevStats) => ({
-      ...prevStats,
-      followerCount: isFollow ? prevStats.followerCount + 1 : prevStats.followerCount - 1
-    }));
-  };
-
   return (
     <section className={styles.container}>
       <UserProfileImage
@@ -130,10 +124,7 @@ function UserProfileCard({ userId, user, stats }: UserProfileCardProps) {
             <span className={styles.nickname}>{user ? user.nickname : userInfo.nickname}</span>
             <span className={styles.userId}>@{user ? user.userId : userInfo.userId}</span>
           </div>
-          <FollowButton
-            targetUserId={user ? user.userId : userInfo.userId}
-            onFollowChange={handleFollowChange}
-          />
+          <FollowButton targetUserId={user ? user.userId : userInfo.userId} onFollowChange={onFollowChange} />
         </div>
         <div className={styles.follow}>
           {userStats.reviewCount !== null && (
@@ -147,13 +138,7 @@ function UserProfileCard({ userId, user, stats }: UserProfileCardProps) {
             <div className={styles.label}>팔로잉</div>
           </button>
           <button onClick={openModal('follower')}>
-            <div className={styles.count}>
-              {userStats.followerCount
-                ? userStats.followerCount
-                : stats
-                  ? stats.followerCount
-                  : userStats.followerCount}
-            </div>
+            <div className={styles.count}>{stats ? stats.followerCount : userStats.followerCount}</div>
             <div className={styles.label}>팔로워</div>
           </button>
         </div>

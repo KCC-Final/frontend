@@ -34,7 +34,7 @@ function BookRecommendation({ initialPopularBooks }: BookRecommendationProps) {
       <TodaySentence />
       <BestsellerList />
       <LibrarianRecommendList />
-      <RecommendationSection limit={20} />
+      {/* <RecommendationSection limit={20} /> */}
       <PopularBooks />
       <PopularLoanBooks initialBooks={initialPopularBooks} />
       <HotTrendBooks />

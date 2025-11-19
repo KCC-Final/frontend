@@ -9,7 +9,7 @@ import { devLogger } from '@/utils/dev-logger';
 
 interface FollowButtonProps {
   targetUserId: string;
-  onFollowChange?: (isFollow: boolean) => void;
+  onFollowChange?: (isFollow: number) => void;
 }
 
 function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
@@ -20,7 +20,7 @@ function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
     try {
       await fetchGroo.follow.createFollow(targetUserId);
       setIsFollowing(true);
-      onFollowChange?.(true);
+      onFollowChange?.(1);
     } catch (error) {
       alert('팔로우에 실패했습니다.');
       devLogger(error, true);
@@ -32,7 +32,7 @@ function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
     try {
       await fetchGroo.follow.deleteFollow(targetUserId);
       setIsFollowing(false);
-      onFollowChange?.(false);
+      onFollowChange?.(-1);
     } catch (error) {
       alert('언팔로우에 실패했습니다.');
       devLogger(error, true);

@@ -27,6 +27,19 @@ function UserFeed({ userId }: UserFeedProps) {
   const [error, setError] = useState<string | null>(null);
   const [feedData, setFeedData] = useState<UserFeedData | null>(null);
 
+  const updateFollowerCount = (amount: number) => {
+    setFeedData((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        stats: {
+          ...prev.stats,
+          followerCount: prev.stats.followerCount + amount
+        }
+      };
+    });
+  };
+
   const loadFeedData = async () => {
     setLoading(true);
     setError(null);
@@ -111,7 +124,12 @@ function UserFeed({ userId }: UserFeedProps) {
 
   return (
     <>
-      <UserProfileCard userId={userId} user={feedData.user} stats={feedData.stats} />
+      <UserProfileCard
+        userId={userId}
+        user={feedData.user}
+        stats={feedData.stats}
+        onFollowChange={updateFollowerCount}
+      />
 
       <nav className={styles.navbar}>
         <button
